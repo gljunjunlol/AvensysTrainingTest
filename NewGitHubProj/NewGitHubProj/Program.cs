@@ -11,6 +11,11 @@ namespace NewGitHubProj
         static void Main(string[] args)
         {
             Console.WriteLine("Hello again!");
+
+            int x = 3;
+            int y = 4;
+
+            Console.WriteLine("Add: " + x + y);
             Console.ReadLine();
         }
     }
