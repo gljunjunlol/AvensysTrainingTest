@@ -9,8 +9,8 @@ namespace attendance_app
     public class attendance
     {
 
-        public string [] Names = { "marvin", "wei yao", "gabriel", "nur", "Akhi", "Han", "wei ming" };
-        bool[] attendance1 = new bool[7];
+        public string [] Names = { "marvin", "wei yao", "gabriel", "nur", "Akhi", "Han", "wei ming", "wei heng", "Hafiq" };
+        bool[] attendance1 = new bool[9];
 
 
         public void ShowAllParticipants()
@@ -33,10 +33,12 @@ namespace attendance_app
             attendance1[4] = false;
             attendance1[5] = true;
             attendance1[6] = true;
+            attendance1[7] = true;
+            attendance1[8] = true;
             bool inVal = true;
             int i;
             i = attendance1.Count(ai => ai == inVal);
-            Console.WriteLine("total attendees is:" + i + " out of: " + count);
+            Console.WriteLine("The exam for HTD 15 total attendees is:" + i + " out of: " + count);
                      
         }
         public void ShowAttendanceForAPerson()
