@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfaceDemo_HTD", "InterfaceDemo_HTD\InterfaceDemo_HTD.csproj", "{A08E212B-1A64-4A45-923C-1FEB20BCA280}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnumDemo_HTD", "EnumDemo_HTD\EnumDemo_HTD.csproj", "{65982823-22BF-4CC1-9BE6-AA59D6A63AAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A08E212B-1A64-4A45-923C-1FEB20BCA280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A08E212B-1A64-4A45-923C-1FEB20BCA280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A08E212B-1A64-4A45-923C-1FEB20BCA280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A08E212B-1A64-4A45-923C-1FEB20BCA280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65982823-22BF-4CC1-9BE6-AA59D6A63AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65982823-22BF-4CC1-9BE6-AA59D6A63AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65982823-22BF-4CC1-9BE6-AA59D6A63AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65982823-22BF-4CC1-9BE6-AA59D6A63AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFC1EAA4-850D-4D94-9EE6-9176FC6EF337}
+	EndGlobalSection
+EndGlobal
