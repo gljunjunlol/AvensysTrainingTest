@@ -1,3 +1,5 @@
+Qn 1 -5.
+
 1) Create a calculator to perform the arithmetic operations , use interface concept to complete the program
 
 2) Validates a password to conform to the following rules:
@@ -20,7 +22,4 @@
 Using boxing and unboxing concept
 from 6 sept to now
 
-5) Write a program  that determines whether a string is a valid hex code .A hex code must begin with a pound key # and is exactly 6 characters in length. Each character must be a digit from 0-9 or an alphabetic character from A-F. All alphabetic characters may be uppercase or lowercase.
-(use inheritance concept)
-
-do the 5 qn and post in github
+5) Write a program  that determines whether a string is a valid hex code .A hex code must begin with a pound key # and is exactly 6 characters in length. Each character must be a digit from 0-9 or an alphabetic character from A-F. All alphabetic characters may be uppercase or lowercase.(use inheritance concept)
