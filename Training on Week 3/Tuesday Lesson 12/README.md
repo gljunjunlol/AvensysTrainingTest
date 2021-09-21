@@ -1,4 +1,5 @@
-QUESTIONS:
+q1-q6
+
 	1) Write C# program to find HCF and LCM of two numbers
 
 	2) Write C# program to create a function to input a string and count number of words are present  in the string , then  print them separately
