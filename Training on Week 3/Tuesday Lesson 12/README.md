@@ -1,4 +1,4 @@
-q1-q6
+All questions
 
 	1) Write C# program to find HCF and LCM of two numbers
 
