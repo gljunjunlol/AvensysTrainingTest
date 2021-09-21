@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlphabetReplacer", "AlphabetReplacer\AlphabetReplacer.csproj", "{6A8D833B-C342-4F56-85B3-F2FCDC989E6E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A8D833B-C342-4F56-85B3-F2FCDC989E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A8D833B-C342-4F56-85B3-F2FCDC989E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A8D833B-C342-4F56-85B3-F2FCDC989E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A8D833B-C342-4F56-85B3-F2FCDC989E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1749BD0F-1172-4412-85F2-2EDBC0DD5674}
+	EndGlobalSection
+EndGlobal
