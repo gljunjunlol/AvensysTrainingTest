@@ -6,20 +6,21 @@ using System.Threading.Tasks;
 
 namespace HCF_LCM_program___Delegates_and_Events
 {
-    
+    public delegate void DelHCFLCM(int LCM, int HCF);
 
 
 
 
     class HCFLCM
     {
-        public delegate void DelHCFLCM(int LCM, int HCF);
-        public static event DelHCFLCM event1 = null;
+        public event DelHCFLCM CalculationCompleted;      // Calculation completed = event name
         public void performOperation(int LCM, int HCF)
         {
-            Console.WriteLine("The calculated LCM is: " + LCM);
-            Console.WriteLine("The calculated HCF is: " + HCF);
-            Console.WriteLine("Operation complete");
+            if (CalculationCompleted != null)
+            {
+                CalculationCompleted.Invoke(LCM, HCF);
+            }
+            
 
         }
         
@@ -30,9 +31,8 @@ namespace HCF_LCM_program___Delegates_and_Events
             Console.WriteLine("Enter second number here: ");
             int val2 = Int32.Parse(Console.ReadLine());
 
-            
-            
-            event1 += performOperation;
+
+
             Calculate(val1, val2);
         }
         public void Calculate(int val1, int val2)
@@ -53,7 +53,7 @@ namespace HCF_LCM_program___Delegates_and_Events
             HCF = n1;
             LCM = (val1 * val2) / HCF;
 
-            event1(LCM, HCF);
+
             
         }
     }
@@ -64,10 +64,19 @@ namespace HCF_LCM_program___Delegates_and_Events
 
             HCFLCM calculateAll = new HCFLCM();
 
+            calculateAll.CalculationCompleted += CalculateAll_CalculationCompleted;        
+
             calculateAll.Answer();
 
 
             Console.ReadLine();
+        }
+
+        private static void CalculateAll_CalculationCompleted(int LCM, int HCF) // as per calculateAll.CalculationCompleted += CalculateAll_CalculationCompleted after tab tab;
+        {
+            Console.WriteLine("The calculated LCM is: " + LCM);
+            Console.WriteLine("The calculated HCF is: " + HCF);
+            Console.WriteLine("Operation complete");
         }
     }
 }

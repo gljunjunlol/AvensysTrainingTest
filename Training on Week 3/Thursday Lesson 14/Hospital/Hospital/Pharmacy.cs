@@ -4,35 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hotel
+namespace Hospital
 {
-    public delegate void calBooking(List<int> billing);
-    class Booking
+    public delegate void calPharmacy(List<int>billing, List<int>billing1);
+
+    class Pharmacy
     {
-        public event calBooking BookingServices;
+        public event calPharmacy RequiredTreatment;
 
-        List<int> lst1 = new List<int>();
-        List<int> billing = new List<int>();
+        public List<int> billing = new List<int>();
         public List<int> billing1 = new List<int>();
-        public void showListOfRooms()
-        {           
-            Console.WriteLine("Welcome to Hotel management system");
+        List<int> lst1 = new List<int>();
+        public void showListOfMedicine()
+        {
+            Console.WriteLine("Welcome to Hospital management system");
             Console.WriteLine("From mobile: Rooms available, showing notifcation");
-            Console.WriteLine("Calculating rooms:....");
 
-            Console.WriteLine("Book a room now: Y/N");
+            Console.WriteLine("Emergency: Y/N");
             string input = Console.ReadLine();
             if (input.Equals("yes", StringComparison.OrdinalIgnoreCase) || input.Equals("y", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("ok please wait while we generate you room number");
+                Console.WriteLine("ok please wait while we generate you to immediate");
                 billing1.Add(1000);
             }
             else
             {
-                Console.WriteLine("Ok see you");
+                Console.WriteLine("Ok please carry on");
                 billing1.Add(0);
             }
- 
             int bill = 0;
             bool loop = true;
             Console.WriteLine("Initial room cost: " + string.Join(" ", billing1.Last()));
@@ -45,32 +44,32 @@ namespace Hotel
                     Console.WriteLine("Expected additional Cost Services: " + bill);
                     Console.WriteLine("");
                     Console.WriteLine("Select additional Services: ");
-                    Console.WriteLine("1: In-room dining");
-                    Console.WriteLine("2: Valet parking");
-                    Console.WriteLine("3: Bag service");
-                    Console.WriteLine("4: Recreational Centres");
-                    Console.WriteLine("5: Ballroom");
+                    Console.WriteLine("1: Outpatient department");
+                    Console.WriteLine("2: General Practitioner");
+                    Console.WriteLine("3: X-ray and radiology");
+                    Console.WriteLine("4: Blood services");
+                    Console.WriteLine("5: Clinical services");
                     Console.WriteLine("6: Exit");
                     int input2 = Int32.Parse(Console.ReadLine());
                     switch (input2)
                     {
                         case 1:
-                            Console.WriteLine("In-room dining added");
+                            Console.WriteLine("OPD added");
                             if (lst1.Contains(1))
                             {
-                                Console.WriteLine("Already added");
+                                Console.WriteLine("Already selected");
                             }
                             else
                             {
                                 lst1.Add(1);
-                                bill += 100;
+                                bill += 1000;
                             }
                             break;
                         case 2:
-                            Console.WriteLine("Valet parking added");
+                            Console.WriteLine("GP needed");
                             if (lst1.Contains(2))
                             {
-                                Console.WriteLine("Already added");
+                                Console.WriteLine("Already selected");
                             }
                             else
                             {
@@ -79,10 +78,10 @@ namespace Hotel
                             }
                             break;
                         case 3:
-                            Console.WriteLine("Bag service added");
+                            Console.WriteLine("Xray needed");
                             if (lst1.Contains(3))
                             {
-                                Console.WriteLine("Already added");
+                                Console.WriteLine("Already selected");
                             }
                             else
                             {
@@ -91,27 +90,27 @@ namespace Hotel
                             }
                             break;
                         case 4:
-                            Console.WriteLine("Recreational Centres added");
+                            Console.WriteLine("Donating blood");
                             if (lst1.Contains(4))
                             {
-                                Console.WriteLine("Already added");
+                                Console.WriteLine("Already selected");
                             }
                             else
                             {
                                 lst1.Add(4);
-                                bill += 100;
+                                bill += 0;
                             }
                             break;
                         case 5:
-                            Console.WriteLine("Ballroom added");
+                            Console.WriteLine("Clinical services needed");
                             if (lst1.Contains(5))
                             {
-                                Console.WriteLine("Already added");
+                                Console.WriteLine("Already selected");
                             }
                             else
                             {
                                 lst1.Add(5);
-                                bill += 600;
+                                bill += 50;
                             }
                             break;
                         case 6:
@@ -127,11 +126,11 @@ namespace Hotel
             {
 
             }
-            if (BookingServices != null)
-            {
-                BookingServices.Invoke(billing);
-            }
 
+            if (RequiredTreatment != null)
+            {
+                RequiredTreatment.Invoke(billing, billing1);
+            }
         }
     }
 }

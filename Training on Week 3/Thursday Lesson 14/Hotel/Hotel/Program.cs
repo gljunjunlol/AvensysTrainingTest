@@ -10,21 +10,25 @@ namespace Hotel
     {
         static void Main(string[] args)
         {
-            
-            Booking pub = new Booking();
-            Billing pub1 = new Billing();
+            Billing billing = new Billing();
+            billing.CalculateBill += Billing_CalculateBill;
+            billing.showListOfRooms();
 
-            Guests sub = new Guests();
-
-            sub.SubscribeToEvent(pub);
-            sub.SubscribeToEvent(pub1);
-
-            pub[0] = "";
-            pub1[0] = "";
-
-            sub.unsubscribeToEvent();
-            sub.unsubscribeToEvent1();
+            Booking book = new Booking();
+            book.BookingServices += Book_BookingServices;
+            book.showListOfRooms();
             Console.ReadLine();
+
+        }
+
+        private static void Book_BookingServices(List<int> billing)
+        {
+            Console.WriteLine(string.Join(" ", billing));
+        }
+
+        private static void Billing_CalculateBill(int result3)
+        {
+            Console.WriteLine(result3);
         }
     }
 }
