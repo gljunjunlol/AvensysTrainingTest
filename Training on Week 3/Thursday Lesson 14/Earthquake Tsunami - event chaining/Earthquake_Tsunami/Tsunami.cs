@@ -15,6 +15,7 @@ namespace Earthquake_Tsunami
 
         public void calTsunamiProbability(double IE)          
         {
+            Console.WriteLine("FROM TSUNAMI");
             Random rand = new Random();
             PT = ((IE / 10) * 0.7 + 0.3 * (rand.Next(0, 100)));
             if (Alert != null) // raise event          ---- check if there is any subscriber  

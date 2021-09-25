@@ -29,6 +29,7 @@ namespace Earthquake_Tsunami
         {
             if (calE != null)
             {
+                Console.WriteLine("FROM EARTHQUAKE");
                 string str = "The probablility of Tsunami is at " + x + " %.";
                 calE.Invoke(str);
             }

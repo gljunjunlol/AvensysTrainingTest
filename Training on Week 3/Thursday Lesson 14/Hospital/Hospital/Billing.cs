@@ -6,34 +6,129 @@ using System.Threading.Tasks;
 
 namespace Hospital
 {
-    public delegate void calBilling(int result3);
+    public delegate void calBilling(List<int> billing, List<int> billing1);
     class Billing
     {
         public event calBilling CalculateBill;
 
-        public void showListOfMedicine()
-        {
-            Pharmacy pharm = new Pharmacy();
-            pharm.RequiredTreatment += Pharm_RequiredTreatment;
-            pharm.showListOfMedicine();
+        List<int> lst1 = new List<int>();
 
 
-        }
 
-        private void Pharm_RequiredTreatment(List<int> billing, List<int> billing1)
+        public void CalBilling(List<int> billing, List<int> billing1)
         {
             if (CalculateBill != null)
             {
+                Console.WriteLine("Emergency: Y/N");
+                string input = Console.ReadLine();
+                if (input.Equals("yes", StringComparison.OrdinalIgnoreCase) || input.Equals("y", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("ok please wait while we generate you to immediate");
+                    billing1.Add(1000);
+                }
+                else
+                {
+                    Console.WriteLine("Ok please carry on");
+                    billing1.Add(0);
+                }
+                int bill = 0;
+                bool loop = true;
+                Console.WriteLine("Initial room cost: " + string.Join(" ", billing1.Last()));
+                try
+                {
+                    while (loop)
+                    {
 
-                int result = billing.Last();
-                int result2 = billing.Last() + billing1.Last();
-                int result3 = result2 * 130 / 100;
+                        billing.Add(bill);
+                        Console.WriteLine("Expected additional Cost Services: " + bill);
+                        Console.WriteLine("");
+                        Console.WriteLine("Select additional Services: ");
+                        Console.WriteLine("1: Outpatient department");
+                        Console.WriteLine("2: General Practitioner");
+                        Console.WriteLine("3: X-ray and radiology");
+                        Console.WriteLine("4: Blood services");
+                        Console.WriteLine("5: Clinical services");
+                        Console.WriteLine("6: Exit");
+                        int input2 = Int32.Parse(Console.ReadLine());
+                        switch (input2)
+                        {
+                            case 1:
+                                Console.WriteLine("OPD added");
+                                if (lst1.Contains(1))
+                                {
+                                    Console.WriteLine("Already selected");
+                                }
+                                else
+                                {
+                                    lst1.Add(1);
+                                    bill += 1000;
+                                }
+                                break;
+                            case 2:
+                                Console.WriteLine("GP needed");
+                                if (lst1.Contains(2))
+                                {
+                                    Console.WriteLine("Already selected");
+                                }
+                                else
+                                {
+                                    lst1.Add(2);
+                                    bill += 20;
+                                }
+                                break;
+                            case 3:
+                                Console.WriteLine("Xray needed");
+                                if (lst1.Contains(3))
+                                {
+                                    Console.WriteLine("Already selected");
+                                }
+                                else
+                                {
+                                    lst1.Add(3);
+                                    bill += 10;
+                                }
+                                break;
+                            case 4:
+                                Console.WriteLine("Donating blood");
+                                if (lst1.Contains(4))
+                                {
+                                    Console.WriteLine("Already selected");
+                                }
+                                else
+                                {
+                                    lst1.Add(4);
+                                    bill += 0;
+                                }
+                                break;
+                            case 5:
+                                Console.WriteLine("Clinical services needed");
+                                if (lst1.Contains(5))
+                                {
+                                    Console.WriteLine("Already selected");
+                                }
+                                else
+                                {
+                                    lst1.Add(5);
+                                    bill += 50;
+                                }
+                                break;
+                            case 6:
+                                loop = false;
+                                Console.WriteLine("Saving....");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                catch
+                {
 
+                }
 
-                Console.WriteLine("From full bill: Bill calculated, Total additional cost is " + string.Join(" ", result));
-                Console.WriteLine("From full bill: Bill calculated, Total cost with booking room is " + string.Join(" ", result2));
-                Console.WriteLine("From full bill: Bill calculated, Total cost after tax is " + string.Join(" ", result3));
-                CalculateBill.Invoke(result3);
+                Console.WriteLine("Checking for bill.............Operation Complete, Please check");
+                Console.WriteLine("");
+                CalculateBill.Invoke(billing, billing1);
             }
         }
     }

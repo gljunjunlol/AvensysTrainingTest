@@ -53,7 +53,7 @@ namespace HCF_LCM_program___Delegates_and_Events
             HCF = n1;
             LCM = (val1 * val2) / HCF;
 
-
+            CalculationCompleted(LCM, HCF);
             
         }
     }
