@@ -14,8 +14,8 @@ namespace ConsoleApp7
         {
             Generator generator = new Generator();
             generator.GenerateKey += Generator_GenerateKey;
-            bool quit = true;
-            while (quit)
+            bool quit = false;
+            while (!quit)
             {
                 Console.Write("Enter string to encrypt: ");
                 string s = Console.ReadLine();
