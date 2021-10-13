@@ -10,16 +10,19 @@ namespace Question5
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("US time now");
-            DateTime now = DateTime.Now;
-            DateTime usaEST = TimeZoneInfo.ConvertTime(now, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
-            Console.WriteLine(usaEST);
-
+            Console.WriteLine("Enter longitude: ");
+            int a = Int32.Parse(Console.ReadLine());
             DateTime thisTime = DateTime.Now;
+
+            DateTime time = DateTime.UtcNow;
+            double time1 = a * 4;
+
+            Console.WriteLine(time.AddMinutes(time1));
+
 
             Console.WriteLine("Enter country");
             var Input = Console.ReadLine();
-            string Input3= (Input + " Standard Time");
+            string Input3 = (Input + " Standard Time");
 
             TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById(Input3);
             DateTime tstTime = TimeZoneInfo.ConvertTime(thisTime, TimeZoneInfo.Local, tst);
