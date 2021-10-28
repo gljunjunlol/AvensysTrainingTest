@@ -8,71 +8,60 @@ namespace Gabriel_Bank_Management_System
 {
     public class Program
     {
+        private readonly IConsoleIO ConsoleIO;
+
+        public Program(IConsoleIO consoleIO)
+        {
+            ConsoleIO = consoleIO;
+        }
+        public Program()
+        {
+            ConsoleIO = new ConsoleIO();
+        }
         static void Main(string[] args)
         {
-            Console.WriteLine("We have the Requirements and necessary information:");
-            Console.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
-            Console.WriteLine("customers with a loan and a savings account");
-            Console.WriteLine("Employees to view customer info: ");
-            Console.WriteLine("Bank Managers to view all customers + additional function: ");
-            Console.WriteLine("");
-            Console.WriteLine("________________________________");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|________________________________");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine();
+            CustomersManagement cmgt = new CustomersManagement(); cmgt.References(); BankEmployeesManagement bemgt = new BankEmployeesManagement(); bemgt.References();
+            HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee(); 
+            BankManagersManagement bmgt = new BankManagersManagement(); bmgt.References();
+            HandleAccountOpeningBankManager mgr = new HandleAccountOpeningBankManager();
+
+            List<int> loginTries = new List<int>();
+
             bool exit = false;
             while (!exit)
             {
                 try
                 {
-                    Console.WriteLine("*******************************");
-                    Console.WriteLine(" << Bank Management System >> ");
-    
-                    Console.WriteLine("");
-                    Console.WriteLine("1: Bank customers (Create new users)");
-                    Console.WriteLine("");
-                    Console.WriteLine("2: Bank Employee (Find customers / Employee Information ");
-                    Console.WriteLine("");
-                    Console.WriteLine("3: Bank Manager");
-                    Console.WriteLine("");
-                    Console.WriteLine("4: Exit the room");
-                    Console.WriteLine("");
-                    Console.WriteLine("*******************************");
-                    Console.WriteLine("ENTER YOUR CHOICE:");
+                    ConsoleIO ConsoleIO = new ConsoleIO();
+                    Program p = new Program();
+                    p.Initialize();
+                    
+                    var action = ConsoleIO.ReadLine();
 
-                    int input = Int32.Parse(Console.ReadLine());
-
-                    switch (input)
+                    switch (action)
                     {
-                        case 1:
+                        case "1":
                             {
-                                CustomersManagement cgmt = new CustomersManagement();
+
                                 Console.Clear();
-                                cgmt.PerformOperation();
-                                Console.WriteLine("1 : Savings");
-                                Console.WriteLine("2 : Loan");
-                                Console.WriteLine("3 : Go Back");
-                                int choice = Int32.Parse(Console.ReadLine());
+                                cmgt.PerformOperation(cmgt, bemgt, bmgt, loginTries);
+                                Console.WriteLine("1 : Savings" + "\n2 : Loan" + "\n3 : Go Back");
+                                var choice = ConsoleIO.ReadLine();
 
                                 switch (choice)
                                 {
-                                    case 1:
+                                    case "1":
                                         {
-                                            Savings.performOperation();
+                                            Savings saving = new Savings();
+                                            saving.performOperation(cmgt);
                                             break;
                                         }
-                                    case 2:
+                                    case "2":
                                         {
-                                            TakingLoan.performOperation();
+
+
+                                            TakingLoan tk = new TakingLoan();
+                                            tk.performOperation(cmgt, bemgt, bmgt);
                                             break;
                                         }
                                     default:
@@ -80,30 +69,28 @@ namespace Gabriel_Bank_Management_System
                                             break;
                                         }
                                 }
-                                
+
                                 break;
                             }
-                        case 2:
+                        case "2":
                             {
 
-                                BankEmployeesManagement bemgt = new BankEmployeesManagement();
-                                Console.Clear();
-                                bemgt.PerformOperation();
-                                //SuperAdmin superadmin = new SuperAdmin();
-                                //superadmin.PerformOperation();
-                                break;
-                            }
-                        case 3:
-                            {
-                                BankManagersManagement bmmgt = new BankManagersManagement();
-                                Console.Clear();
-                                bmmgt.performOperationAdvanced();
-                                bmmgt.PerformOperation();
                                 
-                                //Admin.TaskAssigned();
+                                Console.Clear();
+                                bemgt.PerformOperation(cmgt, bemgt, bmgt);
+                                Console.WriteLine("ok cleared");
+                                Console.ReadLine();
                                 break;
                             }
-                        case 4:
+                        case "3":
+                            {
+                                Console.Clear();
+                                bmgt.performOperationAdvanced(cmgt, bemgt, bmgt);
+                                Console.WriteLine("ok seen manager");
+                                Console.ReadLine();
+                                break;
+                            }
+                        case "4":
                             {
                                 exit = true;
                                 break;
@@ -114,9 +101,10 @@ namespace Gabriel_Bank_Management_System
                             }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    Console.Write("Wrong Input. Please choose among the available options above:");
+                    Console.ReadLine();
                 }
                 finally
                 {
@@ -125,10 +113,37 @@ namespace Gabriel_Bank_Management_System
 
             }
             Console.WriteLine("Exiting the program");
-
-
-
             Console.ReadLine();
+        }
+        public void Initialize()
+        {
+            ConsoleIO.WriteLine("We have the Requirements and necessary information:");
+            ConsoleIO.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
+            ConsoleIO.WriteLine("customers with a loan and a savings account");
+            ConsoleIO.WriteLine("Employees to view customer info: ");
+            ConsoleIO.WriteLine("Bank Managers to view all customers + additional function: \n");
+            ConsoleIO.WriteLine("________________________________");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|________________________________");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("|");
+            ConsoleIO.WriteLine("");
+            ConsoleIO.WriteLine("*******************************");
+            ConsoleIO.WriteLine(" << Bank Management System >> \n");
+            ConsoleIO.WriteLine("1: Bank customers (Create new users)\n");
+            ConsoleIO.WriteLine("2: Bank Employee (Find customers / Employee Information\n ");
+            ConsoleIO.WriteLine("3: Bank Manager\n");
+            ConsoleIO.WriteLine("4: Exit the room\n");
+            ConsoleIO.WriteLine("*******************************");
+            ConsoleIO.WriteLine("ENTER YOUR CHOICE:");
+
         }
     }
 }

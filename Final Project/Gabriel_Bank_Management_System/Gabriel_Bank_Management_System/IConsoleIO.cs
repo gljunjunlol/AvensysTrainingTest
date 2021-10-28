@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public interface IValidatePw
+    public interface IConsoleIO
     {
-        string ValidatePwMethod();
+        void WriteLine(string s);
+        string ReadLine();
+        
     }
 }

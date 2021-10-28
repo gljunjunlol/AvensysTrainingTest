@@ -6,118 +6,73 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    class HandleAccountOpeningBankManager : HandleAccountOpeningEmployee
+    public class HandleAccountOpeningBankManager : HandleAccountOpeningEmployee
     {
-        public new static void DeleteUserAccount()
+        private readonly IConsoleIO ConsoleIO;
+        public HandleAccountOpeningBankManager()
         {
-            foreach (var item in BankManagersManagement.dictionaryOfManagers)
-            {
-                Console.WriteLine("Key in manager id");
-                string id = Console.ReadLine();
-                if (BankManagersManagement.dictionaryOfManagers.ContainsKey(id))
-                {
-                    BankManagersManagement.dictionaryOfManagers.Remove(item.Key);
-                }
-            }
+            ConsoleIO = new ConsoleIO();
+        }
+        public HandleAccountOpeningBankManager(IConsoleIO consoleIO)
+        {
+            ConsoleIO = consoleIO;
+        }
+        public static void DeleteUserAccount()
+        {
+
         }
 
-        public new static BankManagers CreateUserAccount()
+        public new BankManagers CreateUserAccount()
         {
-            Console.WriteLine("Creating by bank moderator..");
-            Console.WriteLine("Processing.. please key in 2FA pin password");
-            string ManagerLogin2FARequired = Console.ReadLine();
-            Console.WriteLine("successful");
-            Console.WriteLine("Key in manager id");
-            string bankmanager_id = Console.ReadLine();
+            ConsoleIO.WriteLine("Creating by bank moderator..");
+            ConsoleIO.WriteLine("Processing.. please key in 2FA pin password");
+            string EmployeeLogin2FARequired = ConsoleIO.ReadLine();
+            ConsoleIO.WriteLine("successful");
+            ConsoleIO.WriteLine("Key in manager id");
+            string bankmanager_id = ConsoleIO.ReadLine();
 
-            Console.WriteLine("Key in manager name");
-            string bankmanager_name = Console.ReadLine();
+            ConsoleIO.WriteLine("Key in manager name");
+            string bankmanager_name = ConsoleIO.ReadLine();
 
-            Console.WriteLine("Key in manager address");
-            string bankmanager_address = Console.ReadLine();
+            ConsoleIO.WriteLine("Key in manager address");
+            string bankmanager_address = ConsoleIO.ReadLine();
 
-            Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
-            DateTime bankmanager_dob = DateTime.Parse(Console.ReadLine());
+            ConsoleIO.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
+            DateTime bankmanager_dob = DateTime.Parse(ConsoleIO.ReadLine());
 
-            Console.WriteLine("key to manager designation: ");
-            string bankmanager_designation = Console.ReadLine();
+            ConsoleIO.WriteLine("key to manager designation: ");
+            string bankmanager_designation = ConsoleIO.ReadLine();
 
-            Console.WriteLine("Key in manager years of service");
-            string bankmanager_yos = Console.ReadLine();
-
-
-            Console.WriteLine("Key in manager pw");
-            Console.WriteLine("Password requirements: 1 lower, 1 upper, 1 digit, 6 - 24 chars:");
-            string bankmanager_pw = Console.ReadLine();
+            ConsoleIO.WriteLine("Key in manager years of service");
+            string bankmanager_yos = ConsoleIO.ReadLine();
 
 
 
 
-            int validConditions = 0;
 
-            foreach (char c in bankmanager_pw)
+            User validatepw = new User();
+            string bankmanager_pw;
+            do
             {
-                if (c >= 'a' && c <= 'z')
-                {
-                    validConditions++;
-                    break;
-                }
+                ConsoleIO.WriteLine("Key in manager pw");
+                ConsoleIO.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
+                bankmanager_pw = ConsoleIO.ReadLine();
             }
-            foreach (char c in bankmanager_pw)
+            while (validatepw.validatePassword(bankmanager_pw) == false);
+            if (validatepw.validatePassword(bankmanager_pw) == true)
             {
-                if (c >= 'A' && c <= 'Z')
-                {
-                    validConditions++;
-                    break;
-                }
-            }
-            int count = 0;
-            foreach (char c in bankmanager_pw)
-            {
-                count++;
-                if (count >= 6 && count <= 24)
-                {
-                    validConditions++;
-                    break;
-                }
-            }
+                ConsoleIO.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
 
-            foreach (char c in bankmanager_pw)
-            {
-                if (c >= '0' && c <= '9')
-                {
-                    validConditions++;
-                    break;
-                }
-            }
-            if (validConditions == 0 || validConditions == 1 || validConditions == 2 || validConditions == 3)
-            {
-                Console.WriteLine("password not met");
-            }
-            else
-            {
-                Console.WriteLine("password is ok");
-                Console.WriteLine("Writing to file..");
-                Console.WriteLine("Congratulations, Account creation has been completed.....");
                 var new_user = new BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
-
                 return new_user;
             }
-
-
             return null;
-
-
-
-
-
-
             // form -> data validation
             //create customer
             // return new customer
         }
 
-        public new static void UserLogin()
+        public void UserLogin(BankManagersManagement bmgt)
         {
             bool exit = false;
             int numberofTries = 4;
@@ -126,27 +81,25 @@ namespace Gabriel_Bank_Management_System
             {
                 input++;
                 numberofTries--;
-                Console.WriteLine("Enter login id " + " (" + "number of tries left " + numberofTries + " )");
-                string bankmanager_id = Console.ReadLine();
-                Console.WriteLine("and pw");
-                string bankmanager_pw = Console.ReadLine();
-                if (BankManagersManagement.dictionaryOfManagers.ContainsKey(bankmanager_id) && BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
+                ConsoleIO.WriteLine("Enter login id " + " (" + "number of tries left " + numberofTries + " )");
+                string bankmanager_id = ConsoleIO.ReadLine();
+                ConsoleIO.WriteLine("and pw");
+                string bankmanager_pw = ConsoleIO.ReadLine();
+                if (bmgt.dictionaryOfManagers.ContainsKey(bankmanager_id) && bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
                 {
-                    Console.WriteLine($"Congratulations, {BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!");
-                    Console.WriteLine("ok user found");
-                    Console.WriteLine($"Hello your info: { BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_id} { BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_name} { BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { BankManagersManagement.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
-                    Console.ReadLine();
+                    ConsoleIO.WriteLine($"Congratulations, {bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_id} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_name} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
+                    
                     exit = true;
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect user or pw");
+                    ConsoleIO.WriteLine("Incorrect user or pw");
                 }
                 if (input > 3)
                 {
-                    Console.WriteLine("Too many tries, please wait 5 mins");
+                    ConsoleIO.WriteLine("Too many tries, please wait 5 mins");
 
-                    Console.ReadLine();
+                    ConsoleIO.ReadLine();
                     Environment.Exit(0);
                 }
                 if (numberofTries == 0)

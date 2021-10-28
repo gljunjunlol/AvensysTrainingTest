@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    interface IBankEmployeesManagement
+    public interface IBankEmployeesManagement
     {
         
-        void ListEmployees();
-        void RemoveCustomers();
-        void AddBankEmployees(BankEmployees bankemployee);
-        void SearchCustomerByID();
-        void SearchCustomerByName();
-        void PerformOperation();
-        
-        
+        void ListEmployees(BankEmployeesManagement bemgt);
+        void RemoveEmployees(BankEmployeesManagement bemgt);
+        void AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        void SearchCustomerByID(CustomersManagement customersmanagement);
+        void SearchCustomerByName(CustomersManagement customersmanagement);
+        void PerformOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        void performOperationinternal(CustomersManagement cmgt, BankEmployeesManagement bemgt);
+
+
+
 
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    class BankEmployees
+    public class BankEmployees
     {
         public string bankemployee_id { get; set; }
         public string bankemployee_name { get; set; }

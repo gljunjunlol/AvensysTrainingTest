@@ -8,824 +8,273 @@ using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System
 {
-    class TakingLoan
+    public class TakingLoan
     {
-        public static void LoanAccount()
+        private readonly IConsoleIO ConsoleIO;
+        public TakingLoan()
         {
-            Console.WriteLine("Lets take a loan");
-            Console.WriteLine("Enter the customer detail:");
-            Console.WriteLine("Enter customer ID");
-            string customer_id = Console.ReadLine();
-            if (CustomersManagement.dictionaryOfcustomers.ContainsKey(customer_id))
-            {
-                if (CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
-                {
-                    Console.WriteLine("Enter loan application amount");
-                    decimal loanamount = decimal.Parse(Console.ReadLine());
-                    DateTime datetime = DateTime.Now;
-                    Console.WriteLine("Taking a loan at: " + datetime);
-
-                    Console.WriteLine("Key in amount of months to repay / installment");
-                    decimal months = decimal.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Key in % of interest of loan");
-                    decimal interest = decimal.Parse(Console.ReadLine());
-
-                    // principal loan amount * interest rate * number of years in term = total interest paid
-                    Console.WriteLine("Total loan calculated after interest");
-                    decimal totalloanamount = loanamount + (loanamount * (interest/100) * (months / 12));
-                    Console.WriteLine(totalloanamount.ToString("F"));
-                    Console.WriteLine("");
-                    Console.WriteLine("Checking for approval....");
-                    Console.WriteLine("Loan of: $" + totalloanamount.ToString("F") + " will repay in" + months + " installments or $" + (totalloanamount / months).ToString("F") + " monthly"  );
-                    Console.WriteLine("Loan application : ID : " + CustomersManagement.dictionaryOfcustomers[customer_id] + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name);
-
-                    CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = true;
-                    CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
-
-                    try
-                    {
-
-                        // first time writing customer details to file
-                        string text = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                        FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
-                        StreamWriter streamWriter = new StreamWriter(fs);
-
-                        Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                        streamWriter.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                        streamWriter.Flush();
-                        streamWriter.Close();
-                        fs.Close();
-
-                        // first time reading customer details on file
-                        FileStream fs2 = new FileStream(text, FileMode.Open, FileAccess.Read);
-                        StreamReader sr1 = new StreamReader(fs2);
-                        Console.WriteLine("Printing content of text file after written detailed report");
-                        sr1.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                        string str1 = sr1.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                        Console.WriteLine(str1);
-                        //while (str != null)
-                        //{
-                        //    Console.WriteLine(str);
-                        //    str = sr.ReadLine();
-                        //}
-                        sr1.Close();
-                        fs2.Close();
-
-                        // Json format - first time writing
-                        Customer cust = new Customer()  // object creation
-                        {
-                            customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                            customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                            customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                            customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                            customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                            customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                            customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                            loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                        };
-                        string jsontext = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                        //if (File.Exists(jsontext))
-                        //    File.Delete(jsontext);
-                        List<Customer> customerList = new List<Customer>();
-                        customerList.Add(cust);
-                        Console.WriteLine("uploading user details to json file");
-                        string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented);
-                        //File.Create("Customer.Json");
-                        File.WriteAllText(jsontext, customerListJson);
-
-                        //Console.ReadLine();
-                        List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
-                        Console.ReadLine();
-                    }
-                    catch (NotSupportedException)
-                    {
-                        Console.WriteLine("The file or directory is not supported");
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        Console.WriteLine("You do not have permission to create this file.");
-                    }
-                    catch (IOException)
-                    {
-                        Console.WriteLine($"The file already exist ");
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                    finally
-                    {
-
-                    }
-                }
-                
-                else
-                {
-                    Console.WriteLine("Already applied for loan which is unpaid");
-                }         
-            }
-            else
-            {
-                Console.WriteLine("Account doesn't exist in our database record");
-            }
-                
-
+            ConsoleIO = new ConsoleIO();
         }
-        public static void CancelLoan()
+        public TakingLoan(IConsoleIO consoleIO)
         {
-            Console.WriteLine("Enter the customer detail:");
-            Console.WriteLine("Cancel current loan (only applicable 7 days before, will be rejected if not met");
-            Console.WriteLine("Enter customer ID");
-            string customer_id = Console.ReadLine();
-            if (CustomersManagement.dictionaryOfcustomers.ContainsKey(customer_id))
+            ConsoleIO = consoleIO;
+        }
+        public decimal CalculateLoanAmount(decimal amt, decimal interest, int month)
+        {
+            ConsoleIO.WriteLine("Enter loan application amount");
+            decimal loanamount = decimal.Parse(ConsoleIO.ReadLine());
+            DateTime datetime = DateTime.Now;
+            ConsoleIO.WriteLine("Taking a loan at: " + datetime + "");
+            ConsoleIO.WriteLine("Key in amount of months to repay / installment");
+            decimal monthsIn = decimal.Parse(ConsoleIO.ReadLine()); var months = Divide(monthsIn, 12);
+            ConsoleIO.WriteLine("Key in % of interest of loan"); decimal interestamount = decimal.Parse(ConsoleIO.ReadLine()); var interests = Divide(interestamount, 100); decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
+            // principal loan amount * interest rate * number of years in term = total interest paid
+
+
+
+            ConsoleIO.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F\n") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
+            return totalloanamount;
+        }
+        public void LoanAccount(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        {
+            ConsoleIO.WriteLine("Enter customer ID");
+            string customer_id = ConsoleIO.ReadLine();
+            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
+                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
                 {
-                    try
-                    {
+                    decimal totalloanamount = CalculateLoanAmount(0, 0, 0);
+                    ConsoleIO.WriteLine("Loan application : ID : " + cmgt.dictionaryOfcustomers[customer_id] + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name);
 
-                    }
-                    catch (FormatException)
-                    {
-                        Console.WriteLine("Key in date as MM DDD YYYY ");
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Key in date as MM DDD YYYY ");
-                    }
-                    Console.WriteLine("Key in date you have applied for the loan");
-                    DateTime loanApplied = DateTime.Parse(Console.ReadLine());
-                    DateTime datetime = DateTime.Now;
-                    
-                    Console.WriteLine("Difference in time is " + (datetime - loanApplied).TotalDays + " Days");
-                    double todayDays = (datetime - loanApplied).TotalDays;
-
-                    if (todayDays > 7)
-                    {
-                        Console.WriteLine("Sorry loan taken too long ago");
-                    }
-                    else
-                    {
-                        Console.WriteLine("ok loan has been cancelled as requested on " + DateTime.Now);
-                        CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-                        CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount = 0;
-                        try
-                        {
-
-                            // first time writing customer details to file
-                            string text = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                            FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
-                            StreamWriter streamWriter = new StreamWriter(fs);
-
-                            Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                            streamWriter.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                            fs.Close();
-
-                            // first time reading customer details on file
-                            FileStream fs2 = new FileStream(text, FileMode.Open, FileAccess.Read);
-                            StreamReader sr1 = new StreamReader(fs2);
-                            Console.WriteLine("Printing content of text file after written detailed report");
-                            sr1.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                            string str1 = sr1.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                            Console.WriteLine(str1);
-                            //while (str != null)
-                            //{
-                            //    Console.WriteLine(str);
-                            //    str = sr.ReadLine();
-                            //}
-                            sr1.Close();
-                            fs2.Close();
-
-                            // Json format - first time writing
-                            Customer cust = new Customer()  // object creation
-                            {
-                                customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                            };
-                            string jsontext = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                            //if (File.Exists(jsontext))
-                            //    File.Delete(jsontext);
-                            List<Customer> customerList = new List<Customer>();
-                            customerList.Add(cust);
-                            Console.WriteLine("uploading user details to json file");
-                            string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented);
-                            //File.Create("Customer.Json");
-                            File.WriteAllText(jsontext, customerListJson);
-
-                            //Console.ReadLine();
-                            List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
-                            Console.ReadLine();
-                        }
-                        catch (NotSupportedException)
-                        {
-                            Console.WriteLine("The file or directory is not supported");
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            Console.WriteLine("You do not have permission to create this file.");
-                        }
-                        catch (IOException)
-                        {
-                            Console.WriteLine($"The file already exist ");
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        finally
-                        {
-
-                        }
-                    }
+                    cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cmgt.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount; 
+                    FileHandling fh = new FileHandling(); fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
                 }
+
                 else
                 {
-                    Console.WriteLine("No loan applied with us in our database");
+                    ConsoleIO.WriteLine("Already applied for loan which is unpaid");
+
                 }
             }
             else
             {
-                Console.WriteLine("Account doesn't exist in our database record");
+                ConsoleIO.WriteLine("Account doesn't exist in our database record");
+
             }
+
+
+
         }
 
-        public static void ViewLoan()
+
+        public void ViewLoan(CustomersManagement cmgt)
         {
-            Console.WriteLine("Enter customer ID");
-            string customer_id = Console.ReadLine();
-            if (CustomersManagement.dictionaryOfcustomers.ContainsKey(customer_id))
+            ConsoleIO.WriteLine("Enter customer ID");
+            string customer_id = ConsoleIO.ReadLine();
+            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
+                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
                 {
-                    Console.WriteLine("Current loan is at $" + CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
+                    ConsoleIO.WriteLine("Current loan is at $" + cmgt.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
                 }
                 else
                 {
-                    Console.WriteLine("Current loan is at $0");
+                    ConsoleIO.WriteLine("Current loan is at $0");
                 }
-                    
+
             }
             else
             {
-                Console.WriteLine("Account doesn't exist in our database record");
+                ConsoleIO.WriteLine("Account doesn't exist in our database record");
             }
         }
 
-        public static void AddLoan()
+        public void AddLoan(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
         {
-            Console.WriteLine("Enter customer ID");
-            string customer_id = Console.ReadLine();
-            if (CustomersManagement.dictionaryOfcustomers.ContainsKey(customer_id))
+            ConsoleIO.WriteLine("Enter customer ID again to ensure of taking loan again");
+            string customer_id = ConsoleIO.ReadLine();
+            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
+                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
                 {
-                    Console.WriteLine("Have you taken a loan with us before? Y/N, if no please go to apply for a new loan");
-                    string input = Console.ReadLine();
-                    string input1 = input.ToUpper();
-                    if (input1 == "Y" || input1 == "YES" || input1 == "YA" || input1 == "YE")
-                    {
-                        Console.WriteLine("Enter additional loan application amount");
-                        decimal loanamount = decimal.Parse(Console.ReadLine());
-                        DateTime datetime = DateTime.Now;
-                        Console.WriteLine("Taking a loan at: " + datetime);
-
-                        Console.WriteLine("Key in amount of months to repay / installment");
-                        decimal months = decimal.Parse(Console.ReadLine());
-
-                        Console.WriteLine("Key in % of interest of loan");
-                        decimal interest = decimal.Parse(Console.ReadLine());
-
-                        // principal loan amount * interest rate * number of years in term = total interest paid
-                        Console.WriteLine("Total loan calculated after interest");
-                        decimal totalloanamount = loanamount + (loanamount * (interest / 100) * (months / 12));
-                        Console.WriteLine(totalloanamount.ToString("F"));
-                        Console.WriteLine("");
-                        Console.WriteLine("Checking for approval....");
-
-                        Console.WriteLine("Loan of: $" + totalloanamount.ToString("F") + " will repay in " + months + " installments or $" + (totalloanamount / months).ToString("F") + " monthly");
-                        Console.WriteLine("Loan application : ID : " + CustomersManagement.dictionaryOfcustomers[customer_id] + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name);
-
-                        CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = true;
-                        CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
-                        try
-                        {
-
-                            // first time writing customer details to file
-                            string text = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                            FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
-                            StreamWriter streamWriter = new StreamWriter(fs);
-
-                            Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                            streamWriter.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                            fs.Close();
-
-                            // first time reading customer details on file
-                            FileStream fs2 = new FileStream(text, FileMode.Open, FileAccess.Read);
-                            StreamReader sr1 = new StreamReader(fs2);
-                            Console.WriteLine("Printing content of text file after written detailed report");
-                            sr1.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                            string str1 = sr1.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                            Console.WriteLine(str1);
-                            //while (str != null)
-                            //{
-                            //    Console.WriteLine(str);
-                            //    str = sr.ReadLine();
-                            //}
-                            sr1.Close();
-                            fs2.Close();
-
-                            // Json format - first time writing
-                            Customer cust = new Customer()  // object creation
-                            {
-                                customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                            };
-                            string jsontext = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                            //if (File.Exists(jsontext))
-                            //    File.Delete(jsontext);
-                            List<Customer> customerList = new List<Customer>();
-                            customerList.Add(cust);
-                            Console.WriteLine("uploading user details to json file");
-                            string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented);
-                            //File.Create("Customer.Json");
-                            File.WriteAllText(jsontext, customerListJson);
-
-                            //Console.ReadLine();
-                            List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
-                            Console.ReadLine();
-                        }
-                        catch (NotSupportedException)
-                        {
-                            Console.WriteLine("The file or directory is not supported");
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            Console.WriteLine("You do not have permission to create this file.");
-                        }
-                        catch (IOException)
-                        {
-                            Console.WriteLine($"The file already exist ");
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        finally
-                        {
-
-                        }
-                    }
-                    else
-                    {
-                        TakingLoan.performOperation();
-                        Console.WriteLine("Going back to main screen");
-                    }
+                    ConsoleIO.WriteLine(customer_id);
+                    TakingLoan tk = new TakingLoan();
+                    tk.LoanAccount(cmgt, bemgt, bmgt);
                     
-                    
+
+
                 }
                 else
                 {
-                    Console.WriteLine("Sorry cant take additional loan as previous loan is still outstanding");
+                    ConsoleIO.WriteLine("Sorry cant take additional loan as previous loan is still outstanding");
                 }
+            }
+            else
+            {
+                ConsoleIO.WriteLine("Account doesn't exist in our database record");
             }
 
         }
-        public static void RepayLoan()
+        public void RepayLoan(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
         {
-            Console.WriteLine("Enter customer ID");
-            string customer_id = Console.ReadLine();
-            if (CustomersManagement.dictionaryOfcustomers.ContainsKey(customer_id))
+            ConsoleIO.WriteLine("Enter customer ID");
+            string customer_id = ConsoleIO.ReadLine();
+            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
+                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
                 {
-                    Console.WriteLine("Current loan is at " + CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
-                    Console.WriteLine("Key amount of loan or % of loan to repay");
-                    Console.WriteLine("E.g. key in 100 to repay 100 or / key in  6% to repay 6%");
-                    string repayLoan = Console.ReadLine();
+                    ConsoleIO.WriteLine("Current loan is at " + cmgt.dictionaryOfcustomers[customer_id].loan_amount.ToString("F") + "\nE.g. key in 100 to repay 100 or / key in  6% to repay 6%");
+                    string repayLoan = ConsoleIO.ReadLine();
                     if (repayLoan.Contains("%") == true)
                     {
                         var charsToRemove = new string[] { "%" };
-                        foreach(var c in charsToRemove)
+                        foreach (var c in charsToRemove)
                         {
                             repayLoan = repayLoan.Replace(c, string.Empty);
                         }
-                        decimal repayLoan2 = decimal.Parse(repayLoan);
-                        decimal amountToRepay = repayLoan2 * CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount / 100;
-                        Console.WriteLine("Amount to repay is: $" + amountToRepay);
-                        decimal remainingLoanLeft = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount - amountToRepay;
-                        if (amountToRepay > CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount)
+                        decimal repayLoanParse = decimal.Parse(repayLoan);
+                        decimal amountToRepay = Multiply(repayLoanParse, Divide(cmgt.dictionaryOfcustomers[customer_id].loan_amount, 100), 1);
+                        ConsoleIO.WriteLine("Amount to repay is: $" + amountToRepay.ToString("F"));
+                        decimal remainingLoanLeft = SubtractLoan(cmgt.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
+                        if (amountToRepay > cmgt.dictionaryOfcustomers[customer_id].loan_amount)
                         {
-                            Console.WriteLine("Exceed loan repayment, key again");
+                            ConsoleIO.WriteLine("Exceed loan repayment, key again");
                         }
                         else
                         {
-                            Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
-                            CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
 
-                            try
+
+                            ConsoleIO.WriteLine("Loan amount left: $" + remainingLoanLeft.ToString("F"));
+                            cmgt.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+                            if (remainingLoanLeft == 0)
                             {
-                                // first time writing customer details to file
-                                string text = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                                FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
-                                StreamWriter streamWriter = new StreamWriter(fs);
-
-                                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                                streamWriter.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                                streamWriter.Flush();
-                                streamWriter.Close();
-                                fs.Close();
-
-                                // first time reading customer details on file
-                                FileStream fs2 = new FileStream(text, FileMode.Open, FileAccess.Read);
-                                StreamReader sr1 = new StreamReader(fs2);
-                                Console.WriteLine("Printing content of text file after written detailed report");
-                                sr1.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                                string str1 = sr1.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                                Console.WriteLine(str1);
-                                //while (str != null)
-                                //{
-                                //    Console.WriteLine(str);
-                                //    str = sr.ReadLine();
-                                //}
-                                sr1.Close();
-                                fs2.Close();
-
-                                // Json format - first time writing
-                                Customer cust = new Customer()  // object creation
-                                {
-                                    customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                    customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                    customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                    customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                    customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                    customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                    customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                    loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                                };
-                                string jsontext = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                                //if (File.Exists(jsontext))
-                                //    File.Delete(jsontext);
-                                List<Customer> customerList = new List<Customer>();
-                                customerList.Add(cust);
-                                Console.WriteLine("uploading user details to json file");
-                                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented);
-                                //File.Create("Customer.Json");
-                                File.WriteAllText(jsontext, customerListJson);
-
-                                //Console.ReadLine();
-                                List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
-                                Console.ReadLine();
-                                if (remainingLoanLeft == 0)
-                                {
-                                    CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-
-                                    // first time writing customer details to file
-                                    string text1 = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                                    FileStream fs1 = new FileStream(text, FileMode.Create, FileAccess.Write);
-                                    StreamWriter streamWriter1 = new StreamWriter(fs1);
-
-                                    Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                                    streamWriter1.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                                    streamWriter1.Flush();
-                                    streamWriter1.Close();
-                                    fs1.Close();
-
-                                    // first time reading customer details on file
-                                    FileStream fs3 = new FileStream(text1, FileMode.Open, FileAccess.Read);
-                                    StreamReader sr2 = new StreamReader(fs3);
-                                    Console.WriteLine("Printing content of text file after written detailed report");
-                                    sr2.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                                    string str2 = sr2.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                                    Console.WriteLine(str2);
-                                    //while (str != null)
-                                    //{
-                                    //    Console.WriteLine(str);
-                                    //    str = sr.ReadLine();
-                                    //}
-                                    sr2.Close();
-                                    fs3.Close();
-
-                                    // Json format - first time writing
-                                    Customer cust1 = new Customer()  // object creation
-                                    {
-                                        customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                        customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                        customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                        customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                        customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                        customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                        customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                        loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                                    };
-                                    string jsontext1 = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                                    //if (File.Exists(jsontext))
-                                    //    File.Delete(jsontext);
-                                    List<Customer> customerList1 = new List<Customer>();
-                                    customerList1.Add(cust1);
-                                    Console.WriteLine("uploading user details to json file");
-                                    string customerListJson1 = JsonConvert.SerializeObject(customerList1, Formatting.Indented);
-                                    //File.Create("Customer.Json");
-                                    File.WriteAllText(jsontext1, customerListJson1);
-
-                                    //Console.ReadLine();
-                                    List<Customer> empTemp1 = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext1));
-                                    Console.ReadLine();
-                                }
-                            }
-                            catch (NotSupportedException)
-                            {
-                                Console.WriteLine("The file or directory is not supported");
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                Console.WriteLine("You do not have permission to create this file.");
-                            }
-                            catch (IOException)
-                            {
-                                Console.WriteLine($"The file already exist ");
-                            }
-                            catch (Exception)
-                            {
+                                cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
 
                             }
-                            finally
-                            {
+                            FileHandling fh1 = new FileHandling();
+                            fh1.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
 
-                            }
-                            
                         }
-                        
                     }
                     else
                     {
                         decimal amountToRepay = decimal.Parse(repayLoan);
-                        Console.WriteLine("Amount to repay is: $" + amountToRepay);
-                        decimal remainingLoanLeft = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount - amountToRepay;
-                        if (amountToRepay > CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount)
+                        ConsoleIO.WriteLine("Amount to repay is: $" + amountToRepay);
+                        decimal remainingLoanLeft = SubtractLoan(cmgt.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
+                        if (amountToRepay > cmgt.dictionaryOfcustomers[customer_id].loan_amount)
                         {
-                            Console.WriteLine("Exceed loan repayment, key again");
+                            ConsoleIO.WriteLine("Exceed loan repayment, key again");
                         }
                         else
                         {
-                            Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
-                            CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
-                            try
+                            ConsoleIO.WriteLine("Loan amount left: $" + remainingLoanLeft);
+                            cmgt.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+                            if (remainingLoanLeft == 0)
                             {
-                                // first time writing customer details to file
-                                string text = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                                FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
-                                StreamWriter streamWriter = new StreamWriter(fs);
-
-                                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                                streamWriter.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                                streamWriter.Flush();
-                                streamWriter.Close();
-                                fs.Close();
-
-                                // first time reading customer details on file
-                                FileStream fs2 = new FileStream(text, FileMode.Open, FileAccess.Read);
-                                StreamReader sr1 = new StreamReader(fs2);
-                                Console.WriteLine("Printing content of text file after written detailed report");
-                                sr1.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                                string str1 = sr1.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                                Console.WriteLine(str1);
-                                //while (str != null)
-                                //{
-                                //    Console.WriteLine(str);
-                                //    str = sr.ReadLine();
-                                //}
-                                sr1.Close();
-                                fs2.Close();
-
-                                // Json format - first time writing
-                                Customer cust = new Customer()  // object creation
-                                {
-                                    customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                    customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                    customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                    customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                    customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                    customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                    customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                    loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                                };
-                                string jsontext = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                                //if (File.Exists(jsontext))
-                                //    File.Delete(jsontext);
-                                List<Customer> customerList = new List<Customer>();
-                                customerList.Add(cust);
-                                Console.WriteLine("uploading user details to json file");
-                                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented);
-                                //File.Create("Customer.Json");
-                                File.WriteAllText(jsontext, customerListJson);
-
-                                //Console.ReadLine();
-                                List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
-                                Console.ReadLine();
-                                if (remainingLoanLeft == 0)
-                                {
-                                    CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-
-                                    // first time writing customer details to file
-                                    string text1 = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                                    FileStream fs1 = new FileStream(text, FileMode.Create, FileAccess.Write);
-                                    StreamWriter streamWriter1 = new StreamWriter(fs1);
-
-                                    Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-
-
-
-                                    streamWriter1.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { CustomersManagement.dictionaryOfcustomers[customer_id].customer_id} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_name} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_address} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_email} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone} { CustomersManagement.dictionaryOfcustomers[customer_id].customerBalance} { CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied} { CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount}");
-                                    streamWriter1.Flush();
-                                    streamWriter1.Close();
-                                    fs1.Close();
-
-                                    // first time reading customer details on file
-                                    FileStream fs3 = new FileStream(text1, FileMode.Open, FileAccess.Read);
-                                    StreamReader sr2 = new StreamReader(fs3);
-                                    Console.WriteLine("Printing content of text file after written detailed report");
-                                    sr2.BaseStream.Seek(0, SeekOrigin.Begin);   // read from start, beginning of file
-                                    string str2 = sr2.ReadToEnd();   // if use ReadtoEnd then dont need while loop
-                                    Console.WriteLine(str2);
-                                    //while (str != null)
-                                    //{
-                                    //    Console.WriteLine(str);
-                                    //    str = sr.ReadLine();
-                                    //}
-                                    sr2.Close();
-                                    fs3.Close();
-
-                                    // Json format - first time writing
-                                    Customer cust1 = new Customer()  // object creation
-                                    {
-                                        customer_id = CustomersManagement.dictionaryOfcustomers[customer_id].customer_id,
-                                        customer_name = CustomersManagement.dictionaryOfcustomers[customer_id].customer_name,
-                                        customer_address = CustomersManagement.dictionaryOfcustomers[customer_id].customer_address,
-                                        customer_dateOfBirth = CustomersManagement.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                                        customer_email = CustomersManagement.dictionaryOfcustomers[customer_id].customer_email,
-                                        customer_phone = CustomersManagement.dictionaryOfcustomers[customer_id].customer_phone,
-                                        customer_loan_applied = CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                                        loan_amount = CustomersManagement.dictionaryOfcustomers[customer_id].loan_amount,
-
-                                    };
-                                    string jsontext1 = "ID " + customer_id + " " + CustomersManagement.dictionaryOfcustomers[customer_id].customer_name + ".json";
-                                    //if (File.Exists(jsontext))
-                                    //    File.Delete(jsontext);
-                                    List<Customer> customerList1 = new List<Customer>();
-                                    customerList1.Add(cust1);
-                                    Console.WriteLine("uploading user details to json file");
-                                    string customerListJson1 = JsonConvert.SerializeObject(customerList1, Formatting.Indented);
-                                    //File.Create("Customer.Json");
-                                    File.WriteAllText(jsontext1, customerListJson1);
-
-                                    //Console.ReadLine();
-                                    List<Customer> empTemp1 = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext1));
-                                    Console.ReadLine();
-                                }
-                            }
-                            catch (NotSupportedException)
-                            {
-                                Console.WriteLine("The file or directory is not supported");
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
-                                Console.WriteLine("You do not have permission to create this file.");
-                            }
-                            catch (IOException)
-                            {
-                                Console.WriteLine($"The file already exist ");
-                            }
-                            catch (Exception)
-                            {
+                                cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
 
                             }
-                            finally
-                            {
+                            FileHandling fh1 = new FileHandling();
+                            fh1.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
 
-                            }
-                            
                         }
-                        
+
                     }
                 }
                 else
                 {
-                    Console.WriteLine("No loan to repay");
+                    ConsoleIO.WriteLine("No loan to repay");
                 }
             }
             else
             {
-                Console.WriteLine("Account doesn't exist in our database record");
+                ConsoleIO.WriteLine("Account doesn't exist in our database record");
             }
 
         }
-        public static void performOperation()
+        public void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
         {
-            Console.WriteLine("Taking loan here");
+            ConsoleIO.WriteLine("Taking loan here");
             bool exit = false;
             while (!exit)
             {
-                try
-                {
-                    Console.WriteLine("In Loan account, key in required operation");
-                    Console.WriteLine("1: Apply for a new loan");
-                    Console.WriteLine("2: Apply for additional loan");
-                    Console.WriteLine("3: Cancel Loan");
-                    Console.WriteLine("4: view the loan");
-                    Console.WriteLine("5: Repay loan amount");
-                    Console.WriteLine("6: Exit loans operation");
-                    int input = Int32.Parse(Console.ReadLine());
+                ConsoleIO.WriteLine("In Loan account, key in required operation" + "\n1: Apply for a new loan" + "\n2: Apply for additional loan" + "\n3: view the loan" + "\n4: Repay loan amount" + "\n5: Exit loans operation");
+                var input = ConsoleIO.ReadLine();
 
-                    switch (input)
-                    {
-                        case 1:
-                            {
-                                LoanAccount();
-                                break;
-                            }
-                        case 2:
-                            {
-                                AddLoan();
-                                break;
-                            }
-                        case 3:
-                            {
-                                CancelLoan();
-                                break;
-                            }
-                        case 4:
-                            {
-                                ViewLoan();
-                                break;
-                            }
-                        case 5:
-                            {
-                                RepayLoan();
-                                break;
-                            }
-                        case 6:
-                            {
-                                exit = true;
-                                break;
-                            }
-                        default:
-                            {
-                                break;
-                            }
-
-                    }
-                }
-                catch
+                switch (input)
                 {
-
-                }
-                finally
-                {
+                    case "1":
+                        {
+                            LoanAccount(cmgt, bemgt, bmgt);
+                            break;
+                        }
+                    case "2":
+                        {
+                            AddLoan(cmgt, bemgt, bmgt);
+                            break;
+                        }
+                    case "3":
+                        {
+                            ViewLoan(cmgt);
+                            break;
+                        }
+                    case "4":
+                        {
+                            RepayLoan(cmgt, bemgt, bmgt);
+                            break;
+                        }
+                    case "5":
+                        {
+                            exit = true;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
 
                 }
 
             }
+        }
+
+        public static decimal AddLoan(decimal x, decimal y)
+        {
+            return x + y;
+        }
+        public static decimal SubtractLoan(decimal x, decimal y)
+        {
+            return x - y;
+        }
+        public static decimal Multiply(decimal x, decimal y, decimal z)
+        {
+            return x * y * z;
+        }
+        public static decimal Divide(decimal x, decimal y)
+        {
+            if (y != 0)
+            {
+                return x / y;
+            }
+            else
+            {
+                throw new DivideByZeroException("Divide error");
+
+            }
+
+        }
+        public static decimal Modulus(decimal x, decimal y)
+        {
+            if (y != 0)
+            {
+                return x % y;
+            }
+            else
+            {
+                throw new DivideByZeroException("Divide error");
+
+            }
+
         }
     }
 }

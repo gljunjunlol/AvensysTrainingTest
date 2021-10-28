@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    interface IBankManagersManagement
+    public interface IBankManagersManagement
     {
-        void ListCustomers();
-        void TotalLoanAmount();
-        void TotalSavingsAccount();
-        void performOperationAdvanced();
+        void ViewManagers(BankManagersManagement bmgt);
+        
+        decimal TotalLoanAmount(CustomersManagement cmgt);
+        decimal TotalSavingsAccount(CustomersManagement cmgt);
+        void performOperationAdvanced(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        void performOperationAdvancedInternal(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        void performOperationAdvancedInternal1(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+
     }
 }
