@@ -8,9 +8,11 @@ namespace Gabriel_Bank_Management_System
 {
     public interface ISavings
     {
-        void performOperation(CustomersManagement cmgt);
-        void customerDeposit(CustomersManagement cmgt);
-        void customerWithdrawl(CustomersManagement cmgt);
+        void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        bool customerDeposit(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        void customerWithdrawl(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
         void ViewBalance(CustomersManagement cmgt);
+        decimal DepositLimit();
+        decimal TakeDepositInput();
     }
 }

@@ -20,100 +20,108 @@ namespace Gabriel_Bank_Management_System
         }
         static void Main(string[] args)
         {
-            CustomersManagement cmgt = new CustomersManagement(); cmgt.References(); BankEmployeesManagement bemgt = new BankEmployeesManagement(); bemgt.References();
-            HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee(); 
-            BankManagersManagement bmgt = new BankManagersManagement(); bmgt.References();
-            HandleAccountOpeningBankManager mgr = new HandleAccountOpeningBankManager();
+            CustomersManagement cmgt = new CustomersManagement(); cmgt.References(); BankEmployeesManagement bemgt = new BankEmployeesManagement(); bemgt.References(); HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee(); BankManagersManagement bmgt = new BankManagersManagement(); bmgt.References(); HandleAccountOpeningBankManager mgr = new HandleAccountOpeningBankManager();
 
-            List<int> loginTries = new List<int>();
 
-            bool exit = false;
+
+
+            List<int> loginTries = new List<int>(); Program p = new Program(); ConsoleIO ConsoleIO = new ConsoleIO(); bool exit = false;
+
+
+
             while (!exit)
             {
                 try
                 {
-                    ConsoleIO ConsoleIO = new ConsoleIO();
-                    Program p = new Program();
-                    p.Initialize();
-                    
-                    var action = ConsoleIO.ReadLine();
-
-                    switch (action)
-                    {
-                        case "1":
-                            {
-
-                                Console.Clear();
-                                cmgt.PerformOperation(cmgt, bemgt, bmgt, loginTries);
-                                Console.WriteLine("1 : Savings" + "\n2 : Loan" + "\n3 : Go Back");
-                                var choice = ConsoleIO.ReadLine();
-
-                                switch (choice)
-                                {
-                                    case "1":
-                                        {
-                                            Savings saving = new Savings();
-                                            saving.performOperation(cmgt);
-                                            break;
-                                        }
-                                    case "2":
-                                        {
-
-
-                                            TakingLoan tk = new TakingLoan();
-                                            tk.performOperation(cmgt, bemgt, bmgt);
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            break;
-                                        }
-                                }
-
-                                break;
-                            }
-                        case "2":
-                            {
-
-                                
-                                Console.Clear();
-                                bemgt.PerformOperation(cmgt, bemgt, bmgt);
-                                Console.WriteLine("ok cleared");
-                                Console.ReadLine();
-                                break;
-                            }
-                        case "3":
-                            {
-                                Console.Clear();
-                                bmgt.performOperationAdvanced(cmgt, bemgt, bmgt);
-                                Console.WriteLine("ok seen manager");
-                                Console.ReadLine();
-                                break;
-                            }
-                        case "4":
-                            {
-                                exit = true;
-                                break;
-                            }
-                        default:
-                            {
-                                break;
-                            }
-                    }
+                    p.performOperation(cmgt, bemgt, bmgt, loginTries, p);
                 }
-                catch(Exception ex)
+                catch (Exception e)
                 {
-                    Console.Write("Wrong Input. Please choose among the available options above:");
-                    Console.ReadLine();
+                    Console.Write("Incorrect format. Please try again");
+                    ConsoleIO.ReadLine();
                 }
-                finally
-                {
+            }
+            
+            
+            
 
+        }
+        public void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt, List<int> loginTries, Program p)
+        {
+            ConsoleIO.WriteLine("Starting Program..");
+            bool exit = false;
+            while (!exit)
+            {
+                p.Initialize();
+                ConsoleIO.WriteLine("ENTER YOUR CHOICE:");
+                var action = ConsoleIO.ReadLine();
+
+                switch (action)
+                {
+                    case "1":
+                        {
+
+                            Console.Clear(); cmgt.PerformOperation(cmgt, bemgt, bmgt, loginTries); ConsoleIO.WriteLine("1 : Savings" + "\n2 : Loan" + "\n3 : Go Back");
+
+
+                            var choice = ConsoleIO.ReadLine();
+
+                            switch (choice)
+                            {
+                                case "1":
+                                    {
+                                        Savings saving = new Savings();
+                                        saving.performOperation(cmgt, bemgt, bmgt);
+                                        break;
+                                    }
+                                case "2":
+                                    {
+
+
+                                        TakingLoan tk = new TakingLoan();
+                                        tk.performOperation(cmgt, bemgt, bmgt);
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        break;
+                                    }
+                            }
+
+                            break;
+                        }
+                    case "2":
+                        {
+
+
+                            Console.Clear();
+                            bemgt.PerformOperation(cmgt, bemgt, bmgt); ConsoleIO.WriteLine("ok cleared"); ConsoleIO.ReadLine();
+
+
+                            break;
+                        }
+                    case "3":
+                        {
+                            Console.Clear();
+                            bmgt.performOperationAdvanced(cmgt, bemgt, bmgt); ConsoleIO.WriteLine("ok seen manager"); ConsoleIO.ReadLine();
+
+
+                            break;
+                        }
+                    case "4":
+                        {
+                            exit = true;
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
                 }
 
             }
-            Console.WriteLine("Exiting the program");
-            Console.ReadLine();
+            ConsoleIO.WriteLine("Exiting the program");
+            ConsoleIO.ReadLine();
         }
         public void Initialize()
         {
@@ -142,7 +150,7 @@ namespace Gabriel_Bank_Management_System
             ConsoleIO.WriteLine("3: Bank Manager\n");
             ConsoleIO.WriteLine("4: Exit the room\n");
             ConsoleIO.WriteLine("*******************************");
-            ConsoleIO.WriteLine("ENTER YOUR CHOICE:");
+            
 
         }
     }

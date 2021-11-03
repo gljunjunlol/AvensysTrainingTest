@@ -151,13 +151,15 @@ namespace TakingLoan_Test
         public void TestSavingdepositText()
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var output = new StringWriter();
             Console.SetOut(output);
 
             var input = new StringReader("12345");
             Console.SetIn(input);
             Savings saving = new Savings();
-            saving.customerDeposit(cmgt);
+            saving.customerDeposit(cmgt, bemgt, bmgt);
             int numberofTries = 4;
             Assert.Equal(output.ToString(), string.Format("Key in customer id\r\nAccount id not found\r\n"));
 
@@ -170,13 +172,15 @@ namespace TakingLoan_Test
         public void TestSavingwithdrawText()
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var output = new StringWriter();
             Console.SetOut(output);
 
             var input = new StringReader("12345");
             Console.SetIn(input);
             Savings saving = new Savings();
-            saving.customerWithdrawl(cmgt);
+            saving.customerWithdrawl(cmgt, bemgt, bmgt);
             int numberofTries = 4;
             Assert.Equal(output.ToString(), string.Format("Key in customer id\r\nAccount id not found\r\n"));
         }
@@ -260,6 +264,8 @@ namespace TakingLoan_Test
         public void TestCustomerDeposits(string itemid)
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
@@ -268,7 +274,7 @@ namespace TakingLoan_Test
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
             Savings save = new Savings(mockConsoleIO.Object);
-            save.customerDeposit(mockCustomerManagement.Object);
+            save.customerDeposit(mockCustomerManagement.Object, bemgt, bmgt);
 
             mockConsoleIO.Verify(t => t.WriteLine("Key in amount for deposit - we will use cheque if more than 5k"), Times.Once);
 
@@ -288,6 +294,8 @@ namespace TakingLoan_Test
         public void TestCustomerDepositsNotExists(string itemid)
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
@@ -296,7 +304,7 @@ namespace TakingLoan_Test
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
             Savings save = new Savings(mockConsoleIO.Object);
-            save.customerDeposit(mockCustomerManagement.Object);
+            save.customerDeposit(mockCustomerManagement.Object, bemgt, bmgt);
 
             mockConsoleIO.Verify(t => t.WriteLine("Account id not found"), Times.Once);
 
@@ -309,6 +317,8 @@ namespace TakingLoan_Test
         public void TestCustomerWithdrawal(string itemid)
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
@@ -317,7 +327,7 @@ namespace TakingLoan_Test
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
             Savings save = new Savings(mockConsoleIO.Object);
-            save.customerWithdrawl(mockCustomerManagement.Object);
+            save.customerWithdrawl(mockCustomerManagement.Object, bemgt, bmgt);
 
             mockConsoleIO.Verify(t => t.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal"), Times.Once);
 
@@ -330,6 +340,8 @@ namespace TakingLoan_Test
         public void TestCustomerWithdrawalNotExists(string itemid)
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
@@ -338,7 +350,7 @@ namespace TakingLoan_Test
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
             Savings save = new Savings(mockConsoleIO.Object);
-            save.customerWithdrawl(mockCustomerManagement.Object);
+            save.customerWithdrawl(mockCustomerManagement.Object, bemgt, bmgt);
 
             mockConsoleIO.Verify(t => t.WriteLine("Account id not found"), Times.Once);
 
@@ -360,6 +372,8 @@ namespace TakingLoan_Test
         public void TestCustomerDepositLimit(decimal withdrawalamount)
         {
             CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
             decimal withdrawal = 4000;
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(withdrawal.ToString());
@@ -369,7 +383,7 @@ namespace TakingLoan_Test
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
             Savings tk = new Savings(mockConsoleIO.Object);
-            tk.customerDeposit(mockCustomerManagement.Object);
+            tk.customerDeposit(mockCustomerManagement.Object, bemgt, bmgt);
 
             
         }
@@ -394,7 +408,9 @@ namespace TakingLoan_Test
         public void TestSavingsperformOperation(string input)
         {
             Savings save = new Savings();
-            
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
+
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
 
@@ -403,9 +419,40 @@ namespace TakingLoan_Test
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
             Savings tk = new Savings(mockConsoleIO.Object);
-            tk.performOperation(mockCustomerManagement.Object);
+            tk.performOperation(mockCustomerManagement.Object, bemgt, bmgt);
 
             mockConsoleIO.Verify(t => t.WriteLine("In Savings account, key in operation" + "\n1: withdraw money" + "\n2: deposit money" + "\n3: view the balance" + "\n4: Exit savings operation"), Times.Once);
+        }
+        [Theory]
+        [InlineData(2000)]
+        public void TestTakeDepositInput(decimal str)
+        {
+            CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
+            Mock<ISavings> input = new Mock<ISavings>();
+            input.Setup(t => t.TakeDepositInput()).Returns(str);
+            Savings save = new Savings(input.Object);
+            bool res = save.customerDeposit(cmgt, bemgt, bmgt);
+            Assert.True(res);
+
+        }
+        [Theory]
+        [InlineData(6000)]
+        public void TestTakeDepositInputIsMore(decimal str)
+        {
+            decimal depositAmount = 6000;
+            CustomersManagement cmgt = new CustomersManagement();
+            Mock<ISavings> input = new Mock<ISavings>();
+            input.Setup(t => t.TakeDepositInput()).Returns(str);
+            Mock<ISavings> input2 = new Mock<ISavings>();
+            input2.Setup(t => t.DepositLimit()).Returns(depositAmount);
+            //Savings save = new Savings(input.Object);
+            //Savings save2 = new Savings(input2.Object);
+            //bool res = save.customerDeposit(cmgt);
+
+            Assert.True(str > depositAmount);
+
         }
     }
 }

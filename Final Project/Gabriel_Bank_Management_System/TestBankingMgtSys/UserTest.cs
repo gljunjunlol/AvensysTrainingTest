@@ -571,7 +571,14 @@ namespace UserTest
         [Fact]
         public void IfInputMoreThan()
         {
-            
+            CustomersManagement cmgt = new CustomersManagement();
+            List<int> loginTries = new List<int>();
+            Mock<IUser> input = new Mock<IUser>();
+            User usr = new User();
+            usr.UserLogin(cmgt, loginTries);
+            loginTries.Add(1);
+
+            Assert.True(loginTries.Count > 3);
             
         }
         [Theory]
@@ -598,5 +605,62 @@ namespace UserTest
 
             mockConsoleIO.Verify(t => t.WriteLine("Screen 1 -- customers only" + "\n1. Create User" + "\n2: Remove User" + "\nSeek help from bank operator" + "\n3: Ask user to log in" + "\n4: Return to home screen"), Times.Once);
         }
+        [Theory]
+        [InlineData(null)]
+        public void TestAddCustomers(Customer new_user)
+        {
+            CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
+            //Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0);
+            Mock<IUser> user = new Mock<IUser>();
+            user.Setup(t => t.CreateUserAccount()).Returns(new_user);
+            CustomersManagement cmgt1 = new CustomersManagement(user.Object);
+            bool res = cmgt1.AddCustomer(cmgt, bemgt, bmgt);
+            Assert.True(res);
+
+        }
+        [Theory]
+        [InlineData(null)]
+        public void TestAddEmployees(BankEmployees new_user)
+        {
+            Mock<IHandleAccountOpeningEmployee> user = new Mock<IHandleAccountOpeningEmployee>();
+            CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            BankManagersManagement bmgt = new BankManagersManagement();
+            //Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0);
+            
+            user.Setup(t => t.CreateUserAccount()).Returns(new_user);
+            BankEmployeesManagement cmgt1 = new BankEmployeesManagement(user.Object);
+            bool res = cmgt1.AddBankEmployees(cmgt, bemgt, bmgt);
+            Assert.True(res);
+
+        }
+        [Theory]
+        [InlineData("1")]
+        [InlineData("2")]
+        [InlineData("3")]
+        [InlineData("4")]
+        public void TestprogramperformOperation(string input)
+        {
+            BankManagersManagement bmgt = new BankManagersManagement();
+            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            CustomersManagement cmgt = new CustomersManagement();
+            Program p = new Program();
+            List<int> loginTries = new List<int>();
+
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
+
+            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockProgram = new Mock<Program>();
+            //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
+
+            Program tk = new Program(mockConsoleIO.Object);
+            tk.performOperation(mockCustomerManagement.Object, bemgt, bmgt, loginTries, mockProgram.Object);
+
+            mockConsoleIO.Verify(t => t.WriteLine("Starting Program.."), Times.Once);
+        }
+
     }
 }

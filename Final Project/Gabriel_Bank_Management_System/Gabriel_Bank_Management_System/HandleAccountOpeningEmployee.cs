@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class HandleAccountOpeningEmployee
+    public class HandleAccountOpeningEmployee : IHandleAccountOpeningEmployee
     {
         private readonly IConsoleIO ConsoleIO;
+        private IHandleAccountOpeningEmployee _user;
         public HandleAccountOpeningEmployee()
         {
             ConsoleIO = new ConsoleIO();
@@ -46,12 +47,12 @@ namespace Gabriel_Bank_Management_System
             
             
             
-            User validatepw = new User();
-            string bankemployee_pw;
+            User validatepw = new User(); string bankemployee_pw;
+
             do
             {
-                ConsoleIO.WriteLine("Key in employee pw");
-                ConsoleIO.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
+                ConsoleIO.WriteLine("Key in employee pw"); ConsoleIO.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
+
                 bankemployee_pw = ConsoleIO.ReadLine();
             }
             while (validatepw.validatePassword(bankemployee_pw) == false);
@@ -96,9 +97,9 @@ namespace Gabriel_Bank_Management_System
                 if (loginTries.Count > 3)
                 {
                     ConsoleIO.WriteLine("Too many tries, please wait 5 mins");
-                    Console.ReadLine();
+                    Console.ReadLine(); Environment.Exit(0);
 
-                    Environment.Exit(0);
+
                 }
                 if (numberofTries == 0)
                 {

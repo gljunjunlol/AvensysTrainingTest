@@ -45,6 +45,40 @@ namespace BankManagerTest
             FileHandling fh = new FileHandling();
             fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
         }
+        [Theory]
+        [InlineData(3000)]
+        public void TestViewCustomerTotalLoanAmt1(decimal totalloanamount)
+        {
+            BankManagersManagement bmgt = new BankManagersManagement();
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalloanamount.ToString());
+
+            var mockCustomerManagement = new Mock<CustomersManagement>();
+
+            mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
+
+
+            bmgt.TotalLoanAmount(mockCustomerManagement.Object);
+
+            mockConsoleIO.Verify(t => t.WriteLine("Total outstanding loan taken:  " + totalloanamount.ToString("F")), Times.Once);
+        }
+        [Theory]
+        [InlineData(3000)]
+        public void TestViewCustomerTotalSavingsAmt1(decimal totalsavingsofCustomers)
+        {
+            BankManagersManagement bmgt = new BankManagersManagement();
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalsavingsofCustomers.ToString());
+
+            var mockCustomerManagement = new Mock<CustomersManagement>();
+
+            mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
+
+
+            bmgt.TotalSavingsAccount(mockCustomerManagement.Object);
+
+            mockConsoleIO.Verify(t => t.WriteLine("Total savings of the bank  " + totalsavingsofCustomers.ToString("F")), Times.Once);
+        }
         [Fact]
 
         public void TestViewCustomerTotalSaving()
@@ -106,7 +140,8 @@ namespace BankManagerTest
         public void TestDeleteManagers()
         {
             BankManagersManagement bmgt = new BankManagersManagement();
-            HandleAccountOpeningBankManager.DeleteUserAccount();
+            HandleAccountOpeningBankManager handle = new HandleAccountOpeningBankManager();
+            handle.DeleteUserAccount();
         }
         [Theory]
         [InlineData("1")]

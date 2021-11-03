@@ -11,6 +11,7 @@ namespace Gabriel_Bank_Management_System
     public class BankEmployeesManagement : IBankEmployeesManagement
     {
         public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
+        private IHandleAccountOpeningEmployee _user;
         private readonly IConsoleIO ConsoleIO;
         public void References()
         {
@@ -24,19 +25,24 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = new ConsoleIO();
         }
-        public void AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public BankEmployeesManagement(IHandleAccountOpeningEmployee user) // constructor dependency injection
+        {
+            _user = user;
+        }
+        public bool AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
         {
             //BankEmployees emp = new BankEmployees("12345", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
             //bemgt.dictionaryOfEmployees.Add("12345", emp);
 
-            HandleAccountOpeningEmployee newacc = new HandleAccountOpeningEmployee();
-            var new_user = newacc.CreateUserAccount();
+            HandleAccountOpeningEmployee _user = new HandleAccountOpeningEmployee();
+            var new_user = _user.CreateUserAccount();
             if (new_user != null)
             {
 
                 if (bemgt.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
                 {
                     ConsoleIO.WriteLine("Account already exists");
+                    return false;
                 }
                 else
                 {
@@ -44,12 +50,15 @@ namespace Gabriel_Bank_Management_System
                     // first time writing customer details to file
                     FileHandling fileHandling = new FileHandling();
                     fileHandling.ReadingandWritingcustomer(new_user.bankemployee_id, cmgt, bemgt, bmgt);
+                    return true;
                 }
             }
             else
             {
                 ConsoleIO.WriteLine("User creation failed try again");
+                return false;
             }
+            return false;
 
         }
         public void SearchCustomerByID(CustomersManagement cmgt)
@@ -147,10 +156,10 @@ namespace Gabriel_Bank_Management_System
                     case "4":
                         {
                             HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee();
-                            emp.UserLogin(bemgt);
-                            bemgt.performOperationinternal(cmgt, bemgt);
-                                
-                            
+                            emp.UserLogin(bemgt); bemgt.performOperationinternal(cmgt, bemgt);
+
+
+
                             break;
                         }
                     case "5":

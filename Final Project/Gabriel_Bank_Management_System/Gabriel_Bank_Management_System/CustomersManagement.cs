@@ -11,6 +11,7 @@ namespace Gabriel_Bank_Management_System
     public class CustomersManagement : ICustomersManagement
     {
         public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
+        private IUser _user;
         private readonly IConsoleIO ConsoleIO;
         public void References()
         {
@@ -25,16 +26,21 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = consoleIO;
         }
-        public void AddCustomer(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public CustomersManagement(IUser user)  // constructor dependency injection
         {
-            User newacc = new User();
-            var new_user = newacc.CreateUserAccount();
+            _user = user;
+        }
+        public bool AddCustomer(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        {
+            User _user = new User();
+            var new_user = _user.CreateUserAccount();
             if (new_user != null)
             {
                 
                 if (cmgt.dictionaryOfcustomers.ContainsKey(new_user.customer_id))
                 {
                     ConsoleIO.WriteLine("Account already exists");
+                    return false;
                 }
                 else
                 {
@@ -42,12 +48,15 @@ namespace Gabriel_Bank_Management_System
                     // first time writing customer details to file
                     FileHandling fileHandling = new FileHandling();
                     fileHandling.ReadingandWritingcustomer(new_user.customer_id, cmgt, bemgt, bmgt);
+                    return true;
                 }
             }
             else
             {
                 ConsoleIO.WriteLine("User creation failed try again");
+                return false;
             }
+            return false;
         }
 
         public void RemoveCustomers(CustomersManagement cmgt)
@@ -106,7 +115,7 @@ namespace Gabriel_Bank_Management_System
                 }
 
             }
-            ConsoleIO.WriteLine("Exiting the program");
+            ConsoleIO.WriteLine(DateTime.Now.ToString());
         }
         public void ListCustomers(CustomersManagement cmgt)
         {

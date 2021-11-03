@@ -46,30 +46,37 @@ namespace Gabriel_Bank_Management_System
             ConsoleIO.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
             DateTime customer_dob = DateTime.Parse(ConsoleIO.ReadLine());
 
-            ConsoleIO.WriteLine("key to create a new user phone: format such as (xxx)xxx-xxxx");
-            string customer_phone = ConsoleIO.ReadLine();
-            validatePhone(customer_phone);
+            
 
-            ConsoleIO.WriteLine("Key in user email format (e.g. john@mail.com)");
-            string customer_email = ConsoleIO.ReadLine();
-            validateEmail(customer_email);
-
-            User validatepw = new User();
-            string customer_pw;
+            
+            string customer_pw; string customer_phone; string customer_email;
             do
             {
-                ConsoleIO.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
-                customer_pw = ConsoleIO.ReadLine();
-            }
-            while (validatepw.validatePassword(customer_pw) == false);
-            if (validatepw.validatePassword(customer_pw) == true)
-            {
-                ConsoleIO.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
+                ConsoleIO.WriteLine("key to create a new user phone: format such as (xxx)xxx-xxxx"); customer_phone = ConsoleIO.ReadLine();
                 
-                var new_user = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, " ", 0, Guid.Empty, false, 0);
-                return new_user;
+
+                
             }
-            return null;
+            while (validatePhone(customer_phone) == false);
+            do
+            {
+                ConsoleIO.WriteLine("Key in user email format (e.g. john@mail.com)"); customer_email = ConsoleIO.ReadLine();
+
+
+            }
+            while (validateEmail(customer_email) == false);
+            do
+            {
+                ConsoleIO.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:"); customer_pw = ConsoleIO.ReadLine();
+
+            }
+            while (validatePassword(customer_pw) == false);
+
+
+            ConsoleIO.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
+
+            var new_user = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, " ", 0, Guid.Empty, false, 0);
+            return new_user;
         }
         
         public void UserLogin(CustomersManagement cmgt, List<int> loginTries)
@@ -153,32 +160,58 @@ namespace Gabriel_Bank_Management_System
         }
         public bool validatePhone(string phone)
         {
-            Regex regex = new Regex("\\(?\\d{3}\\)?-? *\\d{3}-? *-?\\d{4}");
-            if (regex.IsMatch(phone))
+            while (true)
             {
-                Console.WriteLine("Phone id entered is valid");
-                return true;
+                try
+                {
+                    Regex regex = new Regex("\\(?\\d{3}\\)?-? *\\d{3}-? *-?\\d{4}");
+                    if (regex.IsMatch(phone))
+                    {
+                        Console.WriteLine("Phone id entered is valid");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("phone number is not valid, please try again");
+                        //return false;
+                        throw new PhoneIncorrectException(phone);
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+                
             }
-            else
-            {
-                Console.WriteLine("phone number is not valid, please try again");
-                throw new PhoneIncorrectException(phone);
-            }
+            
         }
         public bool validateEmail(string email)
         {
-            Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-            if (regex.IsMatch(email))
+            while (true)
             {
-                Console.WriteLine("Email id entered is valid");
-                // validate the email Id
-                return true;
+                try
+                {
+                    Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+                    if (regex.IsMatch(email))
+                    {
+                        Console.WriteLine("Email id entered is valid");
+                        // validate the email Id
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Email is not valid, please try again");
+                        //return false;
+                        throw new EmailIncorrectException(email);
+                    }
+                }
+                catch
+                {
+                    return false;
+                }
+                
             }
-            else
-            {
-                Console.WriteLine("Email is not valid, please try again");
-                throw new EmailIncorrectException(email);
-            }
+            
         }
         public static void AddUser(CustomersManagement cmgt)
         {

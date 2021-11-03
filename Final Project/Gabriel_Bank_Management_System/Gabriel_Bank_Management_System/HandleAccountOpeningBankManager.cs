@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class HandleAccountOpeningBankManager : HandleAccountOpeningEmployee
+    public class HandleAccountOpeningBankManager : HandleAccountOpeningEmployee, IHandleAccountOpeningBankManager
     {
         private readonly IConsoleIO ConsoleIO;
         public HandleAccountOpeningBankManager()
@@ -17,7 +17,7 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = consoleIO;
         }
-        public static void DeleteUserAccount()
+        public void DeleteUserAccount()
         {
 
         }
@@ -99,8 +99,8 @@ namespace Gabriel_Bank_Management_System
                 {
                     ConsoleIO.WriteLine("Too many tries, please wait 5 mins");
 
-                    ConsoleIO.ReadLine();
-                    Environment.Exit(0);
+                    ConsoleIO.ReadLine(); Environment.Exit(0);
+
                 }
                 if (numberofTries == 0)
                 {

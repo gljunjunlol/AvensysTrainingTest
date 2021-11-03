@@ -62,6 +62,8 @@
     <Compile Include="IConsoleIO.cs" />
     <Compile Include="ICustomersManagement.cs" />
     <Compile Include="IFileHandling.cs" />
+    <Compile Include="IHandleAccountOpeningBankManager.cs" />
+    <Compile Include="IHandleAccountOpeningEmployee.cs" />
     <Compile Include="ISavings.cs" />
     <Compile Include="ITakingLoan.cs" />
     <Compile Include="IUser.cs" />

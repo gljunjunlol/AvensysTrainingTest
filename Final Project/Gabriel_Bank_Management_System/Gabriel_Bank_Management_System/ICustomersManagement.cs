@@ -8,7 +8,7 @@ namespace Gabriel_Bank_Management_System
 {
     public interface ICustomersManagement
     {
-        void AddCustomer(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        bool AddCustomer(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
         void RemoveCustomers(CustomersManagement cmgt);
         void PerformOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt, List<int> loginTries);
         void ListCustomers(CustomersManagement cmgt);

@@ -11,7 +11,7 @@ namespace Gabriel_Bank_Management_System
         
         void ListEmployees(BankEmployeesManagement bemgt);
         void RemoveEmployees(BankEmployeesManagement bemgt);
-        void AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
+        bool AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
         void SearchCustomerByID(CustomersManagement customersmanagement);
         void SearchCustomerByName(CustomersManagement customersmanagement);
         void PerformOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
