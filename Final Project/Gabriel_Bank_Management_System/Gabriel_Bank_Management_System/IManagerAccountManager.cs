@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public interface IHandleAccountOpeningBankManager
+    public interface IManagerAccountManager
     {
-        void DeleteUserAccount();
         BankManagers CreateUserAccount();
-        void UserLogin(BankManagersManagement bmgt);
+        void UserLogin(ManagerAccountManager mam);
 
     }
 }

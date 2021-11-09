@@ -8,46 +8,43 @@ using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class CustomersManagement : ICustomersManagement
+    public class CustomersManager : ICustomersManagement
     {
-        public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
-        private IUser _user;
+        
+        private ICustomerAccountManager _user;
         private readonly IConsoleIO ConsoleIO;
-        public void References()
-        {
-            dictionaryOfcustomers = new Dictionary<string, Customer>();
-        }
+        
 
-        public CustomersManagement()
+        public CustomersManager()
         {
             ConsoleIO = new ConsoleIO();
         }
-        public CustomersManagement(IConsoleIO consoleIO)
+        public CustomersManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
         }
-        public CustomersManagement(IUser user)  // constructor dependency injection
+        public CustomersManager(ICustomerAccountManager user)  // constructor dependency injection
         {
             _user = user;
         }
-        public bool AddCustomer(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public bool AddCustomer(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
-            User _user = new User();
+            CustomerAccountManager _user = new CustomerAccountManager();
             var new_user = _user.CreateUserAccount();
             if (new_user != null)
             {
                 
-                if (cmgt.dictionaryOfcustomers.ContainsKey(new_user.customer_id))
+                if (cam.dictionaryOfcustomers.ContainsKey(new_user.customer_id))
                 {
                     ConsoleIO.WriteLine("Account already exists");
                     return false;
                 }
                 else
                 {
-                    cmgt.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+                    cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
                     // first time writing customer details to file
                     FileHandling fileHandling = new FileHandling();
-                    fileHandling.ReadingandWritingcustomer(new_user.customer_id, cmgt, bemgt, bmgt);
+                    fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
                     return true;
                 }
             }
@@ -56,19 +53,18 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("User creation failed try again");
                 return false;
             }
-            return false;
         }
 
-        public void RemoveCustomers(CustomersManagement cmgt)
+        public void RemoveCustomers(CustomerAccountManager cam)
         {
             ConsoleIO.WriteLine("Key in customer id to remove");
             string customer_id = ConsoleIO.ReadLine();
             
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 
                 ConsoleIO.WriteLine(customer_id + " has been removed");
-                dictionaryOfcustomers.Remove(customer_id);
+                cam.dictionaryOfcustomers.Remove(customer_id);
             }
             else
             {
@@ -76,7 +72,7 @@ namespace Gabriel_Bank_Management_System
             }
         }
 
-        public void PerformOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt, List<int> loginTries)
+        public void PerformOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam, List<int> loginTries)
         {
             bool exit = false;
             while (!exit)
@@ -89,18 +85,18 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            cmgt.AddCustomer(cmgt, bemgt, bmgt);
+                            AddCustomer(cam, eam, mam);
                             break;
                         }
                     case "2":
                         {
-                            cmgt.RemoveCustomers(cmgt);
+                            RemoveCustomers(cam);
                             break;
                         }
                     case "3":
                         {
-                            User newacc = new User();
-                            newacc.UserLogin(cmgt, loginTries);
+                            CustomerAccountManager newacc = new CustomerAccountManager();
+                            newacc.UserLogin(cam, loginTries);
                             break;
                         }
                     case "4":
@@ -117,9 +113,9 @@ namespace Gabriel_Bank_Management_System
             }
             ConsoleIO.WriteLine(DateTime.Now.ToString());
         }
-        public void ListCustomers(CustomersManagement cmgt)
+        public void ListCustomers(CustomerAccountManager cam)
         {
-            foreach (KeyValuePair<string, Customer> kvp in cmgt.dictionaryOfcustomers)
+            foreach (KeyValuePair<string, Customer> kvp in cam.dictionaryOfcustomers)
             {
                 ConsoleIO.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} {kvp.Value.customer_address} {kvp.Value.customer_dateOfBirth} " + "\n Listing all current customers in database: ");
 

@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C3250E2-AF86-421C-886E-40F8D8CB3801}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Gabriel_Bank_Management_System</RootNamespace>
-    <AssemblyName>Gabriel_Bank_Management_System</AssemblyName>
+    <ProjectGuid>{15B9667D-D36B-4EF6-A730-EB6581A0D1F0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebApiLibrary</RootNamespace>
+    <AssemblyName>WebApiLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -46,37 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BankEmployees.cs" />
-    <Compile Include="BankEmployeesManager.cs" />
-    <Compile Include="BankManagers.cs" />
-    <Compile Include="BankManagersManager.cs" />
-    <Compile Include="BankViewModel.cs" />
-    <Compile Include="ConsoleIO.cs" />
-    <Compile Include="Customer.cs" />
-    <Compile Include="CustomersManager.cs" />
-    <Compile Include="EmailIncorrectException.cs" />
-    <Compile Include="FileHandling.cs" />
-    <Compile Include="ManagerAccountManager.cs" />
-    <Compile Include="EmployeeAccountManager.cs" />
-    <Compile Include="IBankEmployeesManager.cs" />
-    <Compile Include="IBankManagersManager.cs" />
-    <Compile Include="IConsoleIO.cs" />
-    <Compile Include="ICustomersManagement.cs" />
-    <Compile Include="IFileHandling.cs" />
-    <Compile Include="IManagerAccountManager.cs" />
-    <Compile Include="IEmployeeAccountManager.cs" />
-    <Compile Include="ISavings.cs" />
-    <Compile Include="ITakingLoan.cs" />
-    <Compile Include="ICustomerAccountManager.cs" />
-    <Compile Include="PhoneIncorrectException.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Controllers\CustomerAccountManagerController.cs" />
+    <Compile Include="Controllers\EmployeeAccountManagerController.cs" />
+    <Compile Include="Controllers\ManagerAccountManagerController.cs" />
+    <Compile Include="Interfaces\ICustomerAccountManager.cs" />
+    <Compile Include="Interfaces\IEmployeeAccountManager.cs" />
+    <Compile Include="Interfaces\IFileHandling.cs" />
+    <Compile Include="Interfaces\IManagerAccountManager.cs" />
+    <Compile Include="Models\BankEmployees.cs" />
+    <Compile Include="Models\BankManagers.cs" />
+    <Compile Include="Models\Customer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Savings.cs" />
-    <Compile Include="TakingLoan.cs" />
-    <Compile Include="CustomerAccountManager.cs" />
+    <Compile Include="Utility\FileHandling.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Folder Include="Common\" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

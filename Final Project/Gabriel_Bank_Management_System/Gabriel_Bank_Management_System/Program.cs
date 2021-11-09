@@ -20,9 +20,9 @@ namespace Gabriel_Bank_Management_System
         }
         static void Main(string[] args)
         {
-            CustomersManagement cmgt = new CustomersManagement(); cmgt.References(); BankEmployeesManagement bemgt = new BankEmployeesManagement(); bemgt.References(); HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee(); BankManagersManagement bmgt = new BankManagersManagement(); bmgt.References(); HandleAccountOpeningBankManager mgr = new HandleAccountOpeningBankManager();
-
-
+            CustomerAccountManager cam = new CustomerAccountManager(); cam.References(); EmployeeAccountManager eam = new EmployeeAccountManager(); eam.References(); EmployeeAccountManager emp = new EmployeeAccountManager(); ManagerAccountManager mam = new ManagerAccountManager(); mam.References(); ManagerAccountManager mgr = new ManagerAccountManager();
+            CustomersManager cam1 = new CustomersManager(); BankEmployeesManager eam1 = new BankEmployeesManager();
+            BankManagersManager mam1 = new BankManagersManager();
 
 
             List<int> loginTries = new List<int>(); Program p = new Program(); ConsoleIO ConsoleIO = new ConsoleIO(); bool exit = false;
@@ -33,9 +33,9 @@ namespace Gabriel_Bank_Management_System
             {
                 try
                 {
-                    p.performOperation(cmgt, bemgt, bmgt, loginTries, p);
+                    p.performOperation(cam, cam1, eam, eam1, mam, mam1, loginTries, p);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.Write("Incorrect format. Please try again");
                     ConsoleIO.ReadLine();
@@ -46,7 +46,7 @@ namespace Gabriel_Bank_Management_System
             
 
         }
-        public void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt, List<int> loginTries, Program p)
+        public void performOperation(CustomerAccountManager cam, CustomersManager cam1, EmployeeAccountManager eam, BankEmployeesManager eam1, ManagerAccountManager mam, BankManagersManager mam1, List<int> loginTries, Program p)
         {
             ConsoleIO.WriteLine("Starting Program..");
             bool exit = false;
@@ -61,7 +61,7 @@ namespace Gabriel_Bank_Management_System
                     case "1":
                         {
 
-                            Console.Clear(); cmgt.PerformOperation(cmgt, bemgt, bmgt, loginTries); ConsoleIO.WriteLine("1 : Savings" + "\n2 : Loan" + "\n3 : Go Back");
+                            Console.Clear(); cam1.PerformOperation(cam, eam, mam, loginTries); ConsoleIO.WriteLine("1 : Savings" + "\n2 : Loan" + "\n3 : Go Back");
 
 
                             var choice = ConsoleIO.ReadLine();
@@ -71,7 +71,7 @@ namespace Gabriel_Bank_Management_System
                                 case "1":
                                     {
                                         Savings saving = new Savings();
-                                        saving.performOperation(cmgt, bemgt, bmgt);
+                                        saving.performOperation(cam, eam, mam);
                                         break;
                                     }
                                 case "2":
@@ -79,7 +79,7 @@ namespace Gabriel_Bank_Management_System
 
 
                                         TakingLoan tk = new TakingLoan();
-                                        tk.performOperation(cmgt, bemgt, bmgt);
+                                        tk.performOperation(cam, eam, mam);
                                         break;
                                     }
                                 default:
@@ -95,7 +95,7 @@ namespace Gabriel_Bank_Management_System
 
 
                             Console.Clear();
-                            bemgt.PerformOperation(cmgt, bemgt, bmgt); ConsoleIO.WriteLine("ok cleared"); ConsoleIO.ReadLine();
+                            eam1.PerformOperation(cam, eam, mam); ConsoleIO.WriteLine("ok cleared"); ConsoleIO.ReadLine();
 
 
                             break;
@@ -103,7 +103,7 @@ namespace Gabriel_Bank_Management_System
                     case "3":
                         {
                             Console.Clear();
-                            bmgt.performOperationAdvanced(cmgt, bemgt, bmgt); ConsoleIO.WriteLine("ok seen manager"); ConsoleIO.ReadLine();
+                            mam1.performOperationAdvanced(cam, cam1, eam, eam1, mam, mam1); ConsoleIO.WriteLine("ok seen manager"); ConsoleIO.ReadLine();
 
 
                             break;

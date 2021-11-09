@@ -8,48 +8,44 @@ using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class BankEmployeesManagement : IBankEmployeesManagement
+    public class BankEmployeesManager : IBankEmployeesManager
     {
-        public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
-        private IHandleAccountOpeningEmployee _user;
+        
+        private IEmployeeAccountManager _user;
         private readonly IConsoleIO ConsoleIO;
-        public void References()
-        {
-            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
-        }
-        public BankEmployeesManagement(IConsoleIO consoleIO)
+        public BankEmployeesManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
         }
-        public BankEmployeesManagement()
+        public BankEmployeesManager()
         {
             ConsoleIO = new ConsoleIO();
         }
-        public BankEmployeesManagement(IHandleAccountOpeningEmployee user) // constructor dependency injection
+        public BankEmployeesManager(IEmployeeAccountManager user) // constructor dependency injection
         {
             _user = user;
         }
-        public bool AddBankEmployees(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public bool AddBankEmployees(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             //BankEmployees emp = new BankEmployees("12345", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
-            //bemgt.dictionaryOfEmployees.Add("12345", emp);
+            //eam.dictionaryOfEmployees.Add("12345", emp);
 
-            HandleAccountOpeningEmployee _user = new HandleAccountOpeningEmployee();
+            EmployeeAccountManager _user = new EmployeeAccountManager();
             var new_user = _user.CreateUserAccount();
             if (new_user != null)
             {
 
-                if (bemgt.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
+                if (eam.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
                 {
                     ConsoleIO.WriteLine("Account already exists");
                     return false;
                 }
                 else
                 {
-                    bemgt.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+                    eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
                     // first time writing customer details to file
                     FileHandling fileHandling = new FileHandling();
-                    fileHandling.ReadingandWritingcustomer(new_user.bankemployee_id, cmgt, bemgt, bmgt);
+                    fileHandling.ReadingandWritingcustomer(new_user.bankemployee_id, cam, eam, mam);
                     return true;
                 }
             }
@@ -58,26 +54,25 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("User creation failed try again");
                 return false;
             }
-            return false;
 
         }
-        public void SearchCustomerByID(CustomersManagement cmgt)
+        public void SearchCustomerByID(CustomerAccountManager cam)
         {
             ConsoleIO.WriteLine("1. Search any customer information by customer ID");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 ConsoleIO.WriteLine("\n" + "ok found" + "\n");
-                ConsoleIO.WriteLine("CUSTOMER ID: " + cmgt.dictionaryOfcustomers[customer_id].customer_id);
-                ConsoleIO.WriteLine("CUSTOMER NAME: " + cmgt.dictionaryOfcustomers[customer_id].customer_name);
-                ConsoleIO.WriteLine("CUSTOMER ADDRESS: " + cmgt.dictionaryOfcustomers[customer_id].customer_address);
-                ConsoleIO.WriteLine("CUSTOMER DATEOFBIRTH: " + cmgt.dictionaryOfcustomers[customer_id].customer_dateOfBirth);
-                ConsoleIO.WriteLine("CUSTOMER EMAIL: " + cmgt.dictionaryOfcustomers[customer_id].customer_email);
-                ConsoleIO.WriteLine("CUSTOMER PHONE: " + cmgt.dictionaryOfcustomers[customer_id].customer_phone);
-                ConsoleIO.WriteLine("CUSTOMER CHEQUE IF ANY: " + cmgt.dictionaryOfcustomers[customer_id].cheque_book_number);
-                ConsoleIO.WriteLine("CUSTOMER BALANCE: $" + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-                ConsoleIO.WriteLine("CUSTOMER LOAN APPLIED IF ANY: " + cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied);
-                ConsoleIO.WriteLine("CUSTOMER LOAN AMOUNT IF ANY: " + cmgt.dictionaryOfcustomers[customer_id].loan_amount);
+                ConsoleIO.WriteLine("CUSTOMER ID: " + cam.dictionaryOfcustomers[customer_id].customer_id);
+                ConsoleIO.WriteLine("CUSTOMER NAME: " + cam.dictionaryOfcustomers[customer_id].customer_name);
+                ConsoleIO.WriteLine("CUSTOMER ADDRESS: " + cam.dictionaryOfcustomers[customer_id].customer_address);
+                ConsoleIO.WriteLine("CUSTOMER DATEOFBIRTH: " + cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth);
+                ConsoleIO.WriteLine("CUSTOMER EMAIL: " + cam.dictionaryOfcustomers[customer_id].customer_email);
+                ConsoleIO.WriteLine("CUSTOMER PHONE: " + cam.dictionaryOfcustomers[customer_id].customer_phone);
+                ConsoleIO.WriteLine("CUSTOMER CHEQUE IF ANY: " + cam.dictionaryOfcustomers[customer_id].cheque_book_number);
+                ConsoleIO.WriteLine("CUSTOMER BALANCE: $" + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
+                ConsoleIO.WriteLine("CUSTOMER LOAN APPLIED IF ANY: " + cam.dictionaryOfcustomers[customer_id].customer_loan_applied);
+                ConsoleIO.WriteLine("CUSTOMER LOAN AMOUNT IF ANY: " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
                 ConsoleIO.WriteLine("");
             }
             else
@@ -85,12 +80,12 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("Account doesn't exist");
             }
         }
-        public void SearchCustomerByName(CustomersManagement cmgt)
+        public void SearchCustomerByName(CustomerAccountManager cam)
         {
             ConsoleIO.WriteLine("1. Search any customer information by customer name");
             string customer_name = ConsoleIO.ReadLine();
             
-            foreach (KeyValuePair<string, Customer> kvp in cmgt.dictionaryOfcustomers)
+            foreach (KeyValuePair<string, Customer> kvp in cam.dictionaryOfcustomers)
             {
                 if (kvp.Value.customer_name == customer_name)
                 {
@@ -102,9 +97,9 @@ namespace Gabriel_Bank_Management_System
                     ConsoleIO.WriteLine($"CUSTOMER EMAIL: {kvp.Value.customer_email}");
                     ConsoleIO.WriteLine($"CUSTOMER PHONE: {kvp.Value.customer_phone}");
                     ConsoleIO.WriteLine($"CUSTOMER CHEQUE IF ANY: {kvp.Value.cheque_book_number}");
-                    ConsoleIO.WriteLine($"CUSTOMER BALANCE: ${kvp.Value.customerBalance}");
+                    ConsoleIO.WriteLine($"CUSTOMER BALANCE: ${kvp.Value.customerBalance.ToString("F")}");
                     ConsoleIO.WriteLine($"CUSTOMER LOAN APPLIED IF ANY: {kvp.Value.customer_loan_applied}");
-                    ConsoleIO.WriteLine($"CUSTOMER LOAN AMOUNT IF ANY: {kvp.Value.loan_amount}\n");
+                    ConsoleIO.WriteLine($"CUSTOMER LOAN AMOUNT IF ANY: {kvp.Value.loan_amount.ToString("F")}\n");
                     ConsoleIO.WriteLine("");
                     ConsoleIO.WriteLine("");
                     ConsoleIO.WriteLine("");
@@ -122,7 +117,7 @@ namespace Gabriel_Bank_Management_System
         }
 
 
-        public void PerformOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void PerformOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             bool exit = false;
             while (!exit)
@@ -140,23 +135,23 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            bemgt.AddBankEmployees(cmgt, bemgt, bmgt);
+                            AddBankEmployees(cam, eam, mam);
                             break;
                         }
                     case "2":
                         {
-                            bemgt.RemoveEmployees(bemgt);
+                            RemoveEmployees(eam);
                             break;
                         }
                     case "3":
                         {
-                            bemgt.ListEmployees(bemgt);
+                            ListEmployees(eam);
                             break;
                         }
                     case "4":
                         {
-                            HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee();
-                            emp.UserLogin(bemgt); bemgt.performOperationinternal(cmgt, bemgt);
+                            EmployeeAccountManager emp = new EmployeeAccountManager();
+                            emp.UserLogin(eam); performOperationinternal(cam, eam);
 
 
 
@@ -178,7 +173,7 @@ namespace Gabriel_Bank_Management_System
 
 
         }
-        public void performOperationinternal(CustomersManagement cmgt, BankEmployeesManagement bemgt)
+        public void performOperationinternal(CustomerAccountManager cam, EmployeeAccountManager eam)
         {
             
             bool exit = false;
@@ -192,12 +187,12 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            SearchCustomerByID(cmgt);
+                            SearchCustomerByID(cam);
                             break;
                         }
                     case "2":
                         {
-                            SearchCustomerByName(cmgt);
+                            SearchCustomerByName(cam);
                             break;
                         }
                     case "3":
@@ -213,34 +208,34 @@ namespace Gabriel_Bank_Management_System
             }
         }
 
-        public void RemoveEmployees(BankEmployeesManagement bemgt)
+        public void RemoveEmployees(EmployeeAccountManager eam)
         {
             ConsoleIO.WriteLine("Key in employee id");
             string employee_id = ConsoleIO.ReadLine();
 
-            if (bemgt.dictionaryOfEmployees.ContainsKey(employee_id))
+            if (eam.dictionaryOfEmployees.ContainsKey(employee_id))
             {
 
                 ConsoleIO.WriteLine(employee_id + " has been removed");
-                dictionaryOfEmployees.Remove(employee_id);
+                eam.dictionaryOfEmployees.Remove(employee_id);
             }
             else
             {
                 ConsoleIO.WriteLine("Account doesn't exist");
             }                      
         }
-        public void ListEmployees(BankEmployeesManagement bemgt)
+        public void ListEmployees(EmployeeAccountManager eam)
         {
-            foreach (KeyValuePair<string, BankEmployees> kvp in bemgt.dictionaryOfEmployees)
+            foreach (KeyValuePair<string, BankEmployees> kvp in eam.dictionaryOfEmployees)
             {
                 ConsoleIO.WriteLine($"{kvp.Value.bankemployee_id} {kvp.Value.bankemployee_name} "+ "\n Viewing all employees here");
 
             }
 
             var bankemployee_id = Console.ReadLine();
-            var user = dictionaryOfEmployees[bankemployee_id];
+            var user = eam.dictionaryOfEmployees[bankemployee_id];
 
-            dictionaryOfEmployees[bankemployee_id] = user;
+            eam.dictionaryOfEmployees[bankemployee_id] = user;
 
         }
     }

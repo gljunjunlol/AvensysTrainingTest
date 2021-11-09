@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class HandleAccountOpeningBankManager : HandleAccountOpeningEmployee, IHandleAccountOpeningBankManager
+    public class ManagerAccountManager : EmployeeAccountManager, IManagerAccountManager
     {
+
+        public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
+
+        public new void References()
+        {
+            dictionaryOfManagers = new Dictionary<string, BankManagers>();
+        }
         private readonly IConsoleIO ConsoleIO;
-        public HandleAccountOpeningBankManager()
+        public ManagerAccountManager()
         {
             ConsoleIO = new ConsoleIO();
         }
-        public HandleAccountOpeningBankManager(IConsoleIO consoleIO)
+        public ManagerAccountManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
-        }
-        public void DeleteUserAccount()
-        {
-
         }
 
         public new BankManagers CreateUserAccount()
@@ -50,7 +53,7 @@ namespace Gabriel_Bank_Management_System
 
 
 
-            User validatepw = new User();
+            CustomerAccountManager validatepw = new CustomerAccountManager();
             string bankmanager_pw;
             do
             {
@@ -72,7 +75,7 @@ namespace Gabriel_Bank_Management_System
             // return new customer
         }
 
-        public void UserLogin(BankManagersManagement bmgt)
+        public void UserLogin(ManagerAccountManager mam)
         {
             bool exit = false;
             int numberofTries = 4;
@@ -85,9 +88,9 @@ namespace Gabriel_Bank_Management_System
                 string bankmanager_id = ConsoleIO.ReadLine();
                 ConsoleIO.WriteLine("and pw");
                 string bankmanager_pw = ConsoleIO.ReadLine();
-                if (bmgt.dictionaryOfManagers.ContainsKey(bankmanager_id) && bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
+                if (mam.dictionaryOfManagers.ContainsKey(bankmanager_id) && mam.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
                 {
-                    ConsoleIO.WriteLine($"Congratulations, {bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_id} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_name} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { bmgt.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
+                    ConsoleIO.WriteLine($"Congratulations, {mam.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
                     
                     exit = true;
                 }

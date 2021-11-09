@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -17,10 +18,11 @@ namespace Gabriel_Bank_Management_System
         public string customer_pw { get; set; }
         public Guid cheque_book_number { get; set; }
         public string account_number { get; set; }
-
+        [JsonProperty(Required = Required.Default)]
         public decimal customerBalance { get; set; }
-
+        [JsonProperty(Required= Required.Default)]
         public bool customer_loan_applied { get; set; }
+        [JsonProperty(Required = Required.Default)]
         public decimal loan_amount { get; set; }
 
 

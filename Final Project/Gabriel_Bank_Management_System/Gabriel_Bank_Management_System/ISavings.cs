@@ -8,10 +8,10 @@ namespace Gabriel_Bank_Management_System
 {
     public interface ISavings
     {
-        void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
-        bool customerDeposit(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
-        void customerWithdrawl(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt);
-        void ViewBalance(CustomersManagement cmgt);
+        void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        bool customerDeposit(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        void customerWithdrawl(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        void ViewBalance(CustomerAccountManager cam);
         decimal DepositLimit();
         decimal TakeDepositInput();
     }

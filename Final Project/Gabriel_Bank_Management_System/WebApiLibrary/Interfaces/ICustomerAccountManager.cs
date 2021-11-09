@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Models;
 
-namespace Gabriel_Bank_Management_System
+namespace WebApiLibrary.Interfaces
 {
-    public interface IUser
+    interface ICustomerAccountManager
     {
-        void UserLogin(CustomersManagement cmgt, List<int> loginTries);
+        void UserLogin(CustomerAccountManager cam, List<int> loginTries);
         bool validatePassword(string customer_pw);
         bool validatePhone(string a);
         bool validateEmail(string a);
-        
-        void DeleteUserAccount();
         Customer CreateUserAccount();
     }
 }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Models;
 
-namespace Gabriel_Bank_Management_System
+namespace WebApiLibrary.Interfaces
 {
-    public interface IFileHandling
+    interface IFileHandling
     {
         void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
     }

@@ -19,7 +19,7 @@ namespace UserTest
         [Fact]
         public void TestCreateAccount()
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var customer_id = "1";
             var customer_name = "john";
             var customer_address = "23 hillview";
@@ -36,11 +36,11 @@ namespace UserTest
             mockConsoleIO.Setup(t => t.ReadLine()).Returns(customer_dob.ToString());
             mockConsoleIO.Setup(t => t.ReadLine()).Returns(customer_phone);
             mockConsoleIO.Setup(t => t.ReadLine()).Returns(customer_email);
-            User newuser = new User();
+            CustomerAccountManager newuser = new CustomerAccountManager();
             newuser.validatePhone(customer_phone);
             newuser.validateEmail(customer_email);
-            var user = new User(mockConsoleIO.Object);
-            User.AddUser(cmgt);
+            var user = new CustomerAccountManager(mockConsoleIO.Object);
+            CustomerAccountManager.AddUser(cmgt);
         }
         [Theory]
         [InlineData("1")]
@@ -48,15 +48,15 @@ namespace UserTest
         [InlineData("12345")]
         public void TestUserLoginAccount(string itemid)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
             List<int> loginTries = new List<int>();
-            User usr = new User(mockConsoleIO.Object);
+            CustomerAccountManager usr = new CustomerAccountManager(mockConsoleIO.Object);
             usr.UserLogin(mockCustomerManagement.Object, loginTries);
 
             mockConsoleIO.Verify(t => t.WriteLine($"Congratulations, {cmgt.dictionaryOfcustomers[itemid].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cmgt.dictionaryOfcustomers[itemid].customer_id} { cmgt.dictionaryOfcustomers[itemid].customer_name} { cmgt.dictionaryOfcustomers[itemid].customer_email} { cmgt.dictionaryOfcustomers[itemid].account_number}"), Times.Once);
@@ -67,50 +67,32 @@ namespace UserTest
         [InlineData("12345")]
         public void TestUserLoginAccountNotExist(string itemid)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             List<int> loginTries = new List<int>();
-            User usr = new User(mockConsoleIO.Object);
+            CustomerAccountManager usr = new CustomerAccountManager(mockConsoleIO.Object);
             usr.UserLogin(mockCustomerManagement.Object, loginTries);
 
             mockConsoleIO.Verify(t => t.WriteLine("Incorrect user or pw"), Times.Once);
 
             
         }
-        [Theory]
-        [InlineData("1", "george", "23 hillview", "13 oct 2020", "loan employee", "3", "George12345678$")]
-        public void TestCreateEmployeeAccount(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string employee_pw)
-        {
-            var mockConsoleIO = new Mock<IConsoleIO>();
-
-            //HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee(mockConsoleIO.Object);
-            //mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(bankemployee_id);
-            //mockConsoleIO.Setup(t => t.ReadLine()).Returns(bankemployee_name);
-            //mockConsoleIO.Setup(t => t.ReadLine()).Returns(bankemployee_address);
-            //mockConsoleIO.Setup(t => t.ReadLine()).Returns(bankemployee_designation);
-            //mockConsoleIO.Verify(t => t.WriteLine("Key in employee id"), Times.Once());
-            //mockConsoleIO.Verify(t => t.WriteLine("Key in customer name"), Times.Once());
-            //mockConsoleIO.Verify(t => t.WriteLine("Key in customer address"), Times.Once());
-            //mockConsoleIO.Verify(t => t.WriteLine("Key in user email format (e.g. john@mail.com)"), Times.Once());
-
-
-        }
         [Fact]
         public void TestCreateUserLoginText()
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
 
             var output = new StringWriter();
             Console.SetOut(output);
             List<int> loginTries = new List<int>();
             var input = new StringReader("12345");
             Console.SetIn(input);
-            User user = new User();
+            CustomerAccountManager user = new CustomerAccountManager();
             user.UserLogin(cmgt, loginTries);
             int numberofTries = 4;
             Assert.Equal(output.ToString(), string.Format("Enter login id " + " (" + "number of tries left " + numberofTries + " )"));
@@ -124,7 +106,7 @@ namespace UserTest
 
             var input = new StringReader("12345");
             Console.SetIn(input);
-            HandleAccountOpeningEmployee emp = new HandleAccountOpeningEmployee();
+            EmployeeAccountManager emp = new EmployeeAccountManager();
             emp.CreateUserAccount();
             Assert.Equal(output.ToString(), string.Format("Key in employee id"));
 
@@ -133,13 +115,13 @@ namespace UserTest
         public void TestCreateEmployeeUserLoginText()
         {
 
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             var output = new StringWriter();
             Console.SetOut(output);
             
             var input = new StringReader("12345");
             Console.SetIn(input);
-            HandleAccountOpeningEmployee emp1 = new HandleAccountOpeningEmployee();
+            EmployeeAccountManager emp1 = new EmployeeAccountManager();
             emp1.UserLogin(bemgt);
             int numberofTries = 4;
             Assert.Equal(output.ToString(), string.Format("Enter login id " + " (" + "number of tries left " + numberofTries + " )"));
@@ -155,9 +137,9 @@ namespace UserTest
 
             var input = new StringReader("12345");
             Console.SetIn(input);
-            HandleAccountOpeningBankManager emp1 = new HandleAccountOpeningBankManager();
-            BankManagersManagement bmgt = new BankManagersManagement();
-            emp1.UserLogin(bmgt);
+            ManagerAccountManager emp1 = new ManagerAccountManager();
+            BankManagersManager bmgt = new BankManagersManager();
+            emp1.UserLogin(emp1);
             int numberofTries = 4;
             Assert.Equal(output.ToString(), string.Format("Enter login id " + " (" + "number of tries left " + numberofTries + " )"));
 
@@ -170,7 +152,7 @@ namespace UserTest
 
             var input = new StringReader("12345");
             Console.SetIn(input);
-            HandleAccountOpeningBankManager emp = new HandleAccountOpeningBankManager();
+            ManagerAccountManager emp = new ManagerAccountManager();
             emp.CreateUserAccount();
             Assert.Equal(output.ToString(), string.Format("Key in manager id"));
 
@@ -183,7 +165,7 @@ namespace UserTest
 
             var input = new StringReader("12345");
             Console.SetIn(input);
-            User emp = new User();
+            CustomerAccountManager emp = new CustomerAccountManager();
             emp.CreateUserAccount();
             
 
@@ -200,7 +182,7 @@ namespace UserTest
             BankEmployees emp = new BankEmployees();
             BankEmployees emp2 = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
             mockdictionaryOfEmployees.Add("1", emp);
-            HandleAccountOpeningEmployee user = new HandleAccountOpeningEmployee(mockConsoleIO.Object);
+            EmployeeAccountManager user = new EmployeeAccountManager(mockConsoleIO.Object);
             foreach (var employee in mockdictionaryOfEmployees)
             {
                 Console.WriteLine("{0} > {1}", employee.Key, employee.Value);
@@ -214,10 +196,10 @@ namespace UserTest
         public void TestCreateManagerAccount()
         {
             var mockConsoleIO = new Mock<IConsoleIO>();
-            string manager_id = "1";
+            
 
 
-            HandleAccountOpeningBankManager user = new HandleAccountOpeningBankManager(mockConsoleIO.Object);
+            ManagerAccountManager user = new ManagerAccountManager(mockConsoleIO.Object);
 
 
             Dictionary<string, BankManagers> mockdictionaryOfManagers = new Dictionary<string, BankManagers>();
@@ -232,9 +214,8 @@ namespace UserTest
             }
 
         }
-        [Theory]
-        [InlineData("1")]
-        public void TestDeleteAccount(string name)
+        [Fact]
+        public void TestDeleteAccount()
         {
             string customer_id = "1";
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
@@ -243,8 +224,8 @@ namespace UserTest
             mockdictionaryOfcustomers.Add(customer_id, cust);
             mockdictionaryOfcustomers.Add("2", cust2);
             Assert.True(mockdictionaryOfcustomers.Count == 2);
-            BankEmployeesManagement emp = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManager emp = new BankEmployeesManager();
+            CustomersManager cmgt = new CustomersManager();
             mockdictionaryOfcustomers.Add("3", cust2);
             
             Assert.True(mockdictionaryOfcustomers.ContainsKey("1"));
@@ -261,9 +242,9 @@ namespace UserTest
         {
             var mockConsoleIO = new Mock<IConsoleIO>();                       
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();            
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();            
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
-            CustomersManagement cmgt = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt = new CustomersManager(mockConsoleIO.Object);
             cmgt.RemoveCustomers(mockCustomerManagement.Object);
             mockConsoleIO.Verify(t => t.WriteLine(itemid + " has been removed"), Times.Once);
         }
@@ -275,9 +256,9 @@ namespace UserTest
         {
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
-            CustomersManagement cmgt = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt = new CustomersManager(mockConsoleIO.Object);
             cmgt.RemoveCustomers(mockCustomerManagement.Object);
             mockConsoleIO.Verify(t => t.WriteLine("Account doesn't exist"), Times.Once);
         }
@@ -289,9 +270,9 @@ namespace UserTest
         [InlineData("JjLo1234##@!")]
         public void TestValidatepwIsTrue(string customer_pw)
         {
-            Mock<IUser> validate = new Mock<IUser>();
+            Mock<ICustomerAccountManager> validate = new Mock<ICustomerAccountManager>();
             validate.Setup(t => t.validatePassword(customer_pw));
-            User validatepw = new User(validate.Object);
+            CustomerAccountManager validatepw = new CustomerAccountManager(validate.Object);
             bool res = validatepw.validatePassword(customer_pw);
             Assert.True(res);
 
@@ -305,9 +286,9 @@ namespace UserTest
         [InlineData("jjjjjjjjj")]
         public void TestvallidatepwIsFalse(string customer_pw)
         {
-            Mock<IUser> validate = new Mock<IUser>();
+            Mock<ICustomerAccountManager> validate = new Mock<ICustomerAccountManager>();
             validate.Setup(t => t.validatePassword(customer_pw));
-            User validatepw = new User(validate.Object);
+            CustomerAccountManager validatepw = new CustomerAccountManager(validate.Object);
             bool res = validatepw.validatePassword(customer_pw);
             Assert.False(res);
         }
@@ -319,9 +300,9 @@ namespace UserTest
         [InlineData("george@something.com")]
         public void TestvallidateEmailIsTrue(string email)
         {
-            Mock<IUser> validate = new Mock<IUser>();
+            Mock<ICustomerAccountManager> validate = new Mock<ICustomerAccountManager>();
             validate.Setup(t => t.validateEmail(email));
-            User validatemail = new User(validate.Object);
+            CustomerAccountManager validatemail = new CustomerAccountManager(validate.Object);
             bool res = validatemail.validateEmail(email);
             Assert.True(res);
         }
@@ -330,7 +311,7 @@ namespace UserTest
         public void TestvallidateEmailIsFalse()
         {
             
-            User validatemail = new User();
+            CustomerAccountManager validatemail = new CustomerAccountManager();
 
 
 
@@ -344,9 +325,9 @@ namespace UserTest
         [InlineData("(222)111-4447")]
         public void TestvallidatePhoneIsTrue(string phone)
         {            
-            Mock<IUser> validate = new Mock<IUser>();
+            Mock<ICustomerAccountManager> validate = new Mock<ICustomerAccountManager>();
             validate.Setup(t => t.validatePhone(phone));
-            User validatephone = new User(validate.Object);
+            CustomerAccountManager validatephone = new CustomerAccountManager(validate.Object);
             bool res = validatephone.validatePhone(phone);
             Assert.True(res);
             Regex rgx = new Regex("[^A-Za-z0-9]");
@@ -359,9 +340,9 @@ namespace UserTest
         [InlineData("(222)111-4447")]
         public void TestvallidatePhoneIsFalse(string phone)
         {
-            Mock<IUser> validate = new Mock<IUser>();
+            Mock<ICustomerAccountManager> validate = new Mock<ICustomerAccountManager>();
             validate.Setup(t => t.validatePhone(phone));
-            User validatephone = new User();
+            CustomerAccountManager validatephone = new CustomerAccountManager();
             bool res = validatephone.validatePhone(phone);
             
             Assert.Throws< PhoneIncorrectException> (() => validatephone.validatePhone(""));
@@ -372,29 +353,21 @@ namespace UserTest
             Assert.NotNull(ex);
             Assert.IsType<PhoneIncorrectException>(ex);
         }
-        [Theory]
-        [InlineData("999")]
-        public void TestforDeleteaccount(string expectedId)
-        {
-            User newuser = new User();
-            newuser.DeleteUserAccount();
-        }
-        [Theory]
-        [InlineData("999")]
-        public void TestUserLogin(string customer_id)
+        [Fact]
+        public void TestUserLogin()
         {
             
         }
         [Fact]
         public void FileHandling()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             var new_user = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, false, 100);
             Assert.NotNull(new_user);
-            CustomersManagement cmgt1 = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             FileHandling fileHandling = new FileHandling();
-            fileHandling.ReadingandWritingcustomer(new_user.customer_id, cmgt1, bemgt, bmgt);
+            fileHandling.ReadingandWritingcustomer(new_user.customer_id, cmgt, bemgt, bmgt);
         }
         [Fact]
         public void FileHandlingTest()
@@ -447,15 +420,16 @@ namespace UserTest
         [Fact]
         public void testAddCustomer()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
             //Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, false, 100);
             //Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0);
             //mockdictionaryOfcustomers.Add(customer_id, cust);
             //mockdictionaryOfcustomers.Add("2", cust2);
-            CustomersManagement cmgt = new CustomersManagement();
-            cmgt.AddCustomer(cmgt, bemgt, bmgt);
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            cmgt1.AddCustomer(cmgt, bemgt, bmgt);
             var new_user = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, false, 100);
             Assert.NotNull(new_user);
             Assert.Contains(mockdictionaryOfcustomers, item => item.Key == new_user.customer_id);
@@ -475,10 +449,11 @@ namespace UserTest
         [Fact]
         public void testRemoveEmployee()
         {
-            CustomersManagement cmgt = new CustomersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
-            bemgt.AddBankEmployees(cmgt, bemgt, bmgt);
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            bemgt1.AddBankEmployees(cmgt, bemgt, bmgt);
             
 
 
@@ -486,11 +461,14 @@ namespace UserTest
         [Fact]
         public void testAddManager()
         {
-            CustomersManagement cmgt = new CustomersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
-            bmgt.AddBankManagers(cmgt, bemgt, bmgt);
-            cmgt.ListCustomers(cmgt);
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            BankManagersManager bmgt1 = new BankManagersManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            bmgt1.AddBankManagers(cmgt, bemgt, bmgt);
+            cmgt1.ListCustomers(cmgt);
 
         }
         [Theory]
@@ -499,14 +477,14 @@ namespace UserTest
         [InlineData("12345")]
         public void AddCustomers(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
-            CustomersManagement cmgt = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt = new CustomersManager(mockConsoleIO.Object);
             
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
@@ -521,14 +499,14 @@ namespace UserTest
         [InlineData("12345")]
         public void AddCustomersNotExist(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
-            CustomersManagement cmgt = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt = new CustomersManager(mockConsoleIO.Object);
 
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -539,9 +517,8 @@ namespace UserTest
 
             
         }
-        [Theory]
-        [InlineData("1")]
-        public void CheckUserNotNull(string customerid)
+        [Fact]
+        public void CheckUserNotNull()
         {
             
             
@@ -552,18 +529,18 @@ namespace UserTest
         [InlineData("12345")]
         public void TestViewAllCustomers(string name)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomersManager cmgt = new CustomersManager();
             string itemid = "1";
             string address = "23 road";
             DateTime dateofBirth = DateTime.Now;
             var mockConsoleIO = new Mock<IConsoleIO>();
             //mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(name);
             mockConsoleIO.SetupSequence(t => t.ReadLine());
-            var mockCustomersManagement = new Mock<CustomersManagement>();
+            var mockCustomersManagement = new Mock<CustomerAccountManager>();
 
             mockCustomersManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
-            CustomersManagement cmgt1 = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt1 = new CustomersManager(mockConsoleIO.Object);
             cmgt1.ListCustomers(mockCustomersManagement.Object);
 
             mockConsoleIO.Verify(t => t.WriteLine($"{itemid} {name} {address} {dateofBirth} " + "\n Listing all current customers in database: "), Times.Once);
@@ -571,11 +548,11 @@ namespace UserTest
         [Fact]
         public void IfInputMoreThan()
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomersManager cmgt1 = new CustomersManager();
             List<int> loginTries = new List<int>();
-            Mock<IUser> input = new Mock<IUser>();
-            User usr = new User();
-            usr.UserLogin(cmgt, loginTries);
+            Mock<ICustomerAccountManager> input = new Mock<ICustomerAccountManager>();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            cmgt.UserLogin(cmgt, loginTries);
             loginTries.Add(1);
 
             Assert.True(loginTries.Count > 3);
@@ -589,9 +566,9 @@ namespace UserTest
         public void TestLCustomerperformOperation(string input)
         {
             List<int> loginTries = new List<int>();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
@@ -600,7 +577,7 @@ namespace UserTest
 
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
-            CustomersManagement cmgt1 = new CustomersManagement(mockConsoleIO.Object);
+            CustomersManager cmgt1 = new CustomersManager(mockConsoleIO.Object);
             cmgt1.PerformOperation(cmgt, bemgt, bmgt, loginTries);
 
             mockConsoleIO.Verify(t => t.WriteLine("Screen 1 -- customers only" + "\n1. Create User" + "\n2: Remove User" + "\nSeek help from bank operator" + "\n3: Ask user to log in" + "\n4: Return to home screen"), Times.Once);
@@ -609,13 +586,13 @@ namespace UserTest
         [InlineData(null)]
         public void TestAddCustomers(Customer new_user)
         {
-            CustomersManagement cmgt = new CustomersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
             //Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0);
-            Mock<IUser> user = new Mock<IUser>();
+            Mock<ICustomerAccountManager> user = new Mock<ICustomerAccountManager>();
             user.Setup(t => t.CreateUserAccount()).Returns(new_user);
-            CustomersManagement cmgt1 = new CustomersManagement(user.Object);
+            CustomersManager cmgt1 = new CustomersManager(user.Object);
             bool res = cmgt1.AddCustomer(cmgt, bemgt, bmgt);
             Assert.True(res);
 
@@ -624,14 +601,14 @@ namespace UserTest
         [InlineData(null)]
         public void TestAddEmployees(BankEmployees new_user)
         {
-            Mock<IHandleAccountOpeningEmployee> user = new Mock<IHandleAccountOpeningEmployee>();
-            CustomersManagement cmgt = new CustomersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
+            Mock<IEmployeeAccountManager> user = new Mock<IEmployeeAccountManager>();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
             //Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0);
             
             user.Setup(t => t.CreateUserAccount()).Returns(new_user);
-            BankEmployeesManagement cmgt1 = new BankEmployeesManagement(user.Object);
+            BankEmployeesManager cmgt1 = new BankEmployeesManager(user.Object);
             bool res = cmgt1.AddBankEmployees(cmgt, bemgt, bmgt);
             Assert.True(res);
 
@@ -643,21 +620,24 @@ namespace UserTest
         [InlineData("4")]
         public void TestprogramperformOperation(string input)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            BankManagersManager bmgt1 = new BankManagersManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             Program p = new Program();
             List<int> loginTries = new List<int>();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             var mockProgram = new Mock<Program>();
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
             Program tk = new Program(mockConsoleIO.Object);
-            tk.performOperation(mockCustomerManagement.Object, bemgt, bmgt, loginTries, mockProgram.Object);
+            tk.performOperation(mockCustomerManagement.Object, cmgt1, bemgt, bemgt1, bmgt, bmgt1, loginTries, mockProgram.Object);
 
             mockConsoleIO.Verify(t => t.WriteLine("Starting Program.."), Times.Once);
         }

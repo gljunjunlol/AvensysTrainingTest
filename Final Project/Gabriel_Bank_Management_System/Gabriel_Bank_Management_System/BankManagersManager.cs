@@ -8,45 +8,39 @@ using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class BankManagersManagement : BankEmployeesManagement, IBankManagersManagement
+    public class BankManagersManager : BankEmployeesManager, IBankManagersManager
     {
         private readonly IConsoleIO ConsoleIO;
-        public new void References()
-        {
-            dictionaryOfManagers = new Dictionary<string, BankManagers>();
-        }
-        public BankManagersManagement(IConsoleIO consoleIO)
+        public BankManagersManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
         }
-        private IBankManagersManagement _bankingmanager;
+        
 
-        public BankManagersManagement()
+        public BankManagersManager()
         {
             ConsoleIO = new ConsoleIO();
         }
 
-        public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
-
-        public void AddBankManagers(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void AddBankManagers(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             //BankManagers mgr = new BankManagers("12345", "karen", "23 hillview", DateTime.Now, "loan manager", "3", "Karen12345678$");
-            //bmgt.dictionaryOfManagers.Add("12345", mgr);
-            HandleAccountOpeningBankManager newacc = new HandleAccountOpeningBankManager();
+            //mam.dictionaryOfManagers.Add("12345", mgr);
+            ManagerAccountManager newacc = new ManagerAccountManager();
             var new_user = newacc.CreateUserAccount();
             if (new_user != null)
             {
 
-                if (bmgt.dictionaryOfManagers.ContainsKey(new_user.bankmanager_id))
+                if (mam.dictionaryOfManagers.ContainsKey(new_user.bankmanager_id))
                 {
                     ConsoleIO.WriteLine("Account already exists");
                 }
                 else
                 {
-                    bmgt.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+                    mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
                     // first time writing customer details to file
                     FileHandling fileHandling = new FileHandling();
-                    fileHandling.ReadingandWritingcustomer(new_user.bankmanager_id, cmgt, bemgt, bmgt);
+                    fileHandling.ReadingandWritingcustomer(new_user.bankmanager_id, cam, eam, mam);
                 }
             }
             else
@@ -55,35 +49,35 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public decimal TotalLoanAmount(CustomersManagement cmgt)
+        public decimal TotalLoanAmount(CustomerAccountManager cam)
         {
 
-            var totalloanamount = cmgt.dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
+            var totalloanamount = cam.dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
 
             ConsoleIO.WriteLine("Total outstanding loan taken:  " + totalloanamount.ToString("F"));
             return totalloanamount;
 
         }
-        public decimal TotalSavingsAccount(CustomersManagement cmgt)
+        public decimal TotalSavingsAccount(CustomerAccountManager cam)
         {
 
-            var totalsavingsofCustomers = cmgt.dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
+            var totalsavingsofCustomers = cam.dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
             ConsoleIO.WriteLine("Total savings of the bank " + totalsavingsofCustomers.ToString("F"));
             return totalsavingsofCustomers;
         }
-        public void ViewManagers(BankManagersManagement bmgt)
+        public void ViewManagers(ManagerAccountManager mam)
         {
-            foreach (KeyValuePair<string, BankManagers> kvp in bmgt.dictionaryOfManagers)
+            foreach (KeyValuePair<string, BankManagers> kvp in mam.dictionaryOfManagers)
             {
                 ConsoleIO.WriteLine($"{kvp.Value.bankmanager_id} {kvp.Value.bankmanager_name} " + "\n Viewing all managers here");
 
             }
             var bankmanager_id = ConsoleIO.ReadLine();
-            var user = dictionaryOfManagers[bankmanager_id];
+            var user = mam.dictionaryOfManagers[bankmanager_id];
 
-            dictionaryOfManagers[bankmanager_id] = user;
+            mam.dictionaryOfManagers[bankmanager_id] = user;
         }
-        public void performOperationAdvanced(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void performOperationAdvanced(CustomerAccountManager cam, CustomersManager cam1, EmployeeAccountManager eam, BankEmployeesManager eam1, ManagerAccountManager mam, BankManagersManager mam1)
         {
             bool exit = false;
             while (!exit)
@@ -98,19 +92,19 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            bmgt.AddBankManagers(cmgt, bemgt, bmgt);
+                            AddBankManagers(cam, eam, mam);
                             break;
                         }
                     case "2":
                         {
-                            ViewManagers(bmgt);
+                            ViewManagers(mam);
                             break;
                         }
                     case "3":
                         {
-                            HandleAccountOpeningBankManager mgr = new HandleAccountOpeningBankManager();
-                            mgr.UserLogin(bmgt);
-                            performOperationAdvancedInternal(cmgt, bemgt, bmgt);
+                            ManagerAccountManager mgr = new ManagerAccountManager();
+                            mgr.UserLogin(mam);
+                            performOperationAdvancedInternal(cam, cam1, eam, eam1, mam, mam1);
                             break;
                         }
                     case "4":
@@ -130,7 +124,7 @@ namespace Gabriel_Bank_Management_System
                  
 
         }
-        public void performOperationAdvancedInternal(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void performOperationAdvancedInternal(CustomerAccountManager cam, CustomersManager cam1, EmployeeAccountManager eam, BankEmployeesManager eam1, ManagerAccountManager mam, BankManagersManager mam1)
         {
             bool exit = false;
             while (!exit)
@@ -144,17 +138,17 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            bemgt.SearchCustomerByID(cmgt);
+                            eam1.SearchCustomerByID(cam);
                             break;
                         }
                     case "2":
                         {
-                            bemgt.SearchCustomerByName(cmgt);
+                            eam1.SearchCustomerByName(cam);
                             break;
                         }
                     case "3":
                         {
-                            bmgt.performOperationAdvancedInternal1(cmgt, bemgt, bmgt);
+                            mam1.performOperationAdvancedInternal1(cam, cam1, eam, eam1, mam, mam1);
                             break;
                         }
                     case "4":
@@ -170,7 +164,7 @@ namespace Gabriel_Bank_Management_System
 
             }
         }
-        public void performOperationAdvancedInternal1(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void performOperationAdvancedInternal1(CustomerAccountManager cam, CustomersManager cam1, EmployeeAccountManager eam, BankEmployeesManager eam1, ManagerAccountManager mam, BankManagersManager mam1)
         {
             bool exit = false;
             while (!exit)
@@ -184,17 +178,17 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            cmgt.ListCustomers(cmgt);
+                            cam1.ListCustomers(cam);
                             break;
                         }
                     case "2":
                         {
-                            TotalLoanAmount(cmgt);
+                            TotalLoanAmount(cam);
                             break;
                         }
                     case "3":
                         {
-                            TotalSavingsAccount(cmgt);
+                            TotalSavingsAccount(cam);
                             break;
                         }
                     case "4":

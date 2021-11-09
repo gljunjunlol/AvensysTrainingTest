@@ -26,21 +26,21 @@ namespace BankManagerTest
 
         public void TestViewCustomerTotalLoanAmt()
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
             Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, true, 0);
             
             
             
             decimal expected = 0;
-            Mock<IBankManagersManagement> bankingmanagermock = new Mock<IBankManagersManagement>();
-            BankManagersManagement bankManagerTest = new BankManagersManagement();
+            Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
+            BankManagersManager bankManagerTest = new BankManagersManager();
             bankingmanagermock.Setup(t => t.TotalLoanAmount(cmgt));
             bankingmanagermock.Verify(t => t.TotalLoanAmount(cmgt), Times.Once);
             decimal res = bankManagerTest.TotalLoanAmount(cmgt);
             Assert.Equal(expected, res);
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             string customer_id = "1";
             FileHandling fh = new FileHandling();
             fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
@@ -49,11 +49,11 @@ namespace BankManagerTest
         [InlineData(3000)]
         public void TestViewCustomerTotalLoanAmt1(decimal totalloanamount)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
+            BankManagersManager bmgt = new BankManagersManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalloanamount.ToString());
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -66,11 +66,11 @@ namespace BankManagerTest
         [InlineData(3000)]
         public void TestViewCustomerTotalSavingsAmt1(decimal totalsavingsofCustomers)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
+            BankManagersManager bmgt = new BankManagersManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalsavingsofCustomers.ToString());
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -86,9 +86,9 @@ namespace BankManagerTest
             Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, true, 0);
             Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, true, 0);
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
-            Mock<IBankManagersManagement> bankingmanagermock = new Mock<IBankManagersManagement>();
-            BankManagersManagement bankManagerTest = new BankManagersManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
+            BankManagersManager bankManagerTest = new BankManagersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             bankingmanagermock.Setup(t => t.TotalSavingsAccount(cmgt));
             mockdictionaryOfcustomers.Add("1", cust);
             mockdictionaryOfcustomers.Add("2", cust);
@@ -110,7 +110,7 @@ namespace BankManagerTest
         public void TestperformOperationAdvanced()
         {
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             decimal expected = 0;
             Customer cust = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 100);
             Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 100);
@@ -119,10 +119,10 @@ namespace BankManagerTest
 
 
             mockdictionaryOfcustomers.Add("1", cust);
-            Mock<IBankManagersManagement> bankingmanagermock = new Mock<IBankManagersManagement>();
+            Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
             bankingmanagermock.Setup(t => t.TotalLoanAmount(cmgt));
             
-            BankManagersManagement bankManagerTest = new BankManagersManagement();
+            BankManagersManager bankManagerTest = new BankManagersManager();
             decimal res = bankManagerTest.TotalLoanAmount(cmgt);
             Assert.Equal(expected, actual);
 
@@ -133,15 +133,13 @@ namespace BankManagerTest
         [Fact]
         public void TestViewManagers()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            bmgt.ViewManagers(bmgt);
+            BankManagersManager bmgt1 = new BankManagersManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            bmgt1.ViewManagers(bmgt);
         }
         [Fact]
         public void TestDeleteManagers()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            HandleAccountOpeningBankManager handle = new HandleAccountOpeningBankManager();
-            handle.DeleteUserAccount();
         }
         [Theory]
         [InlineData("1")]
@@ -149,15 +147,15 @@ namespace BankManagerTest
         [InlineData("12345")]
         public void TestUserBankManagerLogin(string empid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(empid);
 
-            var mockBankManagersManagement = new Mock<BankManagersManagement>();
+            var mockBankManagersManagement = new Mock<ManagerAccountManager>();
 
             mockBankManagersManagement.Setup(x => x.dictionaryOfManagers).Returns(new Dictionary<string, BankManagers>() { { empid, new BankManagers() { bankmanager_id = empid } } });
 
-            HandleAccountOpeningBankManager usr = new HandleAccountOpeningBankManager(mockConsoleIO.Object);
+            ManagerAccountManager usr = new ManagerAccountManager(mockConsoleIO.Object);
             usr.UserLogin(mockBankManagersManagement.Object);
 
             mockConsoleIO.Verify(t => t.WriteLine($"Congratulations, {bmgt.dictionaryOfManagers[empid].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bmgt.dictionaryOfManagers[empid].bankmanager_id} { bmgt.dictionaryOfManagers[empid].bankmanager_name} { bmgt.dictionaryOfManagers[empid].bankmanager_designation} { bmgt.dictionaryOfManagers[empid].bankmanager_yearsOfService}"), Times.Once);
@@ -168,15 +166,15 @@ namespace BankManagerTest
         [InlineData("12345")]
         public void TestUserBankManagerLoginNotExists(string empid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(empid);
 
-            var mockBankManagersManagement = new Mock<BankManagersManagement>();
+            var mockBankManagersManagement = new Mock<ManagerAccountManager>();
 
             mockBankManagersManagement.Setup(x => x.dictionaryOfManagers).Returns(new Dictionary<string, BankManagers>());
 
-            HandleAccountOpeningBankManager usr = new HandleAccountOpeningBankManager(mockConsoleIO.Object);
+            ManagerAccountManager usr = new ManagerAccountManager(mockConsoleIO.Object);
             usr.UserLogin(mockBankManagersManagement.Object);
 
             mockConsoleIO.Verify(t => t.WriteLine("Incorrect user or pw"), Times.Once);
@@ -187,16 +185,16 @@ namespace BankManagerTest
         [InlineData("12345")]
         public void TestListAllManagers(string name)
         {
-            BankManagersManagement bemgt = new BankManagersManagement();
+            ManagerAccountManager bemgt = new ManagerAccountManager();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             //mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(name);
             mockConsoleIO.SetupSequence(t => t.ReadLine());
-            var mockBankManagerManagement = new Mock<BankManagersManagement>();
+            var mockBankManagerManagement = new Mock<ManagerAccountManager>();
 
             mockBankManagerManagement.Setup(x => x.dictionaryOfManagers).Returns(new Dictionary<string, BankManagers>() { { itemid, new BankManagers() { bankmanager_id = itemid } } });
 
-            BankManagersManagement bemp = new BankManagersManagement(mockConsoleIO.Object);
+            BankManagersManager bemp = new BankManagersManager(mockConsoleIO.Object);
             bemp.ViewManagers(mockBankManagerManagement.Object);
 
             mockConsoleIO.Verify(t => t.WriteLine($"{itemid} {name} " + "\n Viewing all managers here"), Times.Once);
@@ -208,9 +206,12 @@ namespace BankManagerTest
         [InlineData("4")]
         public void TestManagerPerformOperation(string input)
         {
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            BankManagersManagement bmgt = new BankManagersManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            BankManagersManager bmgt2 = new BankManagersManager();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
@@ -219,8 +220,8 @@ namespace BankManagerTest
 
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
-            BankManagersManagement bmgt1 = new BankManagersManagement(mockConsoleIO.Object);
-            bmgt1.performOperationAdvanced(cmgt, bemgt, bmgt);
+            BankManagersManager bmgt1 = new BankManagersManager(mockConsoleIO.Object);
+            bmgt1.performOperationAdvanced(cmgt, cmgt1, bemgt, bemgt1, bmgt, bmgt2);
 
             mockConsoleIO.Verify(t => t.WriteLine("Select Option (Involving Manager access only)"), Times.Once);
         }
@@ -231,15 +232,18 @@ namespace BankManagerTest
         [InlineData("4")]
         public void TestManagerPerformOperationInternal(string input)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            BankManagersManager bmgt2 = new BankManagersManager();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
 
-            BankManagersManagement bmgt1 = new BankManagersManagement(mockConsoleIO.Object);
-            bmgt1.performOperationAdvancedInternal(cmgt, bemgt, bmgt);
+            BankManagersManager bmgt1 = new BankManagersManager(mockConsoleIO.Object);
+            bmgt1.performOperationAdvancedInternal(cmgt, cmgt1, bemgt, bemgt1, bmgt, bmgt2);
 
             mockConsoleIO.Verify(t => t.WriteLine("1: Find customer by ID: "), Times.Once);
         }
@@ -250,9 +254,12 @@ namespace BankManagerTest
         [InlineData("4")]
         public void TestManagerPerformOperationInternal1(string input)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            BankEmployeesManager bemgt1 = new BankEmployeesManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomersManager cmgt1 = new CustomersManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
+            BankManagersManager bmgt2 = new BankManagersManager();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
@@ -261,8 +268,8 @@ namespace BankManagerTest
 
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
-            BankManagersManagement bmgt1 = new BankManagersManagement(mockConsoleIO.Object);
-            bmgt1.performOperationAdvancedInternal1(cmgt, bemgt, bmgt);
+            BankManagersManager bmgt1 = new BankManagersManager(mockConsoleIO.Object);
+            bmgt1.performOperationAdvancedInternal1(cmgt, cmgt1, bemgt, bemgt1, bmgt, bmgt2);
 
             mockConsoleIO.Verify(t => t.WriteLine("1. List of total customers / 1: View all users (customers)"), Times.Once);
         }

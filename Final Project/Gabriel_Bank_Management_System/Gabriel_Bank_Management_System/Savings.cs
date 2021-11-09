@@ -27,7 +27,7 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = consoleIO;
         }
-        public void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             bool exit = false;
             while (!exit)
@@ -40,17 +40,17 @@ namespace Gabriel_Bank_Management_System
                     {
                         case "1":
                             {
-                                customerWithdrawl(cmgt, bemgt, bmgt);
+                                customerWithdrawl(cam, eam, mam);
                                 break;
                             }
                         case "2":
                             {
-                                customerDeposit(cmgt, bemgt, bmgt);
+                                customerDeposit(cam, eam, mam);
                                 break;
                             }
                         case "3":
                             {
-                                ViewBalance(cmgt);
+                                ViewBalance(cam);
                                 break;
                             }
                         case "4":
@@ -80,65 +80,37 @@ namespace Gabriel_Bank_Management_System
             decimal depositAmount = decimal.Parse(depositAmountKeyedInByCustomer);
             return depositAmount;
         }
-        public bool customerDeposit(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public bool customerDeposit(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             
             ConsoleIO.WriteLine("Key in customer id");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 
 
                 decimal depositAmount = TakeDepositInput();
                 if (depositAmount > DepositLimit())
                 {
-                    var guid1 = Guid.NewGuid(); cmgt.dictionaryOfcustomers[customer_id].cheque_book_number = guid1; cmgt.dictionaryOfcustomers[customer_id].customerBalance = cmgt.dictionaryOfcustomers[customer_id].customerBalance + depositAmount;
+                    var guid1 = Guid.NewGuid(); cam.dictionaryOfcustomers[customer_id].cheque_book_number = guid1; cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmount;
 
-
-                    ConsoleIO.WriteLine("Amount is larger than 5000, we will process the cheque\n"); ConsoleIO.WriteLine(cmgt.dictionaryOfcustomers[customer_id].ToString() + "\n"); ConsoleIO.WriteLine(cmgt.dictionaryOfcustomers[customer_id].customer_name.ToString()); ConsoleIO.WriteLine(cmgt.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
-
-
-
-                    //// writing customer details to file (cheque deposit)
-                    //string text1 = "ID " + customer_id + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                    //FileStream fs1 = new FileStream(text1, FileMode.Append, FileAccess.Write); StreamWriter streamWriter1 = new StreamWriter(fs1);
-
-
-                    //streamWriter1.WriteLine($"Dear Customer, your cheque deposit is: " + depositAmount + $"\nDear Customer, cheque number issued is: " + customer_id + "," + cmgt.dictionaryOfcustomers[customer_id].customer_name + ", have issued cheque " + guid1 + $"\nDear Customer, check your customer information is matched to cheque number with cheque number details : " + "{0} > {1} > {2}", cmgt.dictionaryOfcustomers[customer_id], cmgt.dictionaryOfcustomers[customer_id].customer_name, cmgt.dictionaryOfcustomers[customer_id].cheque_book_number + $"\nDear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-                    //streamWriter1.Flush(); streamWriter1.Close(); fs1.Close();
-
-
-                    ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-
+                    ConsoleIO.WriteLine("Amount is larger than 5000, we will process the cheque\n"); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].ToString() + "\n"); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customer_name.ToString()); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
+                    ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
                     FileHandling fh = new FileHandling();
-                    fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                    fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
                     return true;
-
-
-
-                    
-
 
                 }
                 if (depositAmount <= DepositLimit())
                 {
                     Customer cust = new Customer();
-                    cust.deposit(depositAmount); cmgt.dictionaryOfcustomers[customer_id].customerBalance = cmgt.dictionaryOfcustomers[customer_id].customerBalance + depositAmount;
+                    cust.deposit(depositAmount); cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmount;
 
 
-                    //// writing customer details to file (deposit)
-                    //string text = "ID " + customer_id + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                    //FileStream fs = new FileStream(text, FileMode.Append, FileAccess.Write);
-                    //StreamWriter streamWriter = new StreamWriter(fs);
-
-                    //streamWriter.WriteLine($"Dear Customer, your deposit is: " + depositAmount + $"\nDear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-                    //streamWriter.Flush(); streamWriter.Close(); fs.Close();
-
-
-                    ConsoleIO.WriteLine($"Dear Customer, your deposit is: " + depositAmount + " and current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
+                    ConsoleIO.WriteLine($"Dear Customer, your deposit is: " + depositAmount.ToString("F") + " and current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
                     FileHandling fh = new FileHandling();
-                    fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                    fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
                     return true;
                 }
             }
@@ -149,78 +121,58 @@ namespace Gabriel_Bank_Management_System
             }
             return false;
         }
-        public void customerWithdrawl(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void customerWithdrawl(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             ConsoleIO.WriteLine("Key in customer id");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 ConsoleIO.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal");
 
-                decimal withdrawAmountKeyedInByCustomer = Int32.Parse(ConsoleIO.ReadLine());
+                decimal withdrawAmountKeyedInByCustomer = decimal.Parse(ConsoleIO.ReadLine());
                 if (withdrawAmountKeyedInByCustomer <= 0)
                 {
                     ConsoleIO.WriteLine("withdrawal amount should be more than 0");
                 }
                 else
                 {
-                    if (cmgt.dictionaryOfcustomers[customer_id].customerBalance < withdrawAmountKeyedInByCustomer)
+                    if (cam.dictionaryOfcustomers[customer_id].customerBalance < withdrawAmountKeyedInByCustomer)
                     {
-                        ConsoleIO.WriteLine("Your balance does not meet the requirement, insufficient funds in balance " + $"\nDear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-                        //Console.WriteLine("Bank overdraft of " + Math.Abs(Customer.customerBalance));
+                        ConsoleIO.WriteLine("Your balance does not meet the requirement, insufficient funds in balance " + $"\nDear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance);
                     }
-                    if (cmgt.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer <= DepositLimit())
+                    if (cam.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer <= DepositLimit())
                     {
-                        cmgt.dictionaryOfcustomers[customer_id].customerBalance = cmgt.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
-                        //Console.WriteLine(cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-
-                        //// writing customer details to file (withdrawal)
-                        //string text = "ID " + customer_id + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                        //FileStream fs = new FileStream(text, FileMode.Append, FileAccess.Write); StreamWriter streamWriter = new StreamWriter(fs);
+                        cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
 
 
-                        ConsoleIO.WriteLine($"Dear Customer, you withdrawed: " + withdrawAmountKeyedInByCustomer);
-
-                        //streamWriter.WriteLine($"Dear Customer, you withdrawed: " + withdrawAmountKeyedInByCustomer);
+                        ConsoleIO.WriteLine($"Dear Customer, you withdrawed: " + withdrawAmountKeyedInByCustomer.ToString("F"));
                         ConsoleIO.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
-                        ConsoleIO.WriteLine(cmgt.dictionaryOfcustomers[customer_id].customerBalance.ToString());
-                        //streamWriter.WriteLine($"Dear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
+                        ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
-
-                        //streamWriter.Flush(); streamWriter.Close(); fs.Close(); ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
                         FileHandling fh = new FileHandling();
-                        fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                        fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
 
                     }
-                    if (cmgt.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer > DepositLimit())
+                    if (cam.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer > DepositLimit())
                     {
 
-                        cmgt.dictionaryOfcustomers[customer_id].customerBalance = cmgt.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
+                        cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
                         ConsoleIO.WriteLine("Amount is larger than 5000, we will search for the cheque");
 
-                        var guid2 = Guid.NewGuid(); cmgt.dictionaryOfcustomers[customer_id].cheque_book_number = guid2;
+                        var guid2 = Guid.NewGuid(); cam.dictionaryOfcustomers[customer_id].cheque_book_number = guid2;
 
-                        Console.WriteLine("{0} > {1} > {2}", cmgt.dictionaryOfcustomers[customer_id], cmgt.dictionaryOfcustomers[customer_id].customer_name, cmgt.dictionaryOfcustomers[customer_id].cheque_book_number);
-
-                        // writing customer details to file (cheque withdrawal)
-                        //string text1 = "ID " + customer_id + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name + ".txt";
-                        //FileStream fs1 = new FileStream(text1, FileMode.Append, FileAccess.Write);
-                        //StreamWriter streamWriter1 = new StreamWriter(fs1);
-
-                        //streamWriter1.WriteLine($"Dear Customer, your cheque withdraw amount is: " + withdrawAmountKeyedInByCustomer + $"\nDear Customer, cheque number used is: " + customer_id + "," + cmgt.dictionaryOfcustomers[customer_id].customer_name + ", have used cheque " + guid2 + $"\nDear Customer, check your customer information is matched to cheque number with cheque number details : " + "{0} > {1} > {2}", cmgt.dictionaryOfcustomers[customer_id], cmgt.dictionaryOfcustomers[customer_id].customer_name, cmgt.dictionaryOfcustomers[customer_id].cheque_book_number);
+                        Console.WriteLine("{0} > {1} > {2}", cam.dictionaryOfcustomers[customer_id], cam.dictionaryOfcustomers[customer_id].customer_name, cam.dictionaryOfcustomers[customer_id].cheque_book_number);
 
                         ConsoleIO.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
+                        ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
-                        ConsoleIO.WriteLine(cmgt.dictionaryOfcustomers[customer_id].customerBalance.ToString());
-                        //streamWriter1.WriteLine($"Dear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
-                        //streamWriter1.Flush(); streamWriter1.Close(); fs1.Close();
                         FileHandling fh = new FileHandling();
-                        fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                        fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
 
 
-                        ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
+                        ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
                     }
                 }
             }
@@ -229,13 +181,13 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("Account id not found");
             }
         }
-        public void ViewBalance(CustomersManagement cmgt)
+        public void ViewBalance(CustomerAccountManager cam)
         {
             ConsoleIO.WriteLine("Key in customer id");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                ConsoleIO.WriteLine("Customer balance is " + cmgt.dictionaryOfcustomers[customer_id].customerBalance);
+                ConsoleIO.WriteLine("Customer balance is " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
             }
         }
         public static decimal AddSavings(decimal x, decimal y)

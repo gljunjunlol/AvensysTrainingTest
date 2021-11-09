@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    class UserCreation
+    class BankViewModel
     {
     }
 }

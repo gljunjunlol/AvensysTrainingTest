@@ -20,9 +20,9 @@ namespace TakingLoan_Test
             _p = new Program();
         }
         [Theory]
-        [InlineData(1000, 5, 3)]
+        [InlineData(1000)]
         
-        public void TestCalculateLoanAmt(decimal amt, decimal interest, int month)
+        public void TestCalculateLoanAmt(decimal amt)
         {
             TakingLoan taking = new TakingLoan();
             taking.CalculateLoanAmount(1000, 12, 5);
@@ -45,7 +45,7 @@ namespace TakingLoan_Test
             Console.SetIn(input);
             
             
-            int numberofTries = 4;
+            
             Assert.Equal(output.ToString(), string.Format("Key in customer id"));
             
         }
@@ -55,12 +55,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestLoanAccount(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.LoanAccount(mockCustomerManagement.Object, bemgt, bmgt);
@@ -72,12 +72,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestLoanAccountNotExists(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.LoanAccount(mockCustomerManagement.Object, bemgt, bmgt);
@@ -89,10 +89,10 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestViewLoanAccount(string itemid)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.ViewLoan(mockCustomerManagement.Object);
@@ -104,10 +104,10 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestViewLoanAccountNotExists(string itemid)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.ViewLoan(mockCustomerManagement.Object);
@@ -119,12 +119,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestAddLoanAccount(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.AddLoan(mockCustomerManagement.Object, bemgt, bmgt);
@@ -136,12 +136,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestAddLoanAccountNotExists(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.AddLoan(mockCustomerManagement.Object, bemgt, bmgt);
@@ -153,12 +153,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestRepayLoanAccount(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.RepayLoan(mockCustomerManagement.Object, bemgt, bmgt);
@@ -170,12 +170,12 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestRepayLoanAccountNotExist(string itemid)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.RepayLoan(mockCustomerManagement.Object, bemgt, bmgt);
@@ -218,9 +218,9 @@ namespace TakingLoan_Test
                 {
                     try
                     {
-                        BankManagersManagement bmgt = new BankManagersManagement();
-                        BankEmployeesManagement bemgt = new BankEmployeesManagement();
-                        CustomersManagement cmgt = new CustomersManagement();
+                        ManagerAccountManager bmgt = new ManagerAccountManager();
+                        EmployeeAccountManager bemgt = new EmployeeAccountManager();
+                        CustomerAccountManager cmgt = new CustomerAccountManager();
                         var output = new StringWriter();
                         Console.SetOut(output);
 
@@ -228,7 +228,7 @@ namespace TakingLoan_Test
                         Console.SetIn(input);
                         TakingLoan taking = new TakingLoan();
                         taking.LoanAccount(cmgt, bemgt, bmgt);
-                        int numberofTries = 4;
+                        
                         Assert.Equal(output.ToString(), string.Format("Key in customer id"));
                         Assert.True(mockdictionaryOfcustomers[customer_id].customer_loan_applied == true);
                         //Assert.Equal(CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = true, true);
@@ -275,7 +275,7 @@ namespace TakingLoan_Test
         [Fact]
         public void TestViewLoan()
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var output = new StringWriter();
             Console.SetOut(output);
 
@@ -283,15 +283,15 @@ namespace TakingLoan_Test
             Console.SetIn(input);
             TakingLoan taking = new TakingLoan();
             taking.ViewLoan(cmgt);
-            int numberofTries = 4;
+            
             Assert.Equal(output.ToString(), string.Format("Enter customer ID\r\nAccount doesn't exist in our database record\r\n"));
         }
         [Fact]
         public void TestAddLoan()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var output = new StringWriter();
             Console.SetOut(output);
 
@@ -299,15 +299,15 @@ namespace TakingLoan_Test
             Console.SetIn(input);
             TakingLoan taking = new TakingLoan();
             taking.AddLoan(cmgt, bemgt, bmgt);
-            int numberofTries = 4;
+            
             Assert.Equal(output.ToString(), string.Format("Enter customer ID\r\n"));
         }
         [Fact]
         public void TestRepaylLoan()
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             //TakingLoan takingloantest = new TakingLoan();
             //takingloantest.RepayLoan();
 
@@ -402,10 +402,10 @@ namespace TakingLoan_Test
         [InlineData("12345")]
         public void TestCalculateLoan(string itemid)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             decimal amount = 1000;
@@ -419,14 +419,14 @@ namespace TakingLoan_Test
         [InlineData(false)]
         public void TestRepayLoanBool(bool loan_applied)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_loan_applied = loan_applied, customer_id = itemid } } });
 
@@ -440,14 +440,14 @@ namespace TakingLoan_Test
         [InlineData(false)]
         public void TestLoanAccountBool(bool loan_applied)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_loan_applied = loan_applied, customer_id = itemid } } });
 
@@ -461,12 +461,12 @@ namespace TakingLoan_Test
         [InlineData(false)]
         public void TestViewLoanAccountBool(bool loan_applied)
         {
-            CustomersManagement cmgt = new CustomersManagement();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_loan_applied = loan_applied, customer_id = itemid } } });
 
@@ -480,14 +480,14 @@ namespace TakingLoan_Test
         [InlineData(false)]
         public void TestAddLoanAccountBool(bool loan_applied)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
-            CustomersManagement cmgt = new CustomersManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
+            CustomerAccountManager cmgt = new CustomerAccountManager();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_loan_applied = loan_applied, customer_id = itemid } } });
 
@@ -504,14 +504,14 @@ namespace TakingLoan_Test
         [InlineData("5")]
         public void TestLoanperformOperation(string input)
         {
-            BankManagersManagement bmgt = new BankManagersManagement();
-            BankEmployeesManagement bemgt = new BankEmployeesManagement();
+            ManagerAccountManager bmgt = new ManagerAccountManager();
+            EmployeeAccountManager bemgt = new EmployeeAccountManager();
             TakingLoan tk1 = new TakingLoan();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
 
-            var mockCustomerManagement = new Mock<CustomersManagement>();
+            var mockCustomerManagement = new Mock<CustomerAccountManager>();
 
             //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 

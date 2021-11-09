@@ -8,28 +8,27 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class User : IUser
+    public class CustomerAccountManager : ICustomerAccountManager
     {
+        public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
         private readonly IConsoleIO ConsoleIO;
-        private IUser _user;
-        public User(IConsoleIO consoleIO)
+        private ICustomerAccountManager _user;
+        public void References()
+        {
+            dictionaryOfcustomers = new Dictionary<string, Customer>();
+        }
+        public CustomerAccountManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
         }
         
-        public User()
+        public CustomerAccountManager()
         {
             ConsoleIO = new ConsoleIO();
         }
-        public User(IUser user)
+        public CustomerAccountManager(ICustomerAccountManager user)
         {
             _user = user;
-        }
-        public void DeleteUserAccount()
-        {
-            
-
-
         }
         public Customer CreateUserAccount()
         {
@@ -79,7 +78,7 @@ namespace Gabriel_Bank_Management_System
             return new_user;
         }
         
-        public void UserLogin(CustomersManagement cmgt, List<int> loginTries)
+        public void UserLogin(CustomerAccountManager cam, List<int> loginTries)
         {
             bool exit = false;
             int numberofTries = 4;
@@ -97,9 +96,9 @@ namespace Gabriel_Bank_Management_System
                 
                 //dictionary.References();
                 
-                if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id) && cmgt.dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
+                if (cam.dictionaryOfcustomers.ContainsKey(customer_id) && cam.dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
                 {
-                    ConsoleIO.WriteLine($"Congratulations, {cmgt.dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cmgt.dictionaryOfcustomers[customer_id].customer_id} { cmgt.dictionaryOfcustomers[customer_id].customer_name} { cmgt.dictionaryOfcustomers[customer_id].customer_email} { cmgt.dictionaryOfcustomers[customer_id].account_number}");
+                    ConsoleIO.WriteLine($"Congratulations, {cam.dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].account_number}");
                     exit = true;
                 }
                 else
@@ -213,12 +212,12 @@ namespace Gabriel_Bank_Management_System
             }
             
         }
-        public static void AddUser(CustomersManagement cmgt)
+        public static void AddUser(CustomerAccountManager cam)
         {
             Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "", 0, Guid.Empty, false, 100);
             Customer cust2 = new Customer("2", "band", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "", 0);
-            cmgt.dictionaryOfcustomers.Add("12345", cust);
-            cmgt.dictionaryOfcustomers.Add("12346", cust2);
+            cam.dictionaryOfcustomers.Add("12345", cust);
+            cam.dictionaryOfcustomers.Add("12346", cust2);
         }
     }
 }

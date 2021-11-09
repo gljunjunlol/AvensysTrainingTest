@@ -7,15 +7,20 @@ using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System
 {
-    public class HandleAccountOpeningEmployee : IHandleAccountOpeningEmployee
+    public class EmployeeAccountManager : IEmployeeAccountManager
     {
+        public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
         private readonly IConsoleIO ConsoleIO;
-        private IHandleAccountOpeningEmployee _user;
-        public HandleAccountOpeningEmployee()
+        
+        public void References()
+        {
+            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+        }
+        public EmployeeAccountManager()
         {
             ConsoleIO = new ConsoleIO();
         }
-        public HandleAccountOpeningEmployee(IConsoleIO consoleIO)
+        public EmployeeAccountManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
         }
@@ -47,7 +52,7 @@ namespace Gabriel_Bank_Management_System
             
             
             
-            User validatepw = new User(); string bankemployee_pw;
+            CustomerAccountManager validatepw = new CustomerAccountManager(); string bankemployee_pw;
 
             do
             {
@@ -69,7 +74,7 @@ namespace Gabriel_Bank_Management_System
             // return new customer
         }
         List<int> loginTries = new List<int>();
-        public void UserLogin(BankEmployeesManagement bemgt)
+        public void UserLogin(EmployeeAccountManager eam)
         {
             bool exit = false;
             int numberofTries = 4;
@@ -84,9 +89,9 @@ namespace Gabriel_Bank_Management_System
                 string bankemployee_id = ConsoleIO.ReadLine();
                 ConsoleIO.WriteLine("and pw");
                 string bankemployee_pw = ConsoleIO.ReadLine();
-                if (bemgt.dictionaryOfEmployees.ContainsKey(bankemployee_id) && bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_pw == bankemployee_pw)
+                if (eam.dictionaryOfEmployees.ContainsKey(bankemployee_id) && eam.dictionaryOfEmployees[bankemployee_id].bankemployee_pw == bankemployee_pw)
                 {
-                    ConsoleIO.WriteLine($"Congratulations, {bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { bemgt.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
+                    ConsoleIO.WriteLine($"Congratulations, {eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
 
                     exit = true;
                 }

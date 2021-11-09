@@ -1,41 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Interfaces;
+using WebApiLibrary.Models;
 
-namespace Gabriel_Bank_Management_System
+namespace WebApiLibrary.Utility
 {
-    public class FileHandling : IFileHandling
+    internal class FileHandling : IFileHandling
     {
-        private readonly IConsoleIO ConsoleIO;
-        public FileHandling()
-        {
-            ConsoleIO = new ConsoleIO();
-        }
-        public FileHandling(IConsoleIO consoleIO)
-        {
-            ConsoleIO = consoleIO;
-        }
+        
         public void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             try
             {
                 Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_address} { cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].customer_phone} { cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F")} { cam.dictionaryOfcustomers[customer_id].customer_loan_applied} { cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F")}");
 
-                // Json format - first time writing
-                Customer cust = new Customer()  // object creation
+                
+                Customer cust = new Customer()
                 {
-                    customer_id = cam.dictionaryOfcustomers[customer_id].customer_id, customer_name = cam.dictionaryOfcustomers[customer_id].customer_name, customer_address = cam.dictionaryOfcustomers[customer_id].customer_address, customer_dateOfBirth = cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth, customer_email = cam.dictionaryOfcustomers[customer_id].customer_email, customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone, cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number, customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance, customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied, loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
- 
+                    customer_id = cam.dictionaryOfcustomers[customer_id].customer_id,
+                    customer_name = cam.dictionaryOfcustomers[customer_id].customer_name,
+                    customer_address = cam.dictionaryOfcustomers[customer_id].customer_address,
+                    customer_dateOfBirth = cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
+                    customer_email = cam.dictionaryOfcustomers[customer_id].customer_email,
+                    customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone,
+                    cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number,
+                    customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance,
+                    customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied,
+                    loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
+
                 };
                 string jsontext = "ID " + customer_id + " " + cam.dictionaryOfcustomers[customer_id].customer_name + ".json";
 
                 List<Customer> customerList = new List<Customer>(); customerList.Add(cust);
                 Console.WriteLine("uploading user details to json file");
-                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new DecimalFormatConverter()); File.WriteAllText(jsontext, customerListJson);                
+                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new DecimalFormatConverter()); File.WriteAllText(jsontext, customerListJson);
                 List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
                 Console.ReadLine();
             }
@@ -64,7 +65,16 @@ namespace Gabriel_Bank_Management_System
         {
             Customer cust = new Customer()
             {
-                customer_id = cam.dictionaryOfcustomers[customer_id].customer_id, customer_name = cam.dictionaryOfcustomers[customer_id].customer_name, customer_address = cam.dictionaryOfcustomers[customer_id].customer_address, customer_dateOfBirth = cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth, customer_email = cam.dictionaryOfcustomers[customer_id].customer_email, customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone, cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number, customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance, customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied, loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
+                customer_id = cam.dictionaryOfcustomers[customer_id].customer_id,
+                customer_name = cam.dictionaryOfcustomers[customer_id].customer_name,
+                customer_address = cam.dictionaryOfcustomers[customer_id].customer_address,
+                customer_dateOfBirth = cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
+                customer_email = cam.dictionaryOfcustomers[customer_id].customer_email,
+                customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone,
+                cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number,
+                customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance,
+                customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied,
+                loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
             };
             string Alljsontext = "List of all banking customers.json";
             var jsonData = System.IO.File.ReadAllText(Alljsontext);

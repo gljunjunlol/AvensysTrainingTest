@@ -32,22 +32,22 @@ namespace Gabriel_Bank_Management_System
 
 
 
-            ConsoleIO.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F\n") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
+            ConsoleIO.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
             return totalloanamount;
         }
-        public void LoanAccount(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void LoanAccount(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
+                if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
                 {
                     decimal totalloanamount = CalculateLoanAmount(0, 0, 0);
-                    ConsoleIO.WriteLine("Loan application : ID : " + cmgt.dictionaryOfcustomers[customer_id] + " " + cmgt.dictionaryOfcustomers[customer_id].customer_name);
+                    ConsoleIO.WriteLine("Loan application : ID : " + cam.dictionaryOfcustomers[customer_id] + " " + cam.dictionaryOfcustomers[customer_id].customer_name);
 
-                    cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cmgt.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount; 
-                    FileHandling fh = new FileHandling(); fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                    cam.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cam.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount; 
+                    FileHandling fh = new FileHandling(); fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
                 }
 
                 else
@@ -67,15 +67,15 @@ namespace Gabriel_Bank_Management_System
         }
 
 
-        public void ViewLoan(CustomersManagement cmgt)
+        public void ViewLoan(CustomerAccountManager cam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
+                if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
                 {
-                    ConsoleIO.WriteLine("Current loan is at $" + cmgt.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
+                    ConsoleIO.WriteLine("Current loan is at $" + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
                 }
                 else
                 {
@@ -89,17 +89,17 @@ namespace Gabriel_Bank_Management_System
             }
         }
 
-        public void AddLoan(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void AddLoan(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             ConsoleIO.WriteLine("Enter customer ID again to ensure of taking loan again");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
+                if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == false)
                 {
                     ConsoleIO.WriteLine(customer_id);
                     TakingLoan tk = new TakingLoan();
-                    tk.LoanAccount(cmgt, bemgt, bmgt);
+                    tk.LoanAccount(cam, eam, mam);
                     
 
 
@@ -115,15 +115,15 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public void RepayLoan(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void RepayLoan(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
-            if (cmgt.dictionaryOfcustomers.ContainsKey(customer_id))
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                if (cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
+                if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
                 {
-                    ConsoleIO.WriteLine("Current loan is at " + cmgt.dictionaryOfcustomers[customer_id].loan_amount.ToString("F") + "\nE.g. key in 100 to repay 100 or / key in  6% to repay 6%");
+                    ConsoleIO.WriteLine("Current loan is at " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F") + "\nE.g. key in 100 to repay 100 or / key in  6% to repay 6%");
                     string repayLoan = ConsoleIO.ReadLine();
                     if (repayLoan.Contains("%") == true)
                     {
@@ -133,10 +133,10 @@ namespace Gabriel_Bank_Management_System
                             repayLoan = repayLoan.Replace(c, string.Empty);
                         }
                         decimal repayLoanParse = decimal.Parse(repayLoan);
-                        decimal amountToRepay = Multiply(repayLoanParse, Divide(cmgt.dictionaryOfcustomers[customer_id].loan_amount, 100), 1);
+                        decimal amountToRepay = Multiply(repayLoanParse, Divide(cam.dictionaryOfcustomers[customer_id].loan_amount, 100), 1);
                         ConsoleIO.WriteLine("Amount to repay is: $" + amountToRepay.ToString("F"));
-                        decimal remainingLoanLeft = SubtractLoan(cmgt.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
-                        if (amountToRepay > cmgt.dictionaryOfcustomers[customer_id].loan_amount)
+                        decimal remainingLoanLeft = SubtractLoan(cam.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
+                        if (amountToRepay > cam.dictionaryOfcustomers[customer_id].loan_amount)
                         {
                             ConsoleIO.WriteLine("Exceed loan repayment, key again");
                         }
@@ -145,14 +145,14 @@ namespace Gabriel_Bank_Management_System
 
 
                             ConsoleIO.WriteLine("Loan amount left: $" + remainingLoanLeft.ToString("F"));
-                            cmgt.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+                            cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
                             if (remainingLoanLeft == 0)
                             {
-                                cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
+                                cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
 
                             }
                             FileHandling fh1 = new FileHandling();
-                            fh1.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                            fh1.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
                         }
                     }
@@ -160,22 +160,22 @@ namespace Gabriel_Bank_Management_System
                     {
                         decimal amountToRepay = decimal.Parse(repayLoan);
                         ConsoleIO.WriteLine("Amount to repay is: $" + amountToRepay);
-                        decimal remainingLoanLeft = SubtractLoan(cmgt.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
-                        if (amountToRepay > cmgt.dictionaryOfcustomers[customer_id].loan_amount)
+                        decimal remainingLoanLeft = SubtractLoan(cam.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
+                        if (amountToRepay > cam.dictionaryOfcustomers[customer_id].loan_amount)
                         {
                             ConsoleIO.WriteLine("Exceed loan repayment, key again");
                         }
                         else
                         {
                             ConsoleIO.WriteLine("Loan amount left: $" + remainingLoanLeft);
-                            cmgt.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+                            cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
                             if (remainingLoanLeft == 0)
                             {
-                                cmgt.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
+                                cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
 
                             }
                             FileHandling fh1 = new FileHandling();
-                            fh1.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
+                            fh1.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
                         }
 
@@ -192,7 +192,7 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public void performOperation(CustomersManagement cmgt, BankEmployeesManagement bemgt, BankManagersManagement bmgt)
+        public void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             ConsoleIO.WriteLine("Taking loan here");
             bool exit = false;
@@ -205,22 +205,22 @@ namespace Gabriel_Bank_Management_System
                 {
                     case "1":
                         {
-                            LoanAccount(cmgt, bemgt, bmgt);
+                            LoanAccount(cam, eam, mam);
                             break;
                         }
                     case "2":
                         {
-                            AddLoan(cmgt, bemgt, bmgt);
+                            AddLoan(cam, eam, mam);
                             break;
                         }
                     case "3":
                         {
-                            ViewLoan(cmgt);
+                            ViewLoan(cam);
                             break;
                         }
                     case "4":
                         {
-                            RepayLoan(cmgt, bemgt, bmgt);
+                            RepayLoan(cam, eam, mam);
                             break;
                         }
                     case "5":
