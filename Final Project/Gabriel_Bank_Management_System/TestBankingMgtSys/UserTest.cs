@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using WebApiLibrary.Interfaces;
+
 
 namespace UserTest
 {
@@ -366,7 +368,7 @@ namespace UserTest
             var new_user = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, false, 100);
             Assert.NotNull(new_user);
             CustomerAccountManager cmgt = new CustomerAccountManager();
-            FileHandling fileHandling = new FileHandling();
+            FileManager fileHandling = new FileManager();
             fileHandling.ReadingandWritingcustomer(new_user.customer_id, cmgt, bemgt, bmgt);
         }
         [Fact]
@@ -379,9 +381,9 @@ namespace UserTest
             {
 
             }
-            var mockRepo = new Mock<IFileHandling>();
+            var mockRepo = new Mock<IFileManager>();
             
-            FileHandling user = new FileHandling(mockConsoleIO.Object);
+            FileManager user = new FileManager(mockConsoleIO.Object);
             string text = "ID 12345 john.txt";
             FileStream fs = new FileStream(text, FileMode.Create, FileAccess.Write);
             StreamWriter streamWriter = new StreamWriter(fs);
@@ -584,7 +586,7 @@ namespace UserTest
         }
         [Theory]
         [InlineData(null)]
-        public void TestAddCustomers(Customer new_user)
+        public void TestAddCustomers(WebApiLibrary.Models.Customer new_user)
         {
             CustomerAccountManager cmgt = new CustomerAccountManager();
             EmployeeAccountManager bemgt = new EmployeeAccountManager();
@@ -599,7 +601,7 @@ namespace UserTest
         }
         [Theory]
         [InlineData(null)]
-        public void TestAddEmployees(BankEmployees new_user)
+        public void TestAddEmployees(WebApiLibrary.Models.BankEmployees new_user)
         {
             Mock<IEmployeeAccountManager> user = new Mock<IEmployeeAccountManager>();
             CustomerAccountManager cmgt = new CustomerAccountManager();

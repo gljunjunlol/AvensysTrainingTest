@@ -69,6 +69,10 @@ namespace WebApiLibrary.Controllers
             // return new customer
         }
         public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
+        public void References()
+        {
+            dictionaryOfManagers = new Dictionary<string, BankManagers>();
+        }
         public void UserLogin(ManagerAccountManager mam)
         {
             bool exit = false;

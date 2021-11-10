@@ -23,9 +23,7 @@ namespace Gabriel_Bank_Management_System
         }
 
         public void AddBankManagers(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
-        {
-            //BankManagers mgr = new BankManagers("12345", "karen", "23 hillview", DateTime.Now, "loan manager", "3", "Karen12345678$");
-            //mam.dictionaryOfManagers.Add("12345", mgr);
+        {            
             ManagerAccountManager newacc = new ManagerAccountManager();
             var new_user = newacc.CreateUserAccount();
             if (new_user != null)
@@ -38,9 +36,6 @@ namespace Gabriel_Bank_Management_System
                 else
                 {
                     mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
-                    // first time writing customer details to file
-                    FileHandling fileHandling = new FileHandling();
-                    fileHandling.ReadingandWritingcustomer(new_user.bankmanager_id, cam, eam, mam);
                 }
             }
             else

@@ -69,6 +69,10 @@ namespace WebApiLibrary.Controllers
         }
         List<int> loginTries = new List<int>();
         public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
+        public void References()
+        {
+            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+        }
         public void UserLogin(EmployeeAccountManager eam)
         {
             bool exit = false;

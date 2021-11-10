@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -42,8 +43,7 @@ namespace Gabriel_Bank_Management_System
                 else
                 {
                     cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-                    // first time writing customer details to file
-                    FileHandling fileHandling = new FileHandling();
+                    FileManager fileHandling = new FileManager();
                     fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
                     return true;
                 }

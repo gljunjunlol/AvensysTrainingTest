@@ -42,7 +42,7 @@ namespace BankManagerTest
             ManagerAccountManager bmgt = new ManagerAccountManager();
             EmployeeAccountManager bemgt = new EmployeeAccountManager();
             string customer_id = "1";
-            FileHandling fh = new FileHandling();
+            FileManager fh = new FileManager();
             fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
         }
         [Theory]

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WebApiLibrary.Interfaces;
+
 
 namespace Gabriel_Bank_Management_System
 {
@@ -82,19 +84,18 @@ namespace Gabriel_Bank_Management_System
         {
             bool exit = false;
             int numberofTries = 4;
-            //int input = 0;
+            
             while (!exit)
             {
                 loginTries.Add(1);
-                //input++;
+                
                 numberofTries--;
                 ConsoleIO.WriteLine("Key in your login information" + "\nEnter login id " + " (" + "number of tries left " + numberofTries + " )");
                 
                 string customer_id = ConsoleIO.ReadLine();
                 ConsoleIO.WriteLine("and pw");
                 string customer_pw = ConsoleIO.ReadLine();
-                
-                //dictionary.References();
+                                
                 
                 if (cam.dictionaryOfcustomers.ContainsKey(customer_id) && cam.dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
                 {
@@ -218,6 +219,16 @@ namespace Gabriel_Bank_Management_System
             Customer cust2 = new Customer("2", "band", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "", 0);
             cam.dictionaryOfcustomers.Add("12345", cust);
             cam.dictionaryOfcustomers.Add("12346", cust2);
+        }
+
+        public void UserLogin(WebApiLibrary.Controllers.CustomerAccountManager cam, List<int> loginTries)
+        {
+            throw new NotImplementedException();
+        }
+
+        WebApiLibrary.Models.Customer ICustomerAccountManager.CreateUserAccount()
+        {
+            throw new NotImplementedException();
         }
     }
 }

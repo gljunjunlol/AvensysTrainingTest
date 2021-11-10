@@ -8,9 +8,10 @@ using WebApiLibrary.Models;
 
 namespace WebApiLibrary.Interfaces
 {
-    interface IManagerAccountManager
+    public interface IManagerAccountManager
     {
         BankManagers CreateUserAccount();
         void UserLogin(ManagerAccountManager mam);
+        void References();
     }
 }

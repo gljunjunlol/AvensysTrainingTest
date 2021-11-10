@@ -4,6 +4,7 @@ using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
 using System.IO;
+using WebApiLibrary.Interfaces;
 
 namespace TakingLoan_Test
 {
@@ -421,9 +422,9 @@ namespace TakingLoan_Test
             ManagerAccountManager bmgt = new ManagerAccountManager();
             Mock<ISavings> input = new Mock<ISavings>();
             input.Setup(t => t.TakeDepositInput()).Returns(str);
-            Savings save = new Savings(input.Object);
-            bool res = save.customerDeposit(cmgt, bemgt, bmgt);
-            Assert.True(res);
+            //Savings save = new Savings(input.Object);                 // uncomment here for ISavings
+            //bool res = save.customerDeposit(cmgt, bemgt, bmgt);
+            //Assert.True(res);
 
         }
         [Theory]
@@ -436,9 +437,7 @@ namespace TakingLoan_Test
             input.Setup(t => t.TakeDepositInput()).Returns(str);
             Mock<ISavings> input2 = new Mock<ISavings>();
             input2.Setup(t => t.DepositLimit()).Returns(depositAmount);
-            //Savings save = new Savings(input.Object);
-            //Savings save2 = new Savings(input2.Object);
-            //bool res = save.customerDeposit(cmgt);
+            
 
             Assert.True(str > depositAmount);
 

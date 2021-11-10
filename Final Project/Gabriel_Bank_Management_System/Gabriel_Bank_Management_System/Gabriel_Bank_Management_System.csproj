@@ -55,19 +55,13 @@
     <Compile Include="Customer.cs" />
     <Compile Include="CustomersManager.cs" />
     <Compile Include="EmailIncorrectException.cs" />
-    <Compile Include="FileHandling.cs" />
+    <Compile Include="FileManager.cs" />
     <Compile Include="ManagerAccountManager.cs" />
     <Compile Include="EmployeeAccountManager.cs" />
     <Compile Include="IBankEmployeesManager.cs" />
     <Compile Include="IBankManagersManager.cs" />
     <Compile Include="IConsoleIO.cs" />
     <Compile Include="ICustomersManagement.cs" />
-    <Compile Include="IFileHandling.cs" />
-    <Compile Include="IManagerAccountManager.cs" />
-    <Compile Include="IEmployeeAccountManager.cs" />
-    <Compile Include="ISavings.cs" />
-    <Compile Include="ITakingLoan.cs" />
-    <Compile Include="ICustomerAccountManager.cs" />
     <Compile Include="PhoneIncorrectException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +72,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApiLibrary\WebApiLibrary.csproj">
+      <Project>{15b9667d-d36b-4ef6-a730-eb6581a0d1f0}</Project>
+      <Name>WebApiLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

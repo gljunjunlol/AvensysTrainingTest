@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -27,9 +28,7 @@ namespace Gabriel_Bank_Management_System
         }
         public bool AddBankEmployees(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
-            //BankEmployees emp = new BankEmployees("12345", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
-            //eam.dictionaryOfEmployees.Add("12345", emp);
-
+            
             EmployeeAccountManager _user = new EmployeeAccountManager();
             var new_user = _user.CreateUserAccount();
             if (new_user != null)
@@ -43,9 +42,6 @@ namespace Gabriel_Bank_Management_System
                 else
                 {
                     eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
-                    // first time writing customer details to file
-                    FileHandling fileHandling = new FileHandling();
-                    fileHandling.ReadingandWritingcustomer(new_user.bankemployee_id, cam, eam, mam);
                     return true;
                 }
             }
@@ -207,7 +203,20 @@ namespace Gabriel_Bank_Management_System
                 }
             }
         }
+        public void ListEmployees(EmployeeAccountManager eam)
+        {
+            foreach (KeyValuePair<string, BankEmployees> kvp in eam.dictionaryOfEmployees)
+            {
+                ConsoleIO.WriteLine($"{kvp.Value.bankemployee_id} {kvp.Value.bankemployee_name} " + "\n Viewing all employees here");
 
+            }
+
+            var bankemployee_id = Console.ReadLine();
+            var user = eam.dictionaryOfEmployees[bankemployee_id];
+
+            eam.dictionaryOfEmployees[bankemployee_id] = user;
+
+        }
         public void RemoveEmployees(EmployeeAccountManager eam)
         {
             ConsoleIO.WriteLine("Key in employee id");
@@ -224,19 +233,6 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("Account doesn't exist");
             }                      
         }
-        public void ListEmployees(EmployeeAccountManager eam)
-        {
-            foreach (KeyValuePair<string, BankEmployees> kvp in eam.dictionaryOfEmployees)
-            {
-                ConsoleIO.WriteLine($"{kvp.Value.bankemployee_id} {kvp.Value.bankemployee_name} "+ "\n Viewing all employees here");
-
-            }
-
-            var bankemployee_id = Console.ReadLine();
-            var user = eam.dictionaryOfEmployees[bankemployee_id];
-
-            eam.dictionaryOfEmployees[bankemployee_id] = user;
-
-        }
+        
     }
 }

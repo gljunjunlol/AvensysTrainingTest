@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Newtonsoft.Json;
+using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -13,15 +14,9 @@ namespace Gabriel_Bank_Management_System
     {
         public static Dictionary<int, Guid> cheque = new Dictionary<int, Guid>();
         private readonly IConsoleIO ConsoleIO;
-        private ISavings _savings;
         public Savings()
         {
             ConsoleIO = new ConsoleIO();
-        }
-        
-        public Savings(ISavings savings)
-        {
-            _savings = savings;
         }
         public Savings(IConsoleIO consoleIO)
         {
@@ -68,17 +63,18 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public decimal DepositLimit()
-        {
-            decimal maximumamount = 5000;
-            return maximumamount;
-        }
+        
         public decimal TakeDepositInput()
         {
             ConsoleIO.WriteLine("Key in amount for deposit - we will use cheque if more than 5k");
             string depositAmountKeyedInByCustomer = ConsoleIO.ReadLine();
             decimal depositAmount = decimal.Parse(depositAmountKeyedInByCustomer);
             return depositAmount;
+        }
+        public decimal DepositLimit()
+        {
+            decimal maximumamount = 5000;
+            return maximumamount;
         }
         public bool customerDeposit(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
@@ -97,7 +93,7 @@ namespace Gabriel_Bank_Management_System
                     ConsoleIO.WriteLine("Amount is larger than 5000, we will process the cheque\n"); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].ToString() + "\n"); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customer_name.ToString()); ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
                     ConsoleIO.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
-                    FileHandling fh = new FileHandling();
+                    FileManager fh = new FileManager();
                     fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
                     return true;
 
@@ -109,7 +105,7 @@ namespace Gabriel_Bank_Management_System
 
 
                     ConsoleIO.WriteLine($"Dear Customer, your deposit is: " + depositAmount.ToString("F") + " and current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-                    FileHandling fh = new FileHandling();
+                    FileManager fh = new FileManager();
                     fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
                     return true;
                 }
@@ -149,7 +145,7 @@ namespace Gabriel_Bank_Management_System
                         ConsoleIO.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
                         ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
-                        FileHandling fh = new FileHandling();
+                        FileManager fh = new FileManager();
                         fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
 
@@ -167,7 +163,7 @@ namespace Gabriel_Bank_Management_System
                         ConsoleIO.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
                         ConsoleIO.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
-                        FileHandling fh = new FileHandling();
+                        FileManager fh = new FileManager();
                         fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
 
@@ -188,6 +184,10 @@ namespace Gabriel_Bank_Management_System
             if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 ConsoleIO.WriteLine("Customer balance is " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
+            }
+            else
+            {
+                ConsoleIO.WriteLine("Account id not found");
             }
         }
         public static decimal AddSavings(decimal x, decimal y)
@@ -226,7 +226,26 @@ namespace Gabriel_Bank_Management_System
                 throw new DivideByZeroException("Divide error");
 
             }
+        }
 
+        public void performOperation(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool customerDeposit(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void customerWithdrawl(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ViewBalance(WebApiLibrary.Controllers.CustomerAccountManager cam)
+        {
+            throw new NotImplementedException();
         }
     }
 }

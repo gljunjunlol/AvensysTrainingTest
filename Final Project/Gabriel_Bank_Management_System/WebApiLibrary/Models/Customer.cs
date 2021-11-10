@@ -40,5 +40,25 @@ namespace WebApiLibrary.Models
         {
 
         }
+        public void deposit(decimal amount)
+        {
+            if (amount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount));
+            }
+            customerBalance += amount;
+        }
+        public void withdraw(decimal amount)
+        {
+            if (amount > customerBalance)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount));
+            }
+            if (amount < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount));
+            }
+            customerBalance -= amount;
+        }
     }
 }

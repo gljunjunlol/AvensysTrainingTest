@@ -8,7 +8,7 @@ using WebApiLibrary.Models;
 
 namespace WebApiLibrary.Interfaces
 {
-    interface IFileHandling
+    public interface IFileManager
     {
         void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -111,6 +112,16 @@ namespace Gabriel_Bank_Management_System
                 }
             }
 
+        }
+
+        WebApiLibrary.Models.BankManagers IManagerAccountManager.CreateUserAccount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UserLogin(WebApiLibrary.Controllers.ManagerAccountManager mam)
+        {
+            throw new NotImplementedException();
         }
     }
 }

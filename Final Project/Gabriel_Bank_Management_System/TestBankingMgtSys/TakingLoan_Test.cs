@@ -232,7 +232,7 @@ namespace TakingLoan_Test
                         Assert.Equal(output.ToString(), string.Format("Key in customer id"));
                         Assert.True(mockdictionaryOfcustomers[customer_id].customer_loan_applied == true);
                         //Assert.Equal(CustomersManagement.dictionaryOfcustomers[customer_id].customer_loan_applied = true, true);
-                        FileHandling fh = new FileHandling();
+                        FileManager fh = new FileManager();
                         fh.ReadingandWritingcustomer(customer_id, cmgt, bemgt, bmgt);
                     }
                     catch (NotSupportedException ex)

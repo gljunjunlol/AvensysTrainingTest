@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -12,10 +13,7 @@ namespace Gabriel_Bank_Management_System
         public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
         private readonly IConsoleIO ConsoleIO;
         
-        public void References()
-        {
-            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
-        }
+        
         public EmployeeAccountManager()
         {
             ConsoleIO = new ConsoleIO();
@@ -23,6 +21,10 @@ namespace Gabriel_Bank_Management_System
         public EmployeeAccountManager(IConsoleIO consoleIO)
         {
             ConsoleIO = consoleIO;
+        }
+        public void References()
+        {
+            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
         }
         public BankEmployees CreateUserAccount()
         {
@@ -48,10 +50,7 @@ namespace Gabriel_Bank_Management_System
             ConsoleIO.WriteLine("Key in employee years of service");
             string bankemployee_yos = ConsoleIO.ReadLine();
 
-
-            
-            
-            
+          
             CustomerAccountManager validatepw = new CustomerAccountManager(); string bankemployee_pw;
 
             do
@@ -79,11 +78,11 @@ namespace Gabriel_Bank_Management_System
             bool exit = false;
             int numberofTries = 4;
 
-            //int input = 0;
+            
             while (!exit)
             {
                 loginTries.Add(1);
-                //input++;
+                
                 numberofTries--;
                 ConsoleIO.WriteLine("Enter login id " + " (" + "number of tries left " + numberofTries + " )");
                 string bankemployee_id = ConsoleIO.ReadLine();
@@ -112,6 +111,16 @@ namespace Gabriel_Bank_Management_System
                 }
             }
 
+        }
+
+        WebApiLibrary.Models.BankEmployees IEmployeeAccountManager.CreateUserAccount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UserLogin(WebApiLibrary.Controllers.EmployeeAccountManager eam)
+        {
+            throw new NotImplementedException();
         }
     }
 }

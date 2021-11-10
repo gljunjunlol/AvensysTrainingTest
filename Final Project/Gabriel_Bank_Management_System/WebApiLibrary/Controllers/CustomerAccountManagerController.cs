@@ -66,15 +66,19 @@ namespace WebApiLibrary.Controllers
             return new_user;
         }
         public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
+        public void References()
+        {
+            dictionaryOfcustomers = new Dictionary<string, Customer>();
+        }
         public void UserLogin(CustomerAccountManager cam, List<int> loginTries)
         {
             bool exit = false;
             int numberofTries = 4;
-            //int input = 0;
+            
             while (!exit)
             {
                 loginTries.Add(1);
-                //input++;
+                
                 numberofTries--;
                 Console.WriteLine("Key in your login information" + "\nEnter login id " + " (" + "number of tries left " + numberofTries + " )");
 
@@ -82,7 +86,7 @@ namespace WebApiLibrary.Controllers
                 Console.WriteLine("and pw");
                 string customer_pw = Console.ReadLine();
 
-                //dictionary.References();
+                
 
                 if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
                 {

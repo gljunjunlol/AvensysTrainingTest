@@ -8,12 +8,13 @@ using WebApiLibrary.Models;
 
 namespace WebApiLibrary.Interfaces
 {
-    interface ICustomerAccountManager
+    public interface ICustomerAccountManager
     {
         void UserLogin(CustomerAccountManager cam, List<int> loginTries);
         bool validatePassword(string customer_pw);
         bool validatePhone(string a);
         bool validateEmail(string a);
         Customer CreateUserAccount();
+        void References();
     }
 }

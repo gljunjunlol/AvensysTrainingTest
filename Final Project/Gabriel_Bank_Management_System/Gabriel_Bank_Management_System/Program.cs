@@ -27,6 +27,8 @@ namespace Gabriel_Bank_Management_System
 
             List<int> loginTries = new List<int>(); Program p = new Program(); ConsoleIO ConsoleIO = new ConsoleIO(); bool exit = false;
 
+            BankViewModel mv = new BankViewModel();
+
 
 
             while (!exit)
