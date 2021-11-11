@@ -10,6 +10,6 @@ namespace WebApiLibrary.Interfaces
 {
     public interface IFileManager
     {
-        void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
     }
 }

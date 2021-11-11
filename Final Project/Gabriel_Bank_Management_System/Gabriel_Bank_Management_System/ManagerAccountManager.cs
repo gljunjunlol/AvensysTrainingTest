@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Controllers;
 using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
@@ -10,15 +11,13 @@ namespace Gabriel_Bank_Management_System
     public class ManagerAccountManager : EmployeeAccountManager, IManagerAccountManager
     {
 
-        public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
+        public Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
 
-        public new void References()
-        {
-            dictionaryOfManagers = new Dictionary<string, BankManagers>();
-        }
+        
         private readonly IConsoleIO ConsoleIO;
         public ManagerAccountManager()
         {
+            dictionaryOfManagers = new Dictionary<string, BankManagers>();
             ConsoleIO = new ConsoleIO();
         }
         public ManagerAccountManager(IConsoleIO consoleIO)
@@ -54,7 +53,7 @@ namespace Gabriel_Bank_Management_System
 
 
 
-            CustomerAccountManager validatepw = new CustomerAccountManager();
+            CustomerAccountManagerController validatepw = new CustomerAccountManagerController();
             string bankmanager_pw;
             do
             {
@@ -78,48 +77,43 @@ namespace Gabriel_Bank_Management_System
 
         public void UserLogin(ManagerAccountManager mam)
         {
-            bool exit = false;
-            int numberofTries = 4;
-            int input = 0;
-            while (!exit)
-            {
-                input++;
-                numberofTries--;
-                ConsoleIO.WriteLine("Enter login id " + " (" + "number of tries left " + numberofTries + " )");
-                string bankmanager_id = ConsoleIO.ReadLine();
-                ConsoleIO.WriteLine("and pw");
-                string bankmanager_pw = ConsoleIO.ReadLine();
-                if (mam.dictionaryOfManagers.ContainsKey(bankmanager_id) && mam.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
-                {
-                    ConsoleIO.WriteLine($"Congratulations, {mam.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
+            //bool exit = false;
+            //int numberofTries = 4;
+            //int input = 0;
+            //while (!exit)
+            //{
+            //    input++;
+            //    numberofTries--;
+            //    ConsoleIO.WriteLine("Enter login id " + " (" + "number of tries left " + numberofTries + " )");
+            //    string bankmanager_id = ConsoleIO.ReadLine();
+            //    ConsoleIO.WriteLine("and pw");
+            //    string bankmanager_pw = ConsoleIO.ReadLine();
+            //    if (mam.dictionaryOfManagers.ContainsKey(bankmanager_id) && mam.dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
+            //    {
+            //        ConsoleIO.WriteLine($"Congratulations, {mam.dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
                     
-                    exit = true;
-                }
-                else
-                {
-                    ConsoleIO.WriteLine("Incorrect user or pw");
-                }
-                if (input > 3)
-                {
-                    ConsoleIO.WriteLine("Too many tries, please wait 5 mins");
+            //        exit = true;
+            //    }
+            //    else
+            //    {
+            //        ConsoleIO.WriteLine("Incorrect user or pw");
+            //    }
+            //    if (input > 3)
+            //    {
+            //        ConsoleIO.WriteLine("Too many tries, please wait 5 mins");
 
-                    ConsoleIO.ReadLine(); Environment.Exit(0);
+            //        ConsoleIO.ReadLine(); Environment.Exit(0);
 
-                }
-                if (numberofTries == 0)
-                {
-                    numberofTries = 4;
-                }
-            }
+            //    }
+            //    if (numberofTries == 0)
+            //    {
+            //        numberofTries = 4;
+            //    }
+            //}
 
         }
 
-        WebApiLibrary.Models.BankManagers IManagerAccountManager.CreateUserAccount()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UserLogin(WebApiLibrary.Controllers.ManagerAccountManager mam)
+        public bool UserLogin(WebApiLibrary.Controllers.ManagerAccountManagerController mam, List<int> loginTries, string bankmanager_id, string bankmanager_pw)
         {
             throw new NotImplementedException();
         }

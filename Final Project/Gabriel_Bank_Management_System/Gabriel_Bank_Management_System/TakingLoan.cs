@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Controllers;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -35,7 +36,7 @@ namespace Gabriel_Bank_Management_System
             ConsoleIO.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
             return totalloanamount;
         }
-        public void LoanAccount(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void LoanAccount(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
@@ -63,7 +64,7 @@ namespace Gabriel_Bank_Management_System
             }
         }
 
-        public void ViewLoan(CustomerAccountManager cam)
+        public void ViewLoan(CustomerAccountManagerController cam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
@@ -85,7 +86,7 @@ namespace Gabriel_Bank_Management_System
             }
         }
 
-        public void AddLoan(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void AddLoan(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             ConsoleIO.WriteLine("Enter customer ID again to ensure of taking loan again");
             string customer_id = ConsoleIO.ReadLine();
@@ -111,7 +112,7 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public void RepayLoan(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void RepayLoan(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             ConsoleIO.WriteLine("Enter customer ID");
             string customer_id = ConsoleIO.ReadLine();
@@ -188,7 +189,7 @@ namespace Gabriel_Bank_Management_System
             }
 
         }
-        public void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void performOperation(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             ConsoleIO.WriteLine("Taking loan here");
             bool exit = false;

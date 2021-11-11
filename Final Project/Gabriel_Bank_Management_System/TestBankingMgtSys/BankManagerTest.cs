@@ -5,6 +5,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Moq;
 using System.IO;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Models;
 
 namespace BankManagerTest
 {
@@ -26,7 +28,7 @@ namespace BankManagerTest
 
         public void TestViewCustomerTotalLoanAmt()
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
             Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, true, 0);
             
@@ -53,7 +55,7 @@ namespace BankManagerTest
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalloanamount.ToString());
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -70,7 +72,7 @@ namespace BankManagerTest
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(totalsavingsofCustomers.ToString());
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -88,7 +90,7 @@ namespace BankManagerTest
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
             Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
             BankManagersManager bankManagerTest = new BankManagersManager();
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             bankingmanagermock.Setup(t => t.TotalSavingsAccount(cmgt));
             mockdictionaryOfcustomers.Add("1", cust);
             mockdictionaryOfcustomers.Add("2", cust);
@@ -110,7 +112,7 @@ namespace BankManagerTest
         public void TestperformOperationAdvanced()
         {
             Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             decimal expected = 0;
             Customer cust = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 100);
             Customer cust2 = new Customer("2", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 100);

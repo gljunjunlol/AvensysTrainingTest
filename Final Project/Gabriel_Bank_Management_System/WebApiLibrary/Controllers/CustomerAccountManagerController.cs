@@ -1,116 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using WebApiLibrary.Interfaces;
 using WebApiLibrary.Models;
+using System.IO;
+using Newtonsoft.Json;
+using Bank.Common.Common;
+using WebApiLibrary.Utility;
 
 namespace WebApiLibrary.Controllers
 {
-    public class CustomerAccountManager : ICustomerAccountManager
+    public class CustomerAccountManagerController : ICustomerAccountManager
     {
         private IList<Customer> _customerList;
-        
-        public CustomerAccountManager()
+        public Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
+
+        public CustomerAccountManagerController()
         {
             _customerList = new List<Customer>();
-        }
-        public Customer CreateUserAccount()
-        {
-
-            Console.WriteLine("Key in customer id");
-            string customer_id = Console.ReadLine();
-
-            Console.WriteLine("Key in customer name");
-            string customer_name = Console.ReadLine();
-
-            Console.WriteLine("Key in customer address");
-            string customer_address = Console.ReadLine();
-
-            Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
-            DateTime customer_dob = DateTime.Parse(Console.ReadLine());
-
-
-
-
-            string customer_pw; string customer_phone; string customer_email;
-            do
-            {
-                Console.WriteLine("key to create a new user phone: format such as (xxx)xxx-xxxx"); customer_phone = Console.ReadLine();
-
-
-
-            }
-            while (validatePhone(customer_phone) == false);
-            do
-            {
-                Console.WriteLine("Key in user email format (e.g. john@mail.com)"); customer_email = Console.ReadLine();
-
-
-            }
-            while (validateEmail(customer_email) == false);
-            do
-            {
-                Console.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:"); customer_pw = Console.ReadLine();
-
-            }
-            while (validatePassword(customer_pw) == false);
-
-
-            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
-
-            var new_user = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, " ", 0, Guid.Empty, false, 0);
-            return new_user;
-        }
-        public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
-        public void References()
-        {
             dictionaryOfcustomers = new Dictionary<string, Customer>();
         }
-        public void UserLogin(CustomerAccountManager cam, List<int> loginTries)
+        
+        public bool UserLogin(CustomerAccountManagerController cam, List<int> loginTries, string customer_id, string customer_pw)
         {
-            bool exit = false;
-            int numberofTries = 4;
-            
-            while (!exit)
+            if (cam.dictionaryOfcustomers.ContainsKey(customer_id) && cam.dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
             {
-                loginTries.Add(1);
-                
-                numberofTries--;
-                Console.WriteLine("Key in your login information" + "\nEnter login id " + " (" + "number of tries left " + numberofTries + " )");
+                Console.WriteLine($"Congratulations, {cam.dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].account_number}");
+                return true;
 
-                string customer_id = Console.ReadLine();
-                Console.WriteLine("and pw");
-                string customer_pw = Console.ReadLine();
-
-                
-
-                if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
-                {
-                    Console.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name} { dictionaryOfcustomers[customer_id].customer_email} { dictionaryOfcustomers[customer_id].account_number}");
-                    exit = true;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect user or pw");
-                }
-                if (loginTries.Count > 3)
-                {
-                    Console.WriteLine("Too many tries, please wait 5 mins");
-
-                    Console.ReadLine();
-                    Environment.Exit(0);
-                }
-                if (numberofTries == 0)
-                {
-                    numberofTries = 4;
-                }
             }
+            return false;
 
         }
+
         public bool validatePassword(string customer_pw)
         {
             if (customer_pw.Length < 6 || customer_pw.Length > 24)
@@ -164,7 +87,7 @@ namespace WebApiLibrary.Controllers
                     else
                     {
                         Console.WriteLine("phone number is not valid, please try again");
-                        //return false;
+                        return false;
                         //throw new PhoneIncorrectException(phone);
                     }
                 }
@@ -192,7 +115,7 @@ namespace WebApiLibrary.Controllers
                     else
                     {
                         Console.WriteLine("Email is not valid, please try again");
-                        //return false;
+                        return false;
                         //throw new EmailIncorrectException(email);
                     }
                 }
@@ -203,6 +126,80 @@ namespace WebApiLibrary.Controllers
 
             }
 
+        }
+        public UserNameResultType CheckUserName(string username)
+        {
+            UserNameResultType type = UserNameResultType.None;
+            try
+            {
+                if (username.Length < 6 || username.Length > 24)
+                {
+                    type = UserNameResultType.UserNameLengthIncorrect;
+                }
+                foreach (char character in username)
+                {
+                    if (char.IsWhiteSpace(character))
+                    {
+                        type = UserNameResultType.UserNameContainsSpace;
+                        break;
+                    }
+                }
+
+                //List<Customer> userList = JsonConvert.DeserializeObject<List<Customer>>(_fileHandling.ReadAllText("User.json"));
+                //if (userList != null)
+                //{
+                //    foreach (Customer customer in userList)
+                //    {
+                //        if (Equals(customer.customer_name, username))
+                //        {
+                //            type = UserNameResultType.DuplicateUser;
+                //            break;
+                //        }
+                //    }
+                //}
+            }
+            catch (IOException)
+            {
+                type = UserNameResultType.UserNameDataAccessError;
+            }
+            catch (Exception)
+            {
+                type = UserNameResultType.UnhandledUserError;
+            }
+            return type;
+        }
+        public IdResultType CheckId(string idNumber)
+        {
+            IdResultType type = IdResultType.None;
+            try
+            {
+                if (idNumber.Length != 4)
+                {
+                    type = IdResultType.IdIncorrect;
+                }
+                
+                //List<Customer> userList = JsonConvert.DeserializeObject<List<Customer>>(_fileHandling.ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam));
+                //if (userList != null)
+                //{
+                //    foreach (Customer customer in userList)
+                //    {
+                //        if (Equals(customer.customer_id, idNumber))
+                //        {
+                //            type = IdResultType.DuplicateId;
+                //            break;
+                //        }
+                //    }
+                //}
+            }
+            catch (IOException)
+            {
+                type = IdResultType.IdDataAccessError;
+            }
+            catch (Exception)
+            {
+                type = IdResultType.UnhandledIdError;
+            }
+            return type;
         }
     }
 }

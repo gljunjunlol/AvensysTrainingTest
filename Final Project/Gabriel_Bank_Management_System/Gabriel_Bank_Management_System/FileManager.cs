@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Controllers;
 using WebApiLibrary.Interfaces;
+using WebApiLibrary.Models;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -20,7 +22,7 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = consoleIO;
         }
-        public void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             try
             {
@@ -36,7 +38,7 @@ namespace Gabriel_Bank_Management_System
 
                 List<Customer> customerList = new List<Customer>(); customerList.Add(cust);
                 Console.WriteLine("uploading user details to json file");
-                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new DecimalFormatConverter()); File.WriteAllText(jsontext, customerListJson);                
+                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, customerListJson);                
                 List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
                 Console.ReadLine();
             }
@@ -61,7 +63,7 @@ namespace Gabriel_Bank_Management_System
 
             }
         }
-        public void JsonListofAllCustomers(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void JsonListofAllCustomers(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             Customer cust = new Customer()
             {
@@ -77,33 +79,10 @@ namespace Gabriel_Bank_Management_System
             Console.ReadLine();
         }
 
-        public void ReadingandWritingcustomer(string customer_id, WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
-        {
-            throw new NotImplementedException();
-        }
+        //public void ReadingandWritingcustomer(string customer_id, WebApiLibrary.Controllers.CustomerAccountManagerController cam, WebApiLibrary.Controllers.EmployeeAccountManagerController eam, WebApiLibrary.Controllers.ManagerAccountManagerController mam)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
-    public class DecimalFormatConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return (objectType == typeof(decimal));
-        }
-
-        public override void WriteJson(JsonWriter writer, object value,
-                                       JsonSerializer serializer)
-        {
-            writer.WriteValue(string.Format("{0:N2}", value));
-        }
-
-        public override bool CanRead
-        {
-            get { return false; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType,
-                                     object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    
 }

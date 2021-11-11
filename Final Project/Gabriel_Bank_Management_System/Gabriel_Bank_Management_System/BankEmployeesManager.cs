@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WebApiLibrary.Controllers;
 using WebApiLibrary.Interfaces;
 
 namespace Gabriel_Bank_Management_System
@@ -26,33 +27,34 @@ namespace Gabriel_Bank_Management_System
         {
             _user = user;
         }
-        public bool AddBankEmployees(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public bool AddBankEmployees(CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
-            
-            EmployeeAccountManager _user = new EmployeeAccountManager();
-            var new_user = _user.CreateUserAccount();
-            if (new_user != null)
-            {
 
-                if (eam.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
-                {
-                    ConsoleIO.WriteLine("Account already exists");
-                    return false;
-                }
-                else
-                {
-                    eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
-                    return true;
-                }
-            }
-            else
-            {
-                ConsoleIO.WriteLine("User creation failed try again");
-                return false;
-            }
+            //EmployeeAccountManager _user = new EmployeeAccountManager();
+            //var new_user = _user.CreateUserAccount();
+            //if (new_user != null)
+            //{
+
+            //    if (eam.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
+            //    {
+            //        ConsoleIO.WriteLine("Account already exists");
+            //        return false;
+            //    }
+            //    else
+            //    {
+            //        eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+            //        return true;
+            //    }
+            //}
+            //else
+            //{
+            //    ConsoleIO.WriteLine("User creation failed try again");
+            //    return false;
+            //}
+            return false;
 
         }
-        public void SearchCustomerByID(CustomerAccountManager cam)
+        public void SearchCustomerByID(CustomerAccountManagerController cam)
         {
             ConsoleIO.WriteLine("1. Search any customer information by customer ID");
             string customer_id = ConsoleIO.ReadLine();
@@ -76,12 +78,12 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("Account doesn't exist");
             }
         }
-        public void SearchCustomerByName(CustomerAccountManager cam)
+        public void SearchCustomerByName(CustomerAccountManagerController cam)
         {
             ConsoleIO.WriteLine("1. Search any customer information by customer name");
             string customer_name = ConsoleIO.ReadLine();
             
-            foreach (KeyValuePair<string, Customer> kvp in cam.dictionaryOfcustomers)
+            foreach (KeyValuePair<string, WebApiLibrary.Models.Customer > kvp in cam.dictionaryOfcustomers)
             {
                 if (kvp.Value.customer_name == customer_name)
                 {
@@ -113,111 +115,28 @@ namespace Gabriel_Bank_Management_System
         }
 
 
-        public void PerformOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
-        {
-            bool exit = false;
-            while (!exit)
-            {
-                ConsoleIO.WriteLine("Screen 1");
-                ConsoleIO.WriteLine("Select Option");
-                ConsoleIO.WriteLine("1. Create Bank Employee a/c");
-                ConsoleIO.WriteLine("2: Remove Bank Employee");
-                ConsoleIO.WriteLine("3: View all Employee");
-                ConsoleIO.WriteLine("4: Ask employee to log in");
-                ConsoleIO.WriteLine("5: Return to home screen");
-                var user_option = ConsoleIO.ReadLine();
-
-                switch (user_option)
-                {
-                    case "1":
-                        {
-                            AddBankEmployees(cam, eam, mam);
-                            break;
-                        }
-                    case "2":
-                        {
-                            RemoveEmployees(eam);
-                            break;
-                        }
-                    case "3":
-                        {
-                            ListEmployees(eam);
-                            break;
-                        }
-                    case "4":
-                        {
-                            EmployeeAccountManager emp = new EmployeeAccountManager();
-                            emp.UserLogin(eam); performOperationinternal(cam, eam);
-
-
-
-                            break;
-                        }
-                    case "5":
-                        {
-                            exit = true;
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }
-            }
-            ConsoleIO.WriteLine("Exiting the program");
-
-
-
-        }
-        public void performOperationinternal(CustomerAccountManager cam, EmployeeAccountManager eam)
+        public void PerformOperation(CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam)
         {
             
-            bool exit = false;
-            while (!exit)
-            {
-                ConsoleIO.WriteLine("1: Find customer by ID: ");
-                ConsoleIO.WriteLine("2: Find customer by name");
-                ConsoleIO.WriteLine("3: Logout and go back");
-                var input = ConsoleIO.ReadLine();
-                switch (input)
-                {
-                    case "1":
-                        {
-                            SearchCustomerByID(cam);
-                            break;
-                        }
-                    case "2":
-                        {
-                            SearchCustomerByName(cam);
-                            break;
-                        }
-                    case "3":
-                        {
-                            exit = true;
-                            break;
-                        }
-                    default:
-                        {
-                            break;
-                        }
-                }
-            }
+
+
+
         }
-        public void ListEmployees(EmployeeAccountManager eam)
+        public void performOperationinternal(CustomerAccountManagerController cam, EmployeeAccountManager eam)
         {
-            foreach (KeyValuePair<string, BankEmployees> kvp in eam.dictionaryOfEmployees)
+            
+            
+        }
+        public void ListEmployees(EmployeeAccountManagerController eam)
+        {
+            foreach (KeyValuePair<string, WebApiLibrary.Models.BankEmployees > kvp in eam.dictionaryOfEmployees)
             {
                 ConsoleIO.WriteLine($"{kvp.Value.bankemployee_id} {kvp.Value.bankemployee_name} " + "\n Viewing all employees here");
 
             }
 
-            var bankemployee_id = Console.ReadLine();
-            var user = eam.dictionaryOfEmployees[bankemployee_id];
-
-            eam.dictionaryOfEmployees[bankemployee_id] = user;
-
         }
-        public void RemoveEmployees(EmployeeAccountManager eam)
+        public void RemoveEmployees(EmployeeAccountManagerController eam)
         {
             ConsoleIO.WriteLine("Key in employee id");
             string employee_id = ConsoleIO.ReadLine();

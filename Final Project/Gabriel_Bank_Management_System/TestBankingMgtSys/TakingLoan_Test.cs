@@ -4,6 +4,7 @@ using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
 using System.IO;
+using WebApiLibrary.Controllers;
 
 namespace TakingLoan_Test
 {
@@ -60,8 +61,8 @@ namespace TakingLoan_Test
             CustomerAccountManager cmgt = new CustomerAccountManager();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
-            mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
+            mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, WebApiLibrary.Models.Customer >() { { itemid, new WebApiLibrary.Models.Customer() { customer_id = itemid } } });
             TakingLoan tk = new TakingLoan(mockConsoleIO.Object);
             tk.LoanAccount(mockCustomerManagement.Object, bemgt, bmgt);
             mockConsoleIO.Verify(t => t.WriteLine("Loan application : ID : " + cmgt.dictionaryOfcustomers[itemid] + " " + cmgt.dictionaryOfcustomers[itemid].customer_name), Times.Once);

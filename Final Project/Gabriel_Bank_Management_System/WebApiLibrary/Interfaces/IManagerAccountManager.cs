@@ -10,8 +10,6 @@ namespace WebApiLibrary.Interfaces
 {
     public interface IManagerAccountManager
     {
-        BankManagers CreateUserAccount();
-        void UserLogin(ManagerAccountManager mam);
-        void References();
+        bool UserLogin(ManagerAccountManagerController mam, List<int> loginTries, string bankmanager_id, string bankmanager_pw);
     }
 }

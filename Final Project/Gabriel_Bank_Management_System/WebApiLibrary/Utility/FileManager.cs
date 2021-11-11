@@ -11,7 +11,7 @@ namespace WebApiLibrary.Utility
     internal class FileManager : IFileManager
     {
         
-        public void ReadingandWritingcustomer(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace WebApiLibrary.Utility
 
                 List<Customer> customerList = new List<Customer>(); customerList.Add(cust);
                 Console.WriteLine("uploading user details to json file");
-                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new DecimalFormatConverter()); File.WriteAllText(jsontext, customerListJson);
+                string customerListJson = JsonConvert.SerializeObject(customerList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, customerListJson);
                 List<Customer> empTemp = JsonConvert.DeserializeObject<List<Customer>>(File.ReadAllText(jsontext));
                 Console.ReadLine();
             }
@@ -61,7 +61,7 @@ namespace WebApiLibrary.Utility
 
             }
         }
-        public void JsonListofAllCustomers(string customer_id, CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void JsonListofAllCustomers(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             Customer cust = new Customer()
             {
@@ -84,30 +84,6 @@ namespace WebApiLibrary.Utility
             jsonData = JsonConvert.SerializeObject(customerBalances, Formatting.Indented);
             File.WriteAllText(Alljsontext, jsonData);
             Console.ReadLine();
-        }
-    }
-    public class DecimalFormatConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return (objectType == typeof(decimal));
-        }
-
-        public override void WriteJson(JsonWriter writer, object value,
-                                       JsonSerializer serializer)
-        {
-            writer.WriteValue(string.Format("{0:N2}", value));
-        }
-
-        public override bool CanRead
-        {
-            get { return false; }
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType,
-                                     object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
         }
     }
 }

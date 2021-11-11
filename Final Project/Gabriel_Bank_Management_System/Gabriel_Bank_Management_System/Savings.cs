@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using Newtonsoft.Json;
 using WebApiLibrary.Interfaces;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Models;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -22,7 +24,7 @@ namespace Gabriel_Bank_Management_System
         {
             ConsoleIO = consoleIO;
         }
-        public void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void performOperation(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             bool exit = false;
             while (!exit)
@@ -76,7 +78,7 @@ namespace Gabriel_Bank_Management_System
             decimal maximumamount = 5000;
             return maximumamount;
         }
-        public bool customerDeposit(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public bool customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             
             ConsoleIO.WriteLine("Key in customer id");
@@ -117,7 +119,7 @@ namespace Gabriel_Bank_Management_System
             }
             return false;
         }
-        public void customerWithdrawl(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam)
+        public void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
             ConsoleIO.WriteLine("Key in customer id");
             string customer_id = ConsoleIO.ReadLine();
@@ -177,7 +179,7 @@ namespace Gabriel_Bank_Management_System
                 ConsoleIO.WriteLine("Account id not found");
             }
         }
-        public void ViewBalance(CustomerAccountManager cam)
+        public void ViewBalance(CustomerAccountManagerController cam)
         {
             ConsoleIO.WriteLine("Key in customer id");
             string customer_id = ConsoleIO.ReadLine();
@@ -226,26 +228,6 @@ namespace Gabriel_Bank_Management_System
                 throw new DivideByZeroException("Divide error");
 
             }
-        }
-
-        public void performOperation(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool customerDeposit(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void customerWithdrawl(WebApiLibrary.Controllers.CustomerAccountManager cam, WebApiLibrary.Controllers.EmployeeAccountManager eam, WebApiLibrary.Controllers.ManagerAccountManager mam)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ViewBalance(WebApiLibrary.Controllers.CustomerAccountManager cam)
-        {
-            throw new NotImplementedException();
         }
     }
 }

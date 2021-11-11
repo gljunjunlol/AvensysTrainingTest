@@ -50,12 +50,11 @@
     <Compile Include="BankEmployeesManager.cs" />
     <Compile Include="BankManagers.cs" />
     <Compile Include="BankManagersManager.cs" />
-    <Compile Include="BankViewModel.cs" />
     <Compile Include="ConsoleIO.cs" />
-    <Compile Include="Customer.cs" />
     <Compile Include="CustomersManager.cs" />
     <Compile Include="EmailIncorrectException.cs" />
     <Compile Include="FileManager.cs" />
+    <Compile Include="FormatDecimalConverter.cs" />
     <Compile Include="ManagerAccountManager.cs" />
     <Compile Include="EmployeeAccountManager.cs" />
     <Compile Include="IBankEmployeesManager.cs" />
@@ -68,12 +67,17 @@
     <Compile Include="Savings.cs" />
     <Compile Include="TakingLoan.cs" />
     <Compile Include="CustomerAccountManager.cs" />
+    <Compile Include="ViewModel\BankViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bank.Common\Bank.Common.csproj">
+      <Project>{b14ba633-251f-4d4f-93b7-8adf06954b9f}</Project>
+      <Name>Bank.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebApiLibrary\WebApiLibrary.csproj">
       <Project>{15b9667d-d36b-4ef6-a730-eb6581a0d1f0}</Project>
       <Name>WebApiLibrary</Name>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApiLibrary.Models
 {
-    public class BankManagers
+    public class BankManagers : BankEmployees
     {
         public string bankmanager_id { get; private set; }
         public string bankmanager_name { get; private set; }
@@ -16,7 +16,7 @@ namespace WebApiLibrary.Models
         public string bankmanager_yearsOfService { get; private  set; }
         public string bankmanager_pw { get; private set; }
 
-        internal BankManagers(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
+        public BankManagers(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
         {
             bankmanager_id = id;
             bankmanager_name = name;
@@ -25,6 +25,14 @@ namespace WebApiLibrary.Models
             bankmanager_designation = designation;
             bankmanager_yearsOfService = yos;
             bankmanager_pw = pw;
+        }
+        public BankManagers()
+        {
+
+        }
+        public override string ToString()
+        {
+            return bankmanager_id + "_" + bankmanager_name + "_" + bankmanager_address + "_" + bankmanager_dateOfBirth + "_" + bankmanager_designation + "_" + bankmanager_yearsOfService + "_" + bankmanager_pw;
         }
     }
 }

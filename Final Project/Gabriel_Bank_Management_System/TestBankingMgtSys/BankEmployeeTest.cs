@@ -3,6 +3,8 @@ using Xunit;
 using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
+using WebApiLibrary.Controllers;
+using WebApiLibrary.Models;
 
 namespace BankEmployeeTest
 {
@@ -31,7 +33,7 @@ namespace BankEmployeeTest
 
         public void TestListEmployee()
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             decimal expected = 0;
             Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
             bankingmanagermock.Setup(t => t.TotalSavingsAccount(cmgt));
@@ -42,7 +44,7 @@ namespace BankEmployeeTest
             EmployeeAccountManager eam = new EmployeeAccountManager();
             BankEmployeesManager bmgt = new BankEmployeesManager();
             bmgt.ListEmployees(eam);
-            eam.References();
+            
             eam.dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
 
             //Mock<IValidatePw> validate = new Mock<IValidatePw>();
@@ -138,11 +140,11 @@ namespace BankEmployeeTest
         [InlineData("12345")]
         public void SearchByIDExists(string itemid)
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
@@ -157,11 +159,11 @@ namespace BankEmployeeTest
         [InlineData("12345")]
         public void SearchByIDNotExists(string itemid)
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -176,11 +178,11 @@ namespace BankEmployeeTest
         [InlineData("12345")]
         public void SearchByNameNotExists(string name)
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(name);
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>());
 
@@ -195,12 +197,12 @@ namespace BankEmployeeTest
         [InlineData("12345")]
         public void SearchByNameExists(string name)
         {
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
             string itemid = "1";
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(name);
 
-            var mockCustomerManagement = new Mock<CustomerAccountManager>();
+            var mockCustomerManagement = new Mock<CustomerAccountManagerController>();
 
             mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_name = name, customer_id = itemid } } });
 
@@ -276,7 +278,7 @@ namespace BankEmployeeTest
         public void TestEmployeePerformOperation(string input)
         {
             EmployeeAccountManager bemgt = new EmployeeAccountManager();
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
@@ -298,7 +300,7 @@ namespace BankEmployeeTest
         public void TestEmployeePerformOperationInternal(string input)
         {
             EmployeeAccountManager bemgt = new EmployeeAccountManager();
-            CustomerAccountManager cmgt = new CustomerAccountManager();
+            CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
 
             var mockConsoleIO = new Mock<IConsoleIO>();
             mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);

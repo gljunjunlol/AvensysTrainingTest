@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebApiLibrary.Controllers;
 
 namespace Gabriel_Bank_Management_System
 {
     public interface IBankEmployeesManager
     {
         
-        void ListEmployees(EmployeeAccountManager eam);
-        void RemoveEmployees(EmployeeAccountManager eam);
-        bool AddBankEmployees(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
-        void SearchCustomerByID(CustomerAccountManager customersmanagement);
-        void SearchCustomerByName(CustomerAccountManager customersmanagement);
-        void PerformOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
-        void performOperationinternal(CustomerAccountManager cam, EmployeeAccountManager eam);
+        void ListEmployees(EmployeeAccountManagerController eam);
+        void RemoveEmployees(EmployeeAccountManagerController eam);
+        bool AddBankEmployees(CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        void SearchCustomerByID(CustomerAccountManagerController customersmanagement);
+        void SearchCustomerByName(CustomerAccountManagerController customersmanagement);
+        void PerformOperation(CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam);
+        void performOperationinternal(CustomerAccountManagerController cam, EmployeeAccountManager eam);
 
 
 

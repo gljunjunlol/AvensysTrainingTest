@@ -10,10 +10,10 @@ namespace WebApiLibrary.Interfaces
 {
     public interface ISavings
     {
-        void performOperation(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
-        bool customerDeposit(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
-        void customerWithdrawl(CustomerAccountManager cam, EmployeeAccountManager eam, ManagerAccountManager mam);
-        void ViewBalance(CustomerAccountManager cam);
+        void performOperation(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
+        bool customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
+        void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
+        void ViewBalance(CustomerAccountManagerController cam);
         decimal DepositLimit();
         decimal TakeDepositInput();
     }

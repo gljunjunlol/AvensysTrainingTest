@@ -10,8 +10,6 @@ namespace WebApiLibrary.Interfaces
 {
     public interface IEmployeeAccountManager
     {
-        BankEmployees CreateUserAccount();
-        void UserLogin(EmployeeAccountManager eam);
-        void References();
+        bool UserLogin(EmployeeAccountManagerController eam, List<int> loginTries, string bankemployee_id, string bankemployee_pw);
     }
 }

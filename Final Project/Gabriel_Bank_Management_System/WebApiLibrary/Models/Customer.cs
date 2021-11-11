@@ -21,7 +21,7 @@ namespace WebApiLibrary.Models
         public bool customer_loan_applied { get; set; }
         public decimal loan_amount { get; set; }
 
-        internal Customer(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
+        public Customer(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
             customer_id = id;
             customer_name = name;
@@ -36,9 +36,27 @@ namespace WebApiLibrary.Models
             customer_loan_applied = loan_app;
             loan_amount = loan_with_amt; 
         }
-        internal Customer()
+        public Customer(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal)
+        {
+            customer_id = id;
+            customer_name = name;
+            customer_address = address;
+            customer_dateOfBirth = dob;
+            customer_email = email;
+            customer_phone = phone;
+            customer_pw = pw;
+            account_number = account_no;
+            customerBalance = account_bal;
+
+
+        }
+        public Customer()
         {
 
+        }
+        public override string ToString()
+        {
+            return customer_id + "_" + customer_name + "_" + customer_address + "_" + customer_dateOfBirth + "_" + customer_email + "_" + customer_phone + "_" + customer_pw + "_" + account_number + "_" + customerBalance + "_" + cheque_book_number + "_" + customer_loan_applied + "_" + loan_amount + "_";
         }
         public void deposit(decimal amount)
         {

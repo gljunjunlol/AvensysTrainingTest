@@ -16,7 +16,12 @@ namespace WebApiLibrary.Models
         public string bankemployee_yearsOfService { get; private set; }
         public string bankemployee_pw { get; private set; }
 
-        internal BankEmployees(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
+
+        public BankEmployees()
+        {
+
+        }
+        public BankEmployees(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
         {
             bankemployee_id = id;
             bankemployee_name = name;
