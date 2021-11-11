@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Gabriel_Bank_Management_System
+namespace Gabriel_Bank_Management_System.Utility
 {
     public class FormatDecimalConverter : JsonConverter
     {

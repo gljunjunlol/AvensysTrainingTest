@@ -46,27 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BankEmployees.cs" />
-    <Compile Include="BankEmployeesManager.cs" />
-    <Compile Include="BankManagers.cs" />
-    <Compile Include="BankManagersManager.cs" />
-    <Compile Include="ConsoleIO.cs" />
-    <Compile Include="CustomersManager.cs" />
     <Compile Include="EmailIncorrectException.cs" />
-    <Compile Include="FileManager.cs" />
-    <Compile Include="FormatDecimalConverter.cs" />
-    <Compile Include="ManagerAccountManager.cs" />
-    <Compile Include="EmployeeAccountManager.cs" />
-    <Compile Include="IBankEmployeesManager.cs" />
-    <Compile Include="IBankManagersManager.cs" />
-    <Compile Include="IConsoleIO.cs" />
-    <Compile Include="ICustomersManagement.cs" />
+    <Compile Include="Interfaces\IBankViewModel.cs" />
     <Compile Include="PhoneIncorrectException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Savings.cs" />
-    <Compile Include="TakingLoan.cs" />
-    <Compile Include="CustomerAccountManager.cs" />
+    <Compile Include="Utility\FormatDecimalConverter.cs" />
     <Compile Include="ViewModel\BankViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,5 +34,9 @@ namespace WebApiLibrary.Models
 
 
         }
+        public override string ToString()
+        {
+            return bankemployee_id + "_" + bankemployee_name + "_" + bankemployee_address + "_" + bankemployee_dateOfBirth + "_" + bankemployee_designation + "_" + bankemployee_yearsOfService + "_" + bankemployee_pw;
+        }
     }
 }

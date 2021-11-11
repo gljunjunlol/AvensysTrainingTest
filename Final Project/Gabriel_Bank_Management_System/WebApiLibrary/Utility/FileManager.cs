@@ -8,7 +8,7 @@ using WebApiLibrary.Models;
 
 namespace WebApiLibrary.Utility
 {
-    internal class FileManager : IFileManager
+    public class FileManager : IFileManager
     {
         
         public void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)

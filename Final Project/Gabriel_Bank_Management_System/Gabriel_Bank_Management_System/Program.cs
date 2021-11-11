@@ -8,30 +8,19 @@ using Bank.Common.Common;
 using WebApiLibrary.Controllers;
 using WebApiLibrary.Interfaces;
 using WebApiLibrary.Models;
-
+using WebApiLibrary.Utility;
 
 namespace Gabriel_Bank_Management_System
 {
     public class Program
     {
-        private readonly IConsoleIO ConsoleIO;
-
-        public Program(IConsoleIO consoleIO)
-        {
-            ConsoleIO = consoleIO;
-        }
-        public Program()
-        {
-            ConsoleIO = new ConsoleIO();
-        }
         static void Main(string[] args)
         {
-            CustomerAccountManagerController cam = new CustomerAccountManagerController(); EmployeeAccountManagerController eam = new EmployeeAccountManagerController(); EmployeeAccountManager emp = new EmployeeAccountManager(); ManagerAccountManagerController mam = new ManagerAccountManagerController(); ManagerAccountManager mgr = new ManagerAccountManager();
-            CustomersManager cam1 = new CustomersManager(); BankEmployeesManager eam1 = new BankEmployeesManager();
-            BankManagersManager mam1 = new BankManagersManager();
+            CustomerAccountManagerController cam = new CustomerAccountManagerController(); EmployeeAccountManagerController eam = new EmployeeAccountManagerController(); ManagerAccountManagerController mam = new ManagerAccountManagerController();
+            
 
 
-            List<int> loginTries = new List<int>(); Program p = new Program(); ConsoleIO ConsoleIO = new ConsoleIO(); 
+            List<int> loginTries = new List<int>(); Program p = new Program();
             
             
             
@@ -42,11 +31,11 @@ namespace Gabriel_Bank_Management_System
 
             do
             {
-                ConsoleIO.WriteLine("Starting Program..");
+                Console.WriteLine("Starting Program..");
 
                 p.Initialize();
-                ConsoleIO.WriteLine("ENTER YOUR CHOICE:");
-                var action = ConsoleIO.ReadLine();
+                Console.WriteLine("ENTER YOUR CHOICE:");
+                var action = Console.ReadLine();
 
                 switch (action)
                 {
@@ -55,7 +44,7 @@ namespace Gabriel_Bank_Management_System
 
                             Console.Clear();
 
-                            ConsoleIO.WriteLine("Screen 1 -- customers only" + "\n1. Create User" + "\n2: Remove User" + "\nSeek help from bank operator" + "\n3: Ask user to log in" + "\n4: Return to home screen");
+                            Console.WriteLine("Screen 1 -- customers only" + "\n1. Create User" + "\n2: Remove User" + "\nSeek help from bank operator" + "\n3: Ask user to log in" + "\n4: Return to home screen");
 
                             string inputStr = Console.ReadLine();
 
@@ -106,7 +95,7 @@ namespace Gabriel_Bank_Management_System
 
                                             string input14;
                                             Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
-                                            DateTime customer_dob = DateTime.Parse(ConsoleIO.ReadLine());
+                                            DateTime customer_dob = DateTime.Parse(Console.ReadLine());
 
                                             Console.WriteLine(customer_dob);
                                             
@@ -169,7 +158,10 @@ namespace Gabriel_Bank_Management_System
                                         }
                                     case 2:
                                         {
-                                            //RemoveCustomers(cam);
+                                            Console.WriteLine("Key in customer id to remove");
+                                            string customer_id = Console.ReadLine();
+                                            mv.RemoveCustomers(cam, customer_id);
+                                            
                                             break;
                                         }
                                     case 3:
@@ -207,18 +199,194 @@ namespace Gabriel_Bank_Management_System
                                                         {
                                                             case "1":
                                                                 {
-                                                                    Savings saving = new Savings();
-                                                                    saving.performOperation(cam, eam, mam);
-                                                                    exited = true;
+                                                                    bool exit11 = false;
+                                                                    while (!exit11)
+                                                                    {
+
+                                                                        Console.WriteLine("In Savings account, key in operation" + "\n1: withdraw money" + "\n2: deposit money" + "\n3: view the balance" + "\n4: Exit savings operation");
+                                                                        var choice2 = Console.ReadLine();
+
+                                                                        switch (choice2)
+                                                                        {
+                                                                            case "1":
+                                                                                {
+                                                                                    Console.WriteLine("Key in customer id");
+                                                                                    string customerid = Console.ReadLine();
+                                                                                    
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid))
+                                                                                    {
+                                                                                        Console.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal");
+
+                                                                                        decimal withdrawAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
+                                                                                        mv.customerWithdrawl(cam, eam, mam, customer_id, withdrawAmountKeyedInByCustomer);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Account id not found");
+                                                                                    }
+
+                                                                                    break;
+                                                                                }
+                                                                            case "2":
+                                                                                {
+                                                                                    Console.WriteLine("Key in customer id");
+                                                                                    string customerid = Console.ReadLine();
+                                                                                    
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid))
+                                                                                    {
+                                                                                        Console.WriteLine("Key in amount for deposit - we will use cheque if more than 5k");
+                                                                                        decimal depositAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
+                                                                                        mv.customerDeposit(cam, eam, mam, customerid, depositAmountKeyedInByCustomer);
+                                                                                        
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Account id not found");
+                                                                                    }
+                                                                                    //customerDeposit(cam, eam, mam);
+                                                                                    break;
+                                                                                }
+                                                                            case "3":
+                                                                                {
+                                                                                    
+                                                                                    mv.ViewBalance(cam);
+                                                                                    break;
+                                                                                }
+                                                                            case "4":
+                                                                                {
+                                                                                    exit11 = true;
+                                                                                    break;
+                                                                                }
+                                                                            default:
+                                                                                {
+                                                                                    break;
+                                                                                }
+
+                                                                        }
+
+                                                                    }
+                                                                    
                                                                     break;
                                                                 }
                                                             case "2":
                                                                 {
+                                                                    Console.WriteLine("Taking loan here");
+                                                                    bool exit12 = false;
+                                                                    while (!exit12)
+                                                                    {
+                                                                        Console.WriteLine("In Loan account, key in required operation" + "\n1: Apply for a new loan" + "\n2: Apply for additional loan" + "\n3: view the loan" + "\n4: Repay loan amount" + "\n5: Exit loans operation");
+                                                                        var choice4 = Console.ReadLine();
+
+                                                                        switch (choice4)
+                                                                        {
+                                                                            case "1":
+                                                                                {
+                                                                                    Console.WriteLine("Enter customer ID");
+                                                                                    string customer_id2 = Console.ReadLine();
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id2))
+                                                                                    {
+                                                                                        if (cam.dictionaryOfcustomers[customer_id2].customer_loan_applied == false)
+                                                                                        {
+                                                                                            Console.WriteLine("Enter loan application amount");
+                                                                                            decimal loanamount = decimal.Parse(Console.ReadLine());
+                                                                                            DateTime datetime = DateTime.Now;
+                                                                                            Console.WriteLine("Taking a loan at: " + datetime + "");
+                                                                                            Console.WriteLine("Key in amount of months to repay / installment");
+                                                                                            decimal monthsIn = decimal.Parse(Console.ReadLine());
+                                                                                            Console.WriteLine("Key in % of interest of loan");
+                                                                                            decimal interestamount = decimal.Parse(Console.ReadLine());
 
 
-                                                                    TakingLoan tk = new TakingLoan();
-                                                                    tk.performOperation(cam, eam, mam);
-                                                                    exited = true;
+                                                                                            mv.LoanAccount(cam, eam, mam, customer_id2, loanamount, monthsIn, interestamount);
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            Console.WriteLine("Already applied for loan which is unpaid");
+
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Account doesn't exist in our database record");
+
+                                                                                    }                                                                                   
+                                                                                    break;
+                                                                                }
+                                                                            case "2":
+                                                                                {
+                                                                                    Console.WriteLine("Enter customer ID again to ensure of taking loan again");
+                                                                                    string customer_id2 = Console.ReadLine();
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id2))
+                                                                                    {
+                                                                                        if (cam.dictionaryOfcustomers[customer_id2].customer_loan_applied == false)
+                                                                                        {
+                                                                                            Console.WriteLine("Enter loan application amount");
+                                                                                            decimal loanamount = decimal.Parse(Console.ReadLine());
+                                                                                            DateTime datetime = DateTime.Now;
+                                                                                            Console.WriteLine("Taking a loan at: " + datetime + "");
+                                                                                            Console.WriteLine("Key in amount of months to repay / installment");
+                                                                                            decimal monthsIn = decimal.Parse(Console.ReadLine());
+                                                                                            Console.WriteLine("Key in % of interest of loan");
+                                                                                            decimal interestamount = decimal.Parse(Console.ReadLine());
+
+
+                                                                                            mv.LoanAccount(cam, eam, mam, customer_id2, loanamount, monthsIn, interestamount);
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            Console.WriteLine("Sorry cant take additional loan as previous loan is still outstanding");
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Account doesn't exist in our database record");
+                                                                                    }
+                                                                                    break;
+                                                                                }
+                                                                            case "3":
+                                                                                {
+                                                                                    Console.WriteLine("Enter customer ID");
+                                                                                    string customer_id2 = Console.ReadLine();
+                                                                                    mv.ViewLoan(cam, customer_id2);
+                                                                                    break;
+                                                                                }
+                                                                            case "4":
+                                                                                {
+                                                                                    Console.WriteLine("Enter customer ID");
+                                                                                    string customer_id3 = Console.ReadLine();
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id3))
+                                                                                    {
+                                                                                        if (cam.dictionaryOfcustomers[customer_id3].customer_loan_applied == true)
+                                                                                        {
+                                                                                            Console.WriteLine("Current loan is at " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
+                                                                                            Console.WriteLine("E.g. key in 100 to repay 100 or / key in  6% to repay 6%");
+                                                                                            string repayLoan = Console.ReadLine();
+                                                                                            mv.RepayLoan(cam, eam, mam, customer_id3, repayLoan);
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            Console.WriteLine("No loan to repay");
+                                                                                        }
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Account doesn't exist in our database record");
+                                                                                    }
+                                                                                    break;
+                                                                                }
+                                                                            case "5":
+                                                                                {
+                                                                                    exit12 = true;
+                                                                                    break;
+                                                                                }
+                                                                            default:
+                                                                                {
+                                                                                    break;
+                                                                                }
+
+                                                                        }
+
+                                                                    }
                                                                     break;
                                                                 }
                                                             default:
@@ -233,31 +401,18 @@ namespace Gabriel_Bank_Management_System
                                                 else
                                                 {
                                                     loginAttempts++;
-                                                }
-
-
-                                                
-                                                
-
-                                                
-                                                
+                                                }                                                
                                             }
                                             if (loginAttempts > 2)
                                                 Console.WriteLine("Incorrect user or pw");
                                             //Console.WriteLine("Too many tries, please wait 5 mins");
                                             else
-                                                Console.WriteLine("Login successful");
-
-
-
-
-
-
+                                                Console.WriteLine("Savings app");
                                             break;
                                         }
                                     case 4:
                                         {
-                                            exit = true;
+                                            
                                             break;
                                         }
                                     default:
@@ -265,27 +420,6 @@ namespace Gabriel_Bank_Management_System
                                             break;
                                         }
                                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            
-
-
-
                             break;
                         }
                     case "2":
@@ -319,10 +453,10 @@ namespace Gabriel_Bank_Management_System
                                                 string input18;
                                                 do
                                                 {
-                                                    ConsoleIO.WriteLine("Creating by bank moderator..");
-                                                    ConsoleIO.WriteLine("Processing.. please key in 2FA pin password");
-                                                    string EmployeeLogin2FARequired = ConsoleIO.ReadLine();
-                                                    ConsoleIO.WriteLine("successful");
+                                                    Console.WriteLine("Creating by bank moderator..");
+                                                    Console.WriteLine("Processing.. please key in 2FA pin password");
+                                                    string EmployeeLogin2FARequired = Console.ReadLine();
+                                                    Console.WriteLine("successful");
                                                     Console.WriteLine("Key in employee id - 4 digits");
                                                     input18 = Console.ReadLine();
                                                     string output = mv.CheckIdNumber(input18);
@@ -357,7 +491,7 @@ namespace Gabriel_Bank_Management_System
 
                                                 string input21;
                                                 Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
-                                                DateTime customer_dob = DateTime.Parse(ConsoleIO.ReadLine());
+                                                DateTime customer_dob = DateTime.Parse(Console.ReadLine());
 
                                                 Console.WriteLine(customer_dob);
 
@@ -387,7 +521,7 @@ namespace Gabriel_Bank_Management_System
 
                                                     if (eam.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
                                                     {
-                                                        ConsoleIO.WriteLine("Account already exists");
+                                                        Console.WriteLine("Account already exists");
                                                         
                                                     }
                                                     else
@@ -398,28 +532,20 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 else
                                                 {
-                                                    ConsoleIO.WriteLine("User creation failed try again");
+                                                    Console.WriteLine("User creation failed try again");
                                                 }
-
-
-
-
-
-
-
-                                                //AddBankEmployees(cam, eam, mam);
                                                 break;
                                             }
                                         case 2:
                                             {
-                                                BankEmployeesManager bemgr = new BankEmployeesManager();
-                                                bemgr.RemoveEmployees(eam);
+                                                Console.WriteLine("Key in employee id");
+                                                string employee_id = Console.ReadLine();
+                                                mv.RemoveEmployees(eam, employee_id);
                                                 break;
                                             }
                                         case 3:
                                             {
-                                                BankEmployeesManager bemgr = new BankEmployeesManager();
-                                                bemgr.ListEmployees(eam);
+                                                mv.ListEmployees(eam);
                                                 break;
                                             }
                                         case 4:
@@ -443,23 +569,26 @@ namespace Gabriel_Bank_Management_System
                                                         
                                                         while (!exited1)
                                                         {
-                                                            ConsoleIO.WriteLine("1: Find customer by ID: ");
-                                                            ConsoleIO.WriteLine("2: Find customer by name");
-                                                            ConsoleIO.WriteLine("3: Logout and go back");
-                                                            var choice = ConsoleIO.ReadLine();
+                                                            Console.WriteLine("1: Find customer by ID: ");
+                                                            Console.WriteLine("2: Find customer by name");
+                                                            Console.WriteLine("3: Logout and go back");
+                                                            var choice = Console.ReadLine();
                                                             switch (choice)
                                                             {
                                                                 case "1":
                                                                     {
-                                                                        BankEmployeesManager bemgr = new BankEmployeesManager();
-                                                                        bemgr.SearchCustomerByID(cam);
+                                                                        Console.WriteLine("1. Search any customer information by customer ID");
+                                                                        string customer_id = Console.ReadLine();
+                                                                        mv.SearchCustomerByID(cam, customer_id);
                                                                         
                                                                         break;
                                                                     }
                                                                 case "2":
                                                                     {
-                                                                        BankEmployeesManager bemgr = new BankEmployeesManager();
-                                                                        bemgr.SearchCustomerByName(cam);
+
+                                                                        Console.WriteLine("1. Search any customer information by customer name");
+                                                                        string customer_name = Console.ReadLine();
+                                                                        mv.SearchCustomerByName(cam, customer_name);
                                                                         
                                                                         break;
                                                                     }
@@ -481,13 +610,6 @@ namespace Gabriel_Bank_Management_System
                                                     {
                                                         loginAttempts++;
                                                     }
-
-
-
-
-
-
-
                                                 }
                                                 if (loginAttempts > 2)
                                                     Console.WriteLine("Incorrect user or pw");
@@ -511,31 +633,21 @@ namespace Gabriel_Bank_Management_System
                             }
                             while (insideMenu10);
                             
-                            ConsoleIO.WriteLine("Exiting the program");
-
-
-
-
-
-
-
-                            ConsoleIO.WriteLine("ok cleared"); ConsoleIO.ReadLine();
-
-
+                            Console.WriteLine("Exiting the program");
+                            Console.WriteLine("ok cleared"); Console.ReadLine();
                             break;
                         }
                     case "3":
                         {
                             bool insideMenu12 = false;
                             Console.Clear();
-                            //mam1.performOperationAdvanced(cam, cam1, eam, eam1, mam, mam1);
                             do
                             {
-                                ConsoleIO.WriteLine("Select Option (Involving Manager access only)");
-                                ConsoleIO.WriteLine("1: Create Bank Manager");
-                                ConsoleIO.WriteLine("2: View Managers");
-                                ConsoleIO.WriteLine("3: Login");
-                                ConsoleIO.WriteLine("4: Return to home screen");
+                                Console.WriteLine("Select Option (Involving Manager access only)");
+                                Console.WriteLine("1: Create Bank Manager");
+                                Console.WriteLine("2: View Managers");
+                                Console.WriteLine("3: Login");
+                                Console.WriteLine("4: Return to home screen");
                                 string inputStr = Console.ReadLine();
 
                                 mv.ParseInputString(inputStr, out var input);
@@ -551,10 +663,10 @@ namespace Gabriel_Bank_Management_System
                                                 string input25;
                                                 do
                                                 {
-                                                    ConsoleIO.WriteLine("Creating by bank moderator..");
-                                                    ConsoleIO.WriteLine("Processing.. please key in 2FA pin password");
-                                                    string EmployeeLogin2FARequired = ConsoleIO.ReadLine();
-                                                    ConsoleIO.WriteLine("successful");
+                                                    Console.WriteLine("Creating by bank moderator..");
+                                                    Console.WriteLine("Processing.. please key in 2FA pin password");
+                                                    string EmployeeLogin2FARequired = Console.ReadLine();
+                                                    Console.WriteLine("successful");
                                                     Console.WriteLine("Key in manager id - 4 digits");
                                                     input25 = Console.ReadLine();
                                                     string output = mv.CheckIdNumber(input25);
@@ -589,7 +701,7 @@ namespace Gabriel_Bank_Management_System
 
                                                 string input28;
                                                 Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
-                                                DateTime manager_dob = DateTime.Parse(ConsoleIO.ReadLine());
+                                                DateTime manager_dob = DateTime.Parse(Console.ReadLine());
 
                                                 Console.WriteLine(manager_dob);
 
@@ -619,7 +731,7 @@ namespace Gabriel_Bank_Management_System
 
                                                     if (mam.dictionaryOfManagers.ContainsKey(new_user.bankmanager_id))
                                                     {
-                                                        ConsoleIO.WriteLine("Account already exists");
+                                                        Console.WriteLine("Account already exists");
 
                                                     }
                                                     else
@@ -630,14 +742,13 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 else
                                                 {
-                                                    ConsoleIO.WriteLine("User creation failed try again");
+                                                    Console.WriteLine("User creation failed try again");
                                                 }
-                                                //AddBankManagers(cam, eam, mam);
                                                 break;
                                             }
                                         case 2:
                                             {
-                                                //ViewManagers(mam);
+                                                mv.ViewManagers(mam);
                                                 break;
                                             }
                                         case 3:
@@ -670,12 +781,16 @@ namespace Gabriel_Bank_Management_System
                                                             {
                                                                 case "1":
                                                                     {
-                                                                        eam1.SearchCustomerByID(cam);
+                                                                        Console.WriteLine("1. Search any customer information by customer ID");
+                                                                        string customer_id = Console.ReadLine();
+                                                                        mv.SearchCustomerByID(cam, customer_id);
                                                                         break;
                                                                     }
                                                                 case "2":
                                                                     {
-                                                                        eam1.SearchCustomerByName(cam);
+                                                                        Console.WriteLine("1. Search any customer information by customer name");
+                                                                        string customer_name = Console.ReadLine();
+                                                                        mv.SearchCustomerByName(cam, customer_name);
                                                                         break;
                                                                     }
                                                                 case "3":
@@ -684,24 +799,22 @@ namespace Gabriel_Bank_Management_System
                                                                         Console.WriteLine("2: List of Total Loan amount");
                                                                         Console.WriteLine("3: List of Total saving account of customers / budgeting purposes / manage tracking");
                                                                         Console.WriteLine("4: Go back to the previous screen (Screen 1) / Logout and go back");
-                                                                        var choice2 = ConsoleIO.ReadLine();
+                                                                        var choice2 = Console.ReadLine();
                                                                         switch (choice2)
                                                                         {
                                                                             case "1":
                                                                                 {
-                                                                                    cam1.ListCustomers(cam);
+                                                                                    mv.ListCustomers(cam);
                                                                                     break;
                                                                                 }
                                                                             case "2":
                                                                                 {
-                                                                                    BankManagersManager bmgt = new BankManagersManager();
-                                                                                    bmgt.TotalLoanAmount(cam);
+                                                                                    mv.TotalLoanAmount(cam);
                                                                                     break;
                                                                                 }
                                                                             case "3":
                                                                                 {
-                                                                                    BankManagersManager bmgt = new BankManagersManager();
-                                                                                    bmgt.TotalSavingsAccount(cam);
+                                                                                    mv.TotalSavingsAccount(cam);
                                                                                     break;
                                                                                 }
                                                                             case "4":
@@ -714,9 +827,6 @@ namespace Gabriel_Bank_Management_System
                                                                                     break;
                                                                                 }
                                                                         }
-
-
-                                                                        //mam1.performOperationAdvancedInternal1(cam, cam1, eam, eam1, mam, mam1);
                                                                         break;
                                                                     }
                                                                 case "4":
@@ -736,22 +846,12 @@ namespace Gabriel_Bank_Management_System
                                                     {
                                                         loginAttempts++;
                                                     }
-
-
-
-
-
-
-
                                                 }
                                                 if (loginAttempts > 2)
                                                     Console.WriteLine("Incorrect user or pw");
                                                 //Console.WriteLine("Too many tries, please wait 5 mins");
                                                 else
                                                     Console.WriteLine("Go back");
-                                                //ManagerAccountManager mgr = new ManagerAccountManager();
-                                                //mgr.UserLogin(mam);
-                                                //performOperationAdvancedInternal(cam, cam1, eam, eam1, mam, mam1);
                                                 break;
                                             }
                                         case 4:
@@ -765,16 +865,10 @@ namespace Gabriel_Bank_Management_System
                                                 break;
                                             }
                                     }
-                                    ConsoleIO.WriteLine("");
+                                    Console.WriteLine("");
                             }
-                            while (insideMenu12);
-                            
-                            
-                            
-                            
-                            
-                            
-                            ConsoleIO.WriteLine("ok seen manager"); ConsoleIO.ReadLine();
+                            while (insideMenu12);                   
+                            Console.WriteLine("ok seen manager"); Console.ReadLine();
 
 
                             break;
@@ -792,15 +886,8 @@ namespace Gabriel_Bank_Management_System
                 
             }
             while (!exit);
-            ConsoleIO.WriteLine("Exiting the program");
-            ConsoleIO.ReadLine();
-
-
-
-
-
-
-
+            Console.WriteLine("Exiting the program");
+            Console.ReadLine();
             while (!exit)
             {
                 try
@@ -810,45 +897,37 @@ namespace Gabriel_Bank_Management_System
                 catch (Exception)
                 {
                     Console.Write("Incorrect format. Please try again");
-                    ConsoleIO.ReadLine();
+                    Console.ReadLine();
                 }
             }
-            
-            
-            
-
-        }
-        public void performOperation(CustomerAccountManager cam, CustomersManager cam1, EmployeeAccountManager eam, BankEmployeesManager eam1, ManagerAccountManager mam, BankManagersManager mam1, List<int> loginTries, Program p)
-        {
-            
         }
         public void Initialize()
         {
-            ConsoleIO.WriteLine("We have the Requirements and necessary information:");
-            ConsoleIO.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
-            ConsoleIO.WriteLine("customers with a loan and a savings account");
-            ConsoleIO.WriteLine("Employees to view customer info: ");
-            ConsoleIO.WriteLine("Bank Managers to view all customers + additional function: \n");
-            ConsoleIO.WriteLine("________________________________");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|________________________________");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("|");
-            ConsoleIO.WriteLine("");
-            ConsoleIO.WriteLine("*******************************");
-            ConsoleIO.WriteLine(" << Bank Management System >> \n");
-            ConsoleIO.WriteLine("1: Bank customers (Create new users)\n");
-            ConsoleIO.WriteLine("2: Bank Employee (Find customers / Employee Information\n ");
-            ConsoleIO.WriteLine("3: Bank Manager\n");
-            ConsoleIO.WriteLine("4: Exit the room\n");
-            ConsoleIO.WriteLine("*******************************");
+            Console.WriteLine("We have the Requirements and necessary information:");
+            Console.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
+            Console.WriteLine("customers with a loan and a savings account");
+            Console.WriteLine("Employees to view customer info: ");
+            Console.WriteLine("Bank Managers to view all customers + additional function: \n");
+            Console.WriteLine("________________________________");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|________________________________");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("|");
+            Console.WriteLine("");
+            Console.WriteLine("*******************************");
+            Console.WriteLine(" << Bank Management System >> \n");
+            Console.WriteLine("1: Bank customers (Create new users)\n");
+            Console.WriteLine("2: Bank Employee (Find customers / Employee Information\n ");
+            Console.WriteLine("3: Bank Manager\n");
+            Console.WriteLine("4: Exit the room\n");
+            Console.WriteLine("*******************************");
             
 
         }
