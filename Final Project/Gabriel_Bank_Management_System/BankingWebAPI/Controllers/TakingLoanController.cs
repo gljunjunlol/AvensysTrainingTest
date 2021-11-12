@@ -35,8 +35,8 @@ namespace BankingWebAPI.Controllers
         {
             //_customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1", customer_name = "John", loan_amount = 2500 });
-            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary", loan_amount = 3500 });
+            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", account_number = "1111" });
+            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", account_number = "2222" });
         }
         [HttpGet]
         [Route("customer/{id}")]                       // https://localhost:44360/api/TakingLoan/customer/2

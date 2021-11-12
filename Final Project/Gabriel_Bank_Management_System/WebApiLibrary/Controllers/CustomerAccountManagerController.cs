@@ -20,6 +20,8 @@ namespace WebApiLibrary.Controllers
         {
             //_customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
+            dictionaryOfcustomers.Add("1111", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$" });
+            dictionaryOfcustomers.Add("2222", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$" });
         }
         
         public bool UserLogin(CustomerAccountManagerController cam, List<int> loginTries, string customer_id, string customer_pw)

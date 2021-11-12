@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bank.Common.Common;
-using WebApiLibrary.Controllers;
-using WebApiLibrary.Interfaces;
-using WebApiLibrary.Models;
-using WebApiLibrary.Utility;
+using BankingWebAPI.Controllers;
+using BankingWebAPI.Interfaces;
+using BankingWebAPI.Models;
+using BankingWebAPI.Utility;
+using System.Web.Http;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -131,7 +132,7 @@ namespace Gabriel_Bank_Management_System
                                             }
                                             while (mv.validatePassword(input17) == false);
                                             while (insideMenu) ;
-                                            WebApiLibrary.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input15, input16, input17, " ", 0, Guid.Empty, false, 0);
+                                            BankingWebAPI.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input15, input16, input17, " ", 0, Guid.Empty, false, 0);
                                             //Console.WriteLine(new_user);
                                             if (new_user != null)
                                             {
@@ -248,8 +249,10 @@ namespace Gabriel_Bank_Management_System
                                                                                 }
                                                                             case "3":
                                                                                 {
-                                                                                    
-                                                                                    mv.ViewBalance(cam);
+                                                                                    SavingsController sav = new SavingsController();
+                                                                                    Console.WriteLine("Key in customer id");
+                                                                                    string customer_id4 = Console.ReadLine();
+                                                                                    mv.ViewBalance(cam, sav, customer_id4);
                                                                                     break;
                                                                                 }
                                                                             case "4":
@@ -514,7 +517,7 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 while (mv.validatePassword(input24) == false);
                                                 while (insideMenu) ;
-                                                WebApiLibrary.Models.BankEmployees new_user = mv.SignUpEmployee(input18, input19, input20, customer_dob, input22, input23, input24);
+                                                BankingWebAPI.Models.BankEmployees new_user = mv.SignUpEmployee(input18, input19, input20, customer_dob, input22, input23, input24);
                                                 //Console.WriteLine(new_user);
                                                 if (new_user != null)
                                                 {
@@ -724,7 +727,7 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 while (mv.validatePassword(input31) == false);
                                                 while (insideMenu) ;
-                                                WebApiLibrary.Models.BankManagers new_user = mv.SignUpManager(input25, input26, input27, manager_dob, input29, input30, input31);
+                                                BankingWebAPI.Models.BankManagers new_user = mv.SignUpManager(input25, input26, input27, manager_dob, input29, input30, input31);
                                                 //Console.WriteLine(new_user);
                                                 if (new_user != null)
                                                 {

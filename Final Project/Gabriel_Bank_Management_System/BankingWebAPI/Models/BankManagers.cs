@@ -8,13 +8,13 @@ namespace BankingWebAPI.Models
 {
     public class BankManagers : BankEmployees
     {
-        public string bankmanager_id { get; private set; }
-        public string bankmanager_name { get; private set; }
-        public string bankmanager_address { get; private set; }
-        public DateTime bankmanager_dateOfBirth { get; private set; }
-        public string bankmanager_designation { get; private set; }
-        public string bankmanager_yearsOfService { get; private  set; }
-        public string bankmanager_pw { get; private set; }
+        public string bankmanager_id { get; set; }
+        public string bankmanager_name { get; set; }
+        public string bankmanager_address { get; set; }
+        public DateTime bankmanager_dateOfBirth { get; set; }
+        public string bankmanager_designation { get; set; }
+        public string bankmanager_yearsOfService { get; set; }
+        public string bankmanager_pw { get; set; }
 
         public BankManagers(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
         {
