@@ -11,13 +11,13 @@ namespace WebApiLibrary.Controllers
 {
     public class EmployeeAccountManagerController : IEmployeeAccountManager
     {
-        private IList<BankEmployees> _employeeList;
+        //private IList<BankEmployees> _employeeList;
         public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
 
 
         public EmployeeAccountManagerController()
         {
-            _employeeList = new List<BankEmployees>();
+            //_employeeList = new List<BankEmployees>();
             dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
         }
 

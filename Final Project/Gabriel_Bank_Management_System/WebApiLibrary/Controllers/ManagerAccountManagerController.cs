@@ -10,14 +10,14 @@ namespace WebApiLibrary.Controllers
 {
     public class ManagerAccountManagerController : IManagerAccountManager
     {
-        private IList<BankManagers> _managersList;
+        //private IList<BankManagers> _managersList;
         public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
 
 
 
         public ManagerAccountManagerController()
         {
-            _managersList = new List<BankManagers>();
+            //_managersList = new List<BankManagers>();
             dictionaryOfManagers = new Dictionary<string, BankManagers>();
         }
         

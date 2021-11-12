@@ -93,7 +93,7 @@ namespace Gabriel_Bank_Management_System
                                             
 
 
-                                            string input14;
+                                            //string input14;
                                             Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
                                             DateTime customer_dob = DateTime.Parse(Console.ReadLine());
 
@@ -489,7 +489,7 @@ namespace Gabriel_Bank_Management_System
 
 
 
-                                                string input21;
+                                                //string input21;
                                                 Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
                                                 DateTime customer_dob = DateTime.Parse(Console.ReadLine());
 
@@ -699,7 +699,7 @@ namespace Gabriel_Bank_Management_System
 
 
 
-                                                string input28;
+                                                //string input28;
                                                 Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
                                                 DateTime manager_dob = DateTime.Parse(Console.ReadLine());
 

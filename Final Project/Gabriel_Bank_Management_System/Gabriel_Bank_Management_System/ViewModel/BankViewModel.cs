@@ -9,6 +9,8 @@ using Bank.Common.Common;
 using WebApiLibrary.Models;
 using System.Threading;
 using WebApiLibrary.Utility;
+using System.IO;
+using System.Net.Http;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
@@ -16,8 +18,8 @@ namespace Gabriel_Bank_Management_System.ViewModel
     {
         CustomerAccountManagerController cam;
 
-        
 
+        private readonly HttpClient _bankClient;
         
 
 
@@ -26,14 +28,39 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
         internal BankViewModel()
         {
+            _bankClient = new HttpClient();
+#if DEBUG
+            _bankClient.BaseAddress = new Uri("https://localhost.44360/");
+#else
+            _bankClient.BaseAddress = new Uri("http://mybankapi.me");
+#endif
+
+            //var responseTask = _bankClient.GetAsync("api/");
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            //if (result.IsSuccessStatusCode)
+            //{
+
+            //}
+
             cam = new CustomerAccountManagerController();
 
         }
         public string CheckIdNumber(string idNumber)
         {
             string output = string.Empty;
-            IdResultType result = cam.CheckId(idNumber);
-            switch (result)
+            IdResultType checkIdResult = cam.CheckId(idNumber);
+            //IdResultType checkIdResult = IdResultType.UnhandledIdError;
+            //var responseTask = _bankClient.GetAsync("api/Authentication/checkid?idNumber=" + idNumber); // to call a web api
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            //if (result.IsSuccessStatusCode)
+            //{
+            //    var readTask = result.Content.ReadAsAsync<IdResultType>();
+            //    readTask.Wait();
+            //    checkIdResult = readTask.Result;
+            //}
+            switch (checkIdResult)
             {
                 case IdResultType.None:
                     break;
@@ -56,8 +83,18 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string CheckUserName(string userName)
         {
             string output = string.Empty;
-            UserNameResultType result = cam.CheckUserName(userName);
-            switch (result)
+            UserNameResultType checkUserNameResult = cam.CheckUserName(userName);
+            //UserNameResultType checkUserNameResult = UserNameResultType.UnhandledUserError;
+            //var responseTask = _bankClient.GetAsync("api/Authentication/checkusername?username=" + userName);
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            //if (result.IsSuccessStatusCode)
+            //{
+            //    var readTask = result.Content.ReadAsAsync<UserNameResultType>();
+            //    readTask.Wait();
+            //    checkUserNameResult = readTask.Result;
+            //}
+            switch (checkUserNameResult)
             {
                 case UserNameResultType.None:
                     break;
@@ -154,33 +191,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 value = null;
             }
         }
-        //public bool AddCustomer(CustomerAccountManagerController cam, EmployeeAccountManager eam, ManagerAccountManager mam)
-        //{
-        //    //CustomerAccountManagerController _user = new CustomerAccountManagerController();
-        //    //var new_user = _user.CreateUserAccount();
-        //    //if (new_user != null)
-        //    //{
-
-        //    //    if (cam.dictionaryOfcustomers.ContainsKey(new_user.customer_id))
-        //    //    {
-        //    //        Console.WriteLine("Account already exists");
-        //    //        return false;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-        //    //        FileManager fileHandling = new FileManager();
-        //    //        fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
-        //    //        return true;
-        //    //    }
-        //    //}
-        //    //else
-        //    //{
-        //    //    Console.WriteLine("User creation failed try again");
-        //    //    return false;
-        //    //}
-        //    return false;
-        //}
         public decimal DepositLimit()
         {
             decimal maximumamount = 5000;

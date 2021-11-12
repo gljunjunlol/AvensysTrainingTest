@@ -2,38 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using WebApiLibrary.Interfaces;
-using WebApiLibrary.Models;
+using BankingWebAPI.Interfaces;
+using BankingWebAPI.Models;
 using System.IO;
 using Newtonsoft.Json;
 using Bank.Common.Common;
-using WebApiLibrary.Utility;
+using BankingWebAPI.Utility;
+using System.Web.Http;
+using BankingWebAPI.Filters;
 
-namespace WebApiLibrary.Controllers
+namespace BankingWebAPI.Controllers
 {
-    public class CustomerAccountManagerController : ICustomerAccountManager
+    [LogAction]
+    [Log]
+    [RoutePrefix("api/Authentication")]
+    public class CustomerAccountManagerController : ApiController, ICustomerAccountManager
     {
-        //private IList<Customer> _customerList;
+        private IList<Customer> _customerList;
         public Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
 
         public CustomerAccountManagerController()
         {
-            //_customerList = new List<Customer>();
+            _customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
         }
-        
-        public bool UserLogin(CustomerAccountManagerController cam, List<int> loginTries, string customer_id, string customer_pw)
+        [HttpGet]
+        [Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
+        public bool UserLogin(string customer_id, string customer_pw)
         {
-            if (cam.dictionaryOfcustomers.ContainsKey(customer_id) && cam.dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
+            if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
             {
-                Console.WriteLine($"Congratulations, {cam.dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].account_number}");
+                Console.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name} { dictionaryOfcustomers[customer_id].customer_email} { dictionaryOfcustomers[customer_id].account_number}");
                 return true;
 
             }
             return false;
 
         }
-
+        [HttpGet]
+        [Route("checkpassword")]                                 // https://localhost:44360/api/Authentication/checkpassword?customer_pw=John12345678$
         public bool validatePassword(string customer_pw)
         {
             if (customer_pw.Length < 6 || customer_pw.Length > 24)
@@ -72,6 +79,8 @@ namespace WebApiLibrary.Controllers
             }
             return true;
         }
+        [HttpGet]
+        [Route("checkphonenumber")]                // https://localhost:44360/api/Authentication/checkphonenumber?phone=(222)333-4444
         public bool validatePhone(string phone)
         {
             while (true)
@@ -99,6 +108,8 @@ namespace WebApiLibrary.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("checkemail")]                                        // https://localhost:44360/api/Authentication/checkemail?email=john@mail.com
         public bool validateEmail(string email)
         {
             while (true)
@@ -127,6 +138,8 @@ namespace WebApiLibrary.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("checkusername")]                         // https://localhost:44360/api/Authentication/checkusername?username=johnsmith
         public UserNameResultType CheckUserName(string username)
         {
             UserNameResultType type = UserNameResultType.None;
@@ -168,6 +181,8 @@ namespace WebApiLibrary.Controllers
             }
             return type;
         }
+        [HttpGet]
+        [Route("checkid")]                      // https://localhost:44360/api/Authentication/checkid?idNumber=1234
         public IdResultType CheckId(string idNumber)
         {
             IdResultType type = IdResultType.None;
