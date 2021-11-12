@@ -41,13 +41,13 @@ namespace BankingWebAPI.Controllers
             dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary" });
         }
         [HttpGet]
-        [Route("")]                               // https://localhost:44360/api/Customer
+        [Route("")]                               // https://localhost:44360/api/Customer              OR      http://mybankapi.me/api/Customer
         public Dictionary<string, Customer> GetAll()
         {
             return dictionaryOfcustomers;
         }
         [HttpGet]
-        [Route("Customer/{id}")]                   // https://localhost:44360/api/Customer/Customer/1
+        [Route("Customer/{id}")]                   // https://localhost:44360/api/Customer/Customer/1      OR http://mybankapi.me/api/Customer/Customer/1
         public Customer GET(string id)
         {
             return dictionaryOfcustomers.Where(x => x.Key.Contains(id)).FirstOrDefault().Value;

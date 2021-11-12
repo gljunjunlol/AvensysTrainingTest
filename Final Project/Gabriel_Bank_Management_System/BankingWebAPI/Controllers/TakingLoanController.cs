@@ -35,8 +35,15 @@ namespace BankingWebAPI.Controllers
         {
             //_customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1", customer_name = "John" });
-            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary" });
+            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1", customer_name = "John", loan_amount = 2500 });
+            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary", loan_amount = 3500 });
+        }
+        [HttpGet]
+        [Route("customer/{id}")]                       // https://localhost:44360/api/TakingLoan/customer/2
+        public decimal ViewLoan(string id)
+        {
+            Customer existingCustomer = dictionaryOfcustomers[id];
+            return existingCustomer.loan_amount;
         }
         [HttpPatch]
         [Route("Customer/Patch")]

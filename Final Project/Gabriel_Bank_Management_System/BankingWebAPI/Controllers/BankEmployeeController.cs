@@ -25,6 +25,9 @@ namespace BankingWebAPI.Controllers
         public BankEmployeeController()
         {
             dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+            dictionaryOfEmployees.Add("1", new BankEmployees() { bankemployee_id = "1", bankemployee_name = "george", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
+            dictionaryOfEmployees.Add("2", new BankEmployees() { bankemployee_id = "2", bankemployee_name = "alan", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
+            dictionaryOfEmployees.Add("3", new BankEmployees() { bankemployee_id = "3", bankemployee_name = "samuel", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
         }
         //[HttpGet]
         //[Route("customerbyid")]
@@ -55,6 +58,69 @@ namespace BankingWebAPI.Controllers
         //        return BadRequest("Account name not exist");
         //    }
         //}
+        [HttpGet]
+        [Route("")]                               // https://localhost:44360/api/BankEmployee     OR http://mybankapi.me/api/BankEmployee
+        public Dictionary<string, BankEmployees> GetAll()
+        {
+            return dictionaryOfEmployees;
+        }
+        [HttpGet]
+        [Route("Employee/{id}")]                   // https://localhost:44360/api/BankEmployee/Employee/1   OR http://mybankapi.me/api/BankEmployee/Employee/1
+        public BankEmployees GET(string id)
+        {
+            return dictionaryOfEmployees.Where(x => x.Key.Contains(id)).FirstOrDefault().Value;
+        }
+        [HttpPatch]
+        [Route("Patch")]
+        public Dictionary<string, BankEmployees> Patch(string bankemployee_id, string updatedName)
+        {
+            BankEmployees existingEmployee = dictionaryOfEmployees[bankemployee_id];
+            if (existingEmployee != null)
+                dictionaryOfEmployees.Remove(bankemployee_id);
+            else
+            {
+                existingEmployee.bankemployee_name = updatedName;
+                dictionaryOfEmployees.Add(bankemployee_id, existingEmployee);
+            }
+            return dictionaryOfEmployees;
+        }
+        [HttpPost]
+        [Route("Add")]
+        public Dictionary<string, BankEmployees> EmployeeAdd(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
+        {
+            dictionaryOfEmployees.Add(id, new BankEmployees(id, name, address, dob, designation, yos, pw));
+            return dictionaryOfEmployees;
+
+        }
+        [HttpPut]
+        [Route("Put")]
+        public Dictionary<string, BankEmployees> PUT(string id, BankEmployees employee)
+        {
+            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == employee.bankemployee_id).FirstOrDefault().Value;
+            if (existingEmployee == null)
+                dictionaryOfEmployees.Remove(id);
+            dictionaryOfEmployees.Add(id, employee);
+            return dictionaryOfEmployees;
+
+        }
+        [HttpDelete]
+        [Route("Delete")]
+        public Dictionary<string, BankEmployees> Delete(string id, BankEmployees employee)
+        {
+            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == employee.bankemployee_id).FirstOrDefault().Value;
+            if (existingEmployee != null)
+                dictionaryOfEmployees.Remove(id);
+            return dictionaryOfEmployees;
+        }
+        [HttpDelete]
+        [Route("DeleteById/{id}")]               // https://localhost:44360/api/BankEmployee/DeleteById/2
+        public Dictionary<string, BankEmployees> DeleteById(string id)
+        {
+            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == id).FirstOrDefault().Value;
+            if (existingEmployee != null)
+                dictionaryOfEmployees.Remove(id);
+            return dictionaryOfEmployees;
+        }
 
     }
 }

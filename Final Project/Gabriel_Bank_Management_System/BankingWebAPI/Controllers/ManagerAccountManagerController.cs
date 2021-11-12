@@ -24,7 +24,7 @@ namespace BankingWebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("managerlogin")]
+        [Route("managerlogin")]                         // https://localhost:44360/api/ManagerAuthentication/managerlogin?bankmanager_id="hello"&bankmanager_pw="hello"
         public bool UserLogin(string bankmanager_id, string bankmanager_pw)
         {
             if (dictionaryOfManagers.ContainsKey(bankmanager_id) && dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)

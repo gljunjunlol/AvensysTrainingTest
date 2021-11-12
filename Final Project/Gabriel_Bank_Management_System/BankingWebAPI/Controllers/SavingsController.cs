@@ -36,11 +36,11 @@ namespace BankingWebAPI.Controllers
         {
             //_customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1", customer_name = "John" });
-            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary" });
+            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1", customer_name = "John", customerBalance = 4000 });
+            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2", customer_name = "Mary", customerBalance = 5000 });
         }
         [HttpPatch]
-        [Route("Customer/Patch")]
+        [Route("deposit")]
         public Dictionary<string, Customer> customerDepositPatch(string id, decimal depositAmountKeyedInByCustomer)
         {
 
@@ -55,7 +55,7 @@ namespace BankingWebAPI.Controllers
             return dictionaryOfcustomers;
         }
         [HttpPatch]
-        [Route("Customer/Patch")]
+        [Route("withdrawal")]
         public Dictionary<string, Customer> customerWithdrawl(string id, decimal withdrawAmountKeyedInByCustomer)
         {
             Customer existingCustomer = dictionaryOfcustomers[id];
@@ -68,8 +68,8 @@ namespace BankingWebAPI.Controllers
             }
             return dictionaryOfcustomers;
         }
-        [HttpPatch]
-        [Route("Customer/Patch")]
+        [HttpGet]
+        [Route("customer/{id}")]                       // https://localhost:44360/api/Savings/customer/2
         public decimal ViewBalance(string id)
         {
             Customer existingCustomer = dictionaryOfcustomers[id];
