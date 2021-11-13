@@ -25,9 +25,9 @@ namespace BankingWebAPI.Controllers
         public BankEmployeeController()
         {
             dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
-            dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "george", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
-            dictionaryOfEmployees.Add("1235", new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alan", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
-            dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuel", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
+            dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
+            dictionaryOfEmployees.Add("1235", new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alansmith", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
+            dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
         }
         //[HttpGet]
         //[Route("customerbyid")]
@@ -85,21 +85,32 @@ namespace BankingWebAPI.Controllers
             return dictionaryOfEmployees;
         }
         [HttpPost]
-        [Route("Add")]
-        public Dictionary<string, BankEmployees> EmployeeAdd(string id, string name, string address, DateTime dob, string designation, string yos, string pw)
+        [Route("Test/Add")]                                 // https://localhost:44360/api/BankEmployee/Test/Add
+        public Dictionary<string, BankEmployees> EmployeeAddTo(BankEmployees new_user)
         {
-            dictionaryOfEmployees.Add(id, new BankEmployees(id, name, address, dob, designation, yos, pw));
+            dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+            return dictionaryOfEmployees;
+
+        }
+        [HttpPost]
+        [Route("Test/Add1")]                                 // https://localhost:44360/api/BankEmployee/Test/Add
+        public Dictionary<string, BankEmployees> EmployeeAdd(BankEmployees new_user)
+        {
+            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == new_user.bankemployee_id).FirstOrDefault().Value;
+            if (existingEmployee != null)
+                return dictionaryOfEmployees;
+            dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
             return dictionaryOfEmployees;
 
         }
         [HttpPut]
-        [Route("Put")]
-        public Dictionary<string, BankEmployees> PUT(string id, BankEmployees employee)
+        [Route("Test/Put")]                                  // https://localhost:44360/api/BankEmployee/Test/Put
+        public Dictionary<string, BankEmployees> PUT(BankEmployees new_user)
         {
-            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == employee.bankemployee_id).FirstOrDefault().Value;
-            if (existingEmployee == null)
-                dictionaryOfEmployees.Remove(id);
-            dictionaryOfEmployees.Add(id, employee);
+            BankEmployees existingEmployee = dictionaryOfEmployees.Where(x => x.Key == new_user.bankemployee_id).FirstOrDefault().Value;
+            if (existingEmployee != null)
+                dictionaryOfEmployees.Remove(new_user.bankemployee_id);
+            dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
             return dictionaryOfEmployees;
 
         }

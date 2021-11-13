@@ -48,5 +48,13 @@ namespace BankingWebAPI.Controllers
             
 
         }
+        [HttpPost]
+        [Route("Test/Add")]                                 // https://localhost:44360/api/ManagerAuthentication/Test/Add
+        public Dictionary<string, BankManagers> ManagerAdd(BankManagers new_user)
+        {
+            dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+            return dictionaryOfManagers;
+
+        }
     }
 }

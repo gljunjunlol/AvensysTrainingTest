@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankingWebAPI.Models
 {
-    public class BankManagers : BankEmployees
+    public class BankManagers
     {
         public string bankmanager_id { get; set; }
         public string bankmanager_name { get; set; }

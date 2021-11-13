@@ -11,6 +11,7 @@ using System.Threading;
 using BankingWebAPI.Utility;
 using System.IO;
 using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
@@ -398,8 +399,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             }
         }
-        public void ListCustomers(CustomerAccountManagerController cam)
+        public void ListCustomers(CustomerAccountManagerController cam, CustomerController cust)
         {
+            string output = string.Empty;
+            Dictionary<string, Customer> viewAllCustomerResult = cust.GetAll();
+            var responseTask = _bankClient.GetAsync("api/Customer");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+                readTask.Wait();
+                viewAllCustomerResult = readTask.Result;
+            }
             Console.WriteLine("\n Listing all current customers in database: ");
             foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
             {
@@ -407,9 +419,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             }
         }
-        public void RemoveCustomers(CustomerAccountManagerController cam, string customer_id)
+        public void RemoveCustomers(CustomerAccountManagerController cam, CustomerController cust, string customer_id)
         {
-            
+            string output = string.Empty;
+            Dictionary<string, Customer> viewRemoveCustomerResult = cust.DeleteById(customer_id);
+            var responseTask = _bankClient.DeleteAsync("api/Customer/Customer/DeleteById/" + customer_id);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+                readTask.Wait();
+                viewRemoveCustomerResult = readTask.Result;
+            }
 
             if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
@@ -424,8 +446,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.ReadLine();
             }
         }
-        public void ListEmployees(EmployeeAccountManagerController eam)
+        public void ListEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp)
         {
+            string output = string.Empty;
+            Dictionary<string, BankEmployees> viewAllEmployeeResult = bemp.GetAll();
+            var responseTask = _bankClient.GetAsync("api/BankEmployee");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Dictionary<string, BankEmployees>>();
+                readTask.Wait();
+                viewAllEmployeeResult = readTask.Result;
+            }
             Console.WriteLine("\n Viewing all employees here");
             foreach (KeyValuePair<string, BankingWebAPI.Models.BankEmployees> kvp in eam.dictionaryOfEmployees)
             {
@@ -434,9 +467,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
             }
 
         }
-        public void RemoveEmployees(EmployeeAccountManagerController eam, string employee_id)
+        public void RemoveEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp, string employee_id)
         {
-            
+            string output = string.Empty;
+            Dictionary<string, BankEmployees> viewRemoveEmployeeResult = bemp.DeleteById(employee_id);
+            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/DeleteById/" + employee_id);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<Dictionary<string, BankEmployees>>();
+                readTask.Wait();
+                viewRemoveEmployeeResult = readTask.Result;
+            }
 
             if (eam.dictionaryOfEmployees.ContainsKey(employee_id))
             {
@@ -509,8 +552,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine("Account doesn't exist");
             }
         }
-        public decimal TotalLoanAmount(CustomerAccountManagerController cam)
+        public decimal TotalLoanAmount(CustomerAccountManagerController cam, TakingLoanController tk)
         {
+            string output = string.Empty;
+            decimal viewTotalLoanAmountResult = tk.TotalLoanAmount();
+            var responseTask = _bankClient.GetAsync("api/TakingLoan");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<decimal>();
+                readTask.Wait();
+                viewTotalLoanAmountResult = readTask.Result;
+            }
             foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
             {
                 Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Loan amt: {kvp.Value.loan_amount.ToString("F")}");
@@ -522,8 +576,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
             return totalloanamount;
 
         }
-        public decimal TotalSavingsAccount(CustomerAccountManagerController cam)
+        public decimal TotalSavingsAccount(CustomerAccountManagerController cam, SavingsController sav)
         {
+            string output = string.Empty;
+            decimal viewTotalSavingsAmountResult = sav.TotalSavingsAmount();
+            var responseTask = _bankClient.GetAsync("api/Savings");
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<decimal>();
+                readTask.Wait();
+                viewTotalSavingsAmountResult = readTask.Result;
+            }
             foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
             {
                 Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Customer balance: {kvp.Value.customerBalance.ToString("F")}");
@@ -559,9 +624,19 @@ namespace Gabriel_Bank_Management_System.ViewModel
             FileManager fh = new FileManager(); fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
         }
 
-        public void ViewLoan(CustomerAccountManagerController cam, string customer_id)
+        public void ViewLoan(CustomerAccountManagerController cam, TakingLoanController tk, string customer_id)
         {
-
+            string output = string.Empty;
+            decimal viewLoanResult = tk.ViewLoan(customer_id);
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/customer/" + customer_id);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<decimal>();
+                readTask.Wait();
+                viewLoanResult = readTask.Result;
+            }
             if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
                 if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
@@ -648,6 +723,24 @@ namespace Gabriel_Bank_Management_System.ViewModel
         {
             return x - y;
         }
-        
+        public Dictionary<string, Customer> CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
+        {
+            Dictionary<string, Customer> checkPhoneresult = cust.CustomerAdd(new_user);
+            //var json = JsonConvert.SerializeObject(new_user);
+            //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            
+            
+            //var responseTask = _bankClient.PostAsync("api/Customer/Test/Add", stringContent);
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            //if (result.IsSuccessStatusCode)
+            //{
+            //    var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+            //    readTask.Wait();
+            //    checkPhoneresult = readTask.Result;
+            //}
+            return checkPhoneresult;
+        }
+
     }
 }

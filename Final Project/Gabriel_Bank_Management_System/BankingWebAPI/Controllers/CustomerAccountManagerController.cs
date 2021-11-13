@@ -25,8 +25,8 @@ namespace BankingWebAPI.Controllers
         {
             _customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1111", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", account_number = "1111" });
-            dictionaryOfcustomers.Add("2222", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", account_number = "2222" });
+            dictionaryOfcustomers.Add("1111", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "1111" });
+            dictionaryOfcustomers.Add("2222", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "2222" });
         }
         [HttpGet]
         [Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
@@ -54,41 +54,52 @@ namespace BankingWebAPI.Controllers
         [Route("checkpassword")]                                 // https://localhost:44360/api/Authentication/checkpassword?customer_pw=John12345678$
         public bool validatePassword(string customer_pw)
         {
-            if (customer_pw.Length < 6 || customer_pw.Length > 24)
+            while (true)
             {
-                Console.WriteLine("Password not met - 6 - 24 chars");
-                return false;
+                try
+                {
+                    if (customer_pw ==null || customer_pw.Length < 6 || customer_pw.Length > 24)
+                    {
+                        Console.WriteLine("Password not met - 6 - 24 chars");
+                        return false;
+                    }
+
+                    if (customer_pw.Any(char.IsLower) == false)
+                    {
+
+                        Console.WriteLine("Password not met - need lower case");
+                        return false;
+
+                    }
+                    if (customer_pw.Any(char.IsUpper) == false)
+                    {
+
+                        Console.WriteLine("Password not met - need upper case");
+                        return false;
+
+                    }
+
+                    if (customer_pw.Any(char.IsDigit) == false)
+                    {
+
+                        Console.WriteLine("Password not met - need to include digits");
+                        return false;
+                    }
+                    Regex rgx = new Regex("[^A-Za-z0-9]");
+                    bool hasSpecialChars = rgx.IsMatch(customer_pw);
+                    if (hasSpecialChars == false)
+                    {
+                        Console.WriteLine("Password not met - need to include special characters");
+                        return false;
+                    }
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
             }
-
-            if (customer_pw.Any(char.IsLower) == false)
-            {
-
-                Console.WriteLine("Password not met - need lower case");
-                return false;
-
-            }
-            if (customer_pw.Any(char.IsUpper) == false)
-            {
-
-                Console.WriteLine("Password not met - need upper case");
-                return false;
-
-            }
-
-            if (customer_pw.Any(char.IsDigit) == false)
-            {
-
-                Console.WriteLine("Password not met - need to include digits");
-                return false;
-            }
-            Regex rgx = new Regex("[^A-Za-z0-9]");
-            bool hasSpecialChars = rgx.IsMatch(customer_pw);
-            if (hasSpecialChars == false)
-            {
-                Console.WriteLine("Password not met - need to include special characters");
-                return false;
-            }
-            return true;
+            
         }
         [HttpGet]
         [Route("checkphonenumber")]                // https://localhost:44360/api/Authentication/checkphonenumber?phone=(222)333-4444
@@ -156,18 +167,22 @@ namespace BankingWebAPI.Controllers
             UserNameResultType type = UserNameResultType.None;
             try
             {
-                if (username.Length < 6 || username.Length > 24)
+                if (username ==null || username.Length < 6 || username.Length > 24)
                 {
                     type = UserNameResultType.UserNameLengthIncorrect;
                 }
-                foreach (char character in username)
+                if (username != null)
                 {
-                    if (char.IsWhiteSpace(character))
+                    foreach (char character in username)
                     {
-                        type = UserNameResultType.UserNameContainsSpace;
-                        break;
+                        if (char.IsWhiteSpace(character))
+                        {
+                            type = UserNameResultType.UserNameContainsSpace;
+                            break;
+                        }
                     }
                 }
+                
 
                 //List<Customer> userList = JsonConvert.DeserializeObject<List<Customer>>(_fileHandling.ReadAllText("User.json"));
                 //if (userList != null)
@@ -199,7 +214,7 @@ namespace BankingWebAPI.Controllers
             IdResultType type = IdResultType.None;
             try
             {
-                if (idNumber.Length != 4)
+                if (idNumber ==null || idNumber.Length != 4)
                 {
                     type = IdResultType.IdIncorrect;
                 }

@@ -91,6 +91,13 @@ namespace BankingWebAPI.Controllers
             return 0;
             
         }
+        [HttpGet]
+        [Route("")]                                // https://localhost:44360/api/Savings
+        public decimal TotalSavingsAmount()
+        {
+            decimal totalSavingsamount = dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
+            return totalSavingsamount;
+        }
         public static decimal AddSavings(decimal x, decimal y)
         {
             return x + y;

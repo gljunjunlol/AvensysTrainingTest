@@ -132,7 +132,7 @@ namespace Gabriel_Bank_Management_System
                                             }
                                             while (mv.validatePassword(input17) == false);
                                             while (insideMenu) ;
-                                            BankingWebAPI.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input15, input16, input17, " ", 0, Guid.Empty, false, 0);
+                                            BankingWebAPI.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input15, input16, input17, input11, 0, Guid.Empty, false, 0);
                                             //Console.WriteLine(new_user);
                                             if (new_user != null)
                                             {
@@ -144,6 +144,8 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 else
                                                 {
+                                                    CustomerController cust = new CustomerController();
+                                                    //mv.CustomerAdd(cam, cust, new_user.customer_id, new_user);
                                                     cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
                                                     FileManager fileHandling = new FileManager();
                                                     fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
@@ -159,9 +161,10 @@ namespace Gabriel_Bank_Management_System
                                         }
                                     case 2:
                                         {
+                                            CustomerController cust = new CustomerController();
                                             Console.WriteLine("Key in customer id to remove");
                                             string customer_id = Console.ReadLine();
-                                            mv.RemoveCustomers(cam, customer_id);
+                                            mv.RemoveCustomers(cam, cust, customer_id);
                                             
                                             break;
                                         }
@@ -348,9 +351,10 @@ namespace Gabriel_Bank_Management_System
                                                                                 }
                                                                             case "3":
                                                                                 {
+                                                                                    TakingLoanController tk = new TakingLoanController();
                                                                                     Console.WriteLine("Enter customer ID");
                                                                                     string customer_id2 = Console.ReadLine();
-                                                                                    mv.ViewLoan(cam, customer_id2);
+                                                                                    mv.ViewLoan(cam, tk, customer_id2);
                                                                                     break;
                                                                                 }
                                                                             case "4":
@@ -530,7 +534,8 @@ namespace Gabriel_Bank_Management_System
                                                     else
                                                     {
                                                         eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
-                                                        
+                                                        FileManager fileHandling = new FileManager();
+                                                        fileHandling.ReadingandWritingEmployee(new_user.bankemployee_id, cam, eam, mam);
                                                     }
                                                 }
                                                 else
@@ -541,14 +546,16 @@ namespace Gabriel_Bank_Management_System
                                             }
                                         case 2:
                                             {
+                                                BankEmployeeController bemp = new BankEmployeeController();
                                                 Console.WriteLine("Key in employee id");
                                                 string employee_id = Console.ReadLine();
-                                                mv.RemoveEmployees(eam, employee_id);
+                                                mv.RemoveEmployees(eam, bemp, employee_id);
                                                 break;
                                             }
                                         case 3:
                                             {
-                                                mv.ListEmployees(eam);
+                                                BankEmployeeController bemp = new BankEmployeeController();
+                                                mv.ListEmployees(eam, bemp);
                                                 break;
                                             }
                                         case 4:
@@ -740,7 +747,8 @@ namespace Gabriel_Bank_Management_System
                                                     else
                                                     {
                                                         mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
-
+                                                        FileManager fileHandling = new FileManager();
+                                                        fileHandling.ReadingandWritingManager(new_user.bankmanager_id, cam, eam, mam);
                                                     }
                                                 }
                                                 else
@@ -807,17 +815,20 @@ namespace Gabriel_Bank_Management_System
                                                                         {
                                                                             case "1":
                                                                                 {
-                                                                                    mv.ListCustomers(cam);
+                                                                                    CustomerController cust = new CustomerController();
+                                                                                    mv.ListCustomers(cam, cust);
                                                                                     break;
                                                                                 }
                                                                             case "2":
                                                                                 {
-                                                                                    mv.TotalLoanAmount(cam);
+                                                                                    TakingLoanController tk = new TakingLoanController();
+                                                                                    mv.TotalLoanAmount(cam, tk);
                                                                                     break;
                                                                                 }
                                                                             case "3":
                                                                                 {
-                                                                                    mv.TotalSavingsAccount(cam);
+                                                                                    SavingsController sav = new SavingsController();
+                                                                                    mv.TotalSavingsAccount(cam, sav);
                                                                                     break;
                                                                                 }
                                                                             case "4":

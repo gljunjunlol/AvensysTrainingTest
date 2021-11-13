@@ -42,8 +42,28 @@ namespace BankingWebAPI.Controllers
         [Route("customer/{id}")]                       // https://localhost:44360/api/TakingLoan/customer/2
         public decimal ViewLoan(string id)
         {
-            Customer existingCustomer = dictionaryOfcustomers[id];
-            return existingCustomer.loan_amount;
+            try
+            {
+                Customer existingCustomer = dictionaryOfcustomers[id];
+                return existingCustomer.loan_amount;
+            }
+            catch(KeyNotFoundException)
+            {
+                Console.WriteLine("");
+            }
+            catch(ArgumentNullException)
+            {
+                Console.WriteLine("");
+            }
+            return 0;
+            
+        }
+        [HttpGet]
+        [Route("")]                            // https://localhost:44360/api/TakingLoan
+        public decimal TotalLoanAmount()
+        {
+            decimal totalloanamount = dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
+            return totalloanamount;
         }
         [HttpPatch]
         [Route("Customer/Patch")]
