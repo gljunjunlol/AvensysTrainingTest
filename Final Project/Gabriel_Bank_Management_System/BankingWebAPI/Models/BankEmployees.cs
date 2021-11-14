@@ -44,4 +44,26 @@ namespace BankingWebAPI.Models
             return bankemployee_id + "_" + bankemployee_name + "_" + bankemployee_address + "_" + bankemployee_dateOfBirth + "_" + bankemployee_designation + "_" + bankemployee_yearsOfService + "_" + bankemployee_pw;
         }
     }
+
+    public class BankEmployeeBranch
+    {
+        [Key]
+        public string bankemployee_id { get; set; }
+        public string bank_branch { get; set; }
+    }
+    //public class EmployeeDetail
+    //{
+    //    public int EmployeeDetailId { get; set; }
+    //    public int AnnualLeave { get; set; }
+    //    public int MedicalLeave { get; set; }
+    //    public decimal EmployeeSalary { get; set; }
+    //    public string Country { get; set; }
+    //    public string Qualification { get; set; }
+    //    public bool DriverLicense { get; set; }
+    //    public DateTime startDate { get; set; }
+    //    public string WorkLocation { get; set; }
+
+    //    public string MartialStatus { get; set; }
+    //    public BankEmployees BankEmployee { get; set; }
+    //}
 }

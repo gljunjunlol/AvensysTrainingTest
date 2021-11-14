@@ -9,7 +9,7 @@ namespace BankingWebAPI.EntityFramework
 {
     public class BankDBInitializer : DropCreateDatabaseAlways<BankManagementContexts>
     {
-        protected override void Seed(BankManagementContexts context)
+        protected override void Seed(BankManagementContexts context) // seed get called only once (initial data you want) - usually value of first row loaded into the table
         {
             Customer defaultUser = new Customer("1111", "HulkSmith", "23 hillview road", DateTime.Parse("12 Oct 1996"), "hulk@gmail.com", "(222)333-4444", "pw", "1111", 1000);
             context.Customers.Add(defaultUser);

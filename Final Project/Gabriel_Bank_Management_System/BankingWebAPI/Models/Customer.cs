@@ -87,4 +87,12 @@ namespace BankingWebAPI.Models
             customerBalance -= amount;
         }
     }
+
+    public class TransactionTable
+    {
+        public DateTime dateOftransaction { get; set; }
+        public string TransactionDetails { get; set; }
+        public decimal TransactionAmount { get; set; }
+
+    }
 }

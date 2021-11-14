@@ -114,6 +114,15 @@
     <Compile Include="Interfaces\IManagerAccountManager.cs" />
     <Compile Include="Interfaces\ISavings.cs" />
     <Compile Include="Interfaces\ITakingLoan.cs" />
+    <Compile Include="Migrations\202111140959530_InitialModel.cs" />
+    <Compile Include="Migrations\202111140959530_InitialModel.designer.cs">
+      <DependentUpon>202111140959530_InitialModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202111141432562_BankEmployeeBranch.cs" />
+    <Compile Include="Migrations\202111141432562_BankEmployeeBranch.designer.cs">
+      <DependentUpon>202111141432562_BankEmployeeBranch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BankEmployees.cs" />
     <Compile Include="Models\BankManagers.cs" />
     <Compile Include="Models\Customer.cs" />
@@ -139,6 +148,14 @@
       <Project>{b14ba633-251f-4d4f-93b7-8adf06954b9f}</Project>
       <Name>Bank.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202111140959530_InitialModel.resx">
+      <DependentUpon>202111140959530_InitialModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111141432562_BankEmployeeBranch.resx">
+      <DependentUpon>202111141432562_BankEmployeeBranch.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

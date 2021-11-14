@@ -33,6 +33,8 @@ namespace BankingWebAPI.Controllers
                 dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
                 bankContext.SaveChanges();
             }
+            Console.WriteLine("End");
+            Console.ReadLine();
             
             
         }

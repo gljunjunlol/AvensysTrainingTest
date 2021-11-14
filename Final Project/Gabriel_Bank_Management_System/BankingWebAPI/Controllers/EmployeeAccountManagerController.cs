@@ -35,6 +35,17 @@ namespace BankingWebAPI.Controllers
                 bankContext.Employees.Add(bemp1);
                 bankContext.Employees.Add(bemp2);
                 bankContext.Employees.Add(bemp3);
+
+                BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = "1111", bank_branch = "Singapore Branch" };
+                BankEmployeeBranch emp2 = new BankEmployeeBranch() { bankemployee_id = "1235", bank_branch = "Hong Kong Branch" };
+                BankEmployeeBranch emp3 = new BankEmployeeBranch() { bankemployee_id = "1236", bank_branch = "South Branch" };
+                List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
+                bankEmployeeBranchList.Add(emp1);
+                bankEmployeeBranchList.Add(emp2);
+                bankEmployeeBranchList.Add(emp3);
+                bankContext.employeeDetails.Add(emp1);
+                bankContext.employeeDetails.Add(emp2);
+                bankContext.employeeDetails.Add(emp3);
                 bankContext.SaveChanges();
             }
             Console.WriteLine("End");    // these writeline readline is essential
