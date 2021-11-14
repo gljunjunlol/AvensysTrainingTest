@@ -1,4 +1,5 @@
 ﻿using System;
+using BankingWebAPI.EntityFramework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,11 +23,25 @@ namespace BankingWebAPI.Controllers
 
         public EmployeeAccountManagerController()
         {
+            using (BankManagementContexts bankContext = new BankManagementContexts())
+            {
+                dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+                BankEmployees bemp1 = new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" };
+                BankEmployees bemp2 = new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alansmith", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" };
+                BankEmployees bemp3 = new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "Samuel12345678$" };
+                dictionaryOfEmployees.Add("1111", bemp1);
+                dictionaryOfEmployees.Add("1235", bemp2);
+                dictionaryOfEmployees.Add("1236", bemp3);
+                bankContext.Employees.Add(bemp1);
+                bankContext.Employees.Add(bemp2);
+                bankContext.Employees.Add(bemp3);
+                bankContext.SaveChanges();
+            }
+            Console.WriteLine("End");    // these writeline readline is essential
+            Console.ReadLine();
             _employeeList = new List<BankEmployees>();
-            dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
-            dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
-            dictionaryOfEmployees.Add("1235", new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alansmith", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
-            dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "Samuel12345678$" });
+            
+            
         }
         [HttpGet]
         [Route("employeelogin")]                       // https://localhost:44360/api/EmployeeAuthentication/employeelogin?bankemployee_id=hello&bankemployee_pw=hello

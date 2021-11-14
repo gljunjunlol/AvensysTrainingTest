@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,18 +10,24 @@ namespace BankingWebAPI.Models
 {
     public class Customer
     {
+        [Key]
         public string customer_id { get; set; }
+        [Column("CustomerName", Order = 0, TypeName = "text")]
         public string customer_name { get; set; }
+        [Column("CustomerAddress", Order = 1, TypeName = "text")]
         public string customer_address { get; set; }
         public DateTime customer_dateOfBirth { get; set; }
         public string customer_email { get; set; }
         public string customer_phone { get; set; }
+        [MaxLength(24)]
         public string customer_pw { get; set; }
         public Guid cheque_book_number { get; set; }
         public string account_number { get; set; }
         public decimal customerBalance { get; set; }
         public bool customer_loan_applied { get; set; }
         public decimal loan_amount { get; set; }
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         public Customer(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {

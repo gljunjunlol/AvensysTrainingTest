@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,11 @@ namespace BankingWebAPI.Models
 {
     public class BankEmployees
     {
+        [Key]
         public string bankemployee_id { get; set; }
+        [Column("EmployeeName", Order = 0, TypeName = "text")]
         public string bankemployee_name { get; set; }
+        [Column("EmployeeAddress", Order = 1, TypeName = "text")]
         public string bankemployee_address { get; set; }
         public DateTime bankemployee_dateOfBirth { get; set; }
         public string bankemployee_designation { get; set; }

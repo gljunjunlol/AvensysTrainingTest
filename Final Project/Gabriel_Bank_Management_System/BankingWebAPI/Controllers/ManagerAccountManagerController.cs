@@ -1,4 +1,5 @@
 ﻿using System;
+using BankingWebAPI.EntityFramework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,9 +23,19 @@ namespace BankingWebAPI.Controllers
 
         public ManagerAccountManagerController()
         {
+            using (BankManagementContexts bankContext = new BankManagementContexts())
+            {
+                dictionaryOfManagers = new Dictionary<string, BankManagers>();
+                BankManagers bmgr1 = new BankManagers() { bankmanager_id = "1111", bankmanager_name = "Peterson Jr", bankmanager_address = "23 hillview", bankmanager_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankmanager_designation = "Relationship Manager", bankmanager_yearsOfService = "13", bankmanager_pw = "Peterson12345678$" };
+                dictionaryOfManagers.Add("1111", bmgr1);
+                bankContext.Managers.Add(bmgr1);
+                bankContext.SaveChanges();
+            }
+            Console.WriteLine("End");     // these writeline readline is essential
+            Console.ReadLine();
             _managersList = new List<BankManagers>();
-            dictionaryOfManagers = new Dictionary<string, BankManagers>();
-            dictionaryOfManagers.Add("1111", new BankManagers() { bankmanager_id = "1111", bankmanager_name = "Peterson Jr", bankmanager_address = "23 hillview", bankmanager_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankmanager_designation = "Relationship Manager", bankmanager_yearsOfService = "13", bankmanager_pw = "Peterson12345678$" });
+            
+            
         }
 
         [HttpGet]

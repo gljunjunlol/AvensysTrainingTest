@@ -1,4 +1,5 @@
 ﻿using System;
+using BankingWebAPI.EntityFramework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -23,10 +24,24 @@ namespace BankingWebAPI.Controllers
 
         public CustomerAccountManagerController()
         {
+            using (BankManagementContexts bankContext = new BankManagementContexts())
+            {
+                dictionaryOfcustomers = new Dictionary<string, Customer>();
+                Customer cust1 = new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "1111" };
+                Customer cust2 = new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "2222" };
+                dictionaryOfcustomers.Add("1111", cust1);
+                dictionaryOfcustomers.Add("2222", cust2);
+                //bankContext.Customers.Remove(cust1);
+                //bankContext.Customers.Remove(cust2);
+                bankContext.Customers.Add(cust1);
+                bankContext.Customers.Add(cust2);
+                bankContext.SaveChanges();
+            }
+            Console.WriteLine("End");
+            Console.ReadLine();
             _customerList = new List<Customer>();
-            dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1111", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "1111" });
-            dictionaryOfcustomers.Add("2222", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "2222" });
+            
+            
         }
         [HttpGet]
         [Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
