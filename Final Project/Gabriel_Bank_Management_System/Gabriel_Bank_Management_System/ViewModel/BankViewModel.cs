@@ -12,6 +12,8 @@ using BankingWebAPI.Utility;
 using System.IO;
 using System.Net.Http;
 using Newtonsoft.Json;
+using BankingWebAPI.EntityFramework;
+using System.Data.Entity;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
@@ -264,7 +266,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
             decimal maximumamount = 5000;
             return maximumamount;
         }
-        public void customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal depositAmountKeyedInByCustomer)
+        public void customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal depositAmountKeyedInByCustomer, Customer existingCustomer)
         {
 
 
@@ -273,6 +275,32 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 var guid1 = Guid.NewGuid(); cam.dictionaryOfcustomers[customer_id].cheque_book_number = guid1; cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmountKeyedInByCustomer;
 
                 Console.WriteLine("Amount is larger than 5000, we will process the cheque\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].ToString() + "\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customer_name.ToString()); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
+
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    try
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                        bankContext.Customers.Attach(existingCustomer);
+                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                        bankContext.SaveChanges();
+                    }
+                    finally
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = true;
+                    }
+                    Console.WriteLine("Updated cheque deposit to db");
+                    Console.ReadLine();
+                    bankContext.Customers.Add(existingCustomer);
+                    bankContext.SaveChanges();
+                    Console.WriteLine("End");
+                    Console.ReadLine();
+
+
+                }
                 Console.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
                 FileManager fh = new FileManager();
@@ -285,14 +313,38 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Customer cust = new Customer();
                 cust.deposit(depositAmountKeyedInByCustomer); cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmountKeyedInByCustomer;
 
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    try
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = false;
+                        
 
+
+                        bankContext.Customers.Attach(existingCustomer);
+                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                        bankContext.SaveChanges();
+                    }
+                    finally
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = true;
+                    }
+                    Console.WriteLine("Updated deposit to db");
+                    Console.ReadLine();
+                    bankContext.Customers.Add(existingCustomer);
+                    bankContext.SaveChanges();
+                    Console.WriteLine("End");
+                    Console.ReadLine();
+
+
+                }
                 Console.WriteLine($"Dear Customer, your deposit is: " + depositAmountKeyedInByCustomer.ToString("F") + " and current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
                 FileManager fh = new FileManager();
                 fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
 
             }
         }
-        public void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal withdrawAmountKeyedInByCustomer)
+        public void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal withdrawAmountKeyedInByCustomer, Customer existingCustomer)
         {
             if (withdrawAmountKeyedInByCustomer <= 0)
             {
@@ -307,6 +359,36 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 if (cam.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer <= DepositLimit())
                 {
                     cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
+
+                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    {
+                        try
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                            bankContext.Customers.Attach(existingCustomer);
+                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                            bankContext.SaveChanges();
+                        }
+                        finally
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = true;
+                        }
+                        Console.WriteLine("Updated withdrawal to db");
+                        Console.ReadLine();
+                        bankContext.Customers.Add(existingCustomer);
+                        bankContext.SaveChanges();
+                        Console.WriteLine("End");
+                        Console.ReadLine();
+
+
+                    }
+
+
+
+
 
 
                     Console.WriteLine($"Dear Customer, you withdrawed: " + withdrawAmountKeyedInByCustomer.ToString("F"));
@@ -328,6 +410,31 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
                     Console.WriteLine("{0} > {1} > {2}", cam.dictionaryOfcustomers[customer_id], cam.dictionaryOfcustomers[customer_id].customer_name, cam.dictionaryOfcustomers[customer_id].cheque_book_number);
 
+                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    {
+                        try
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                            bankContext.Customers.Attach(existingCustomer);
+                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                            bankContext.SaveChanges();
+                        }
+                        finally
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = true;
+                        }
+                        Console.WriteLine("Updated cheque withdrawal to db");
+                        Console.ReadLine();
+                        bankContext.Customers.Add(existingCustomer);
+                        bankContext.SaveChanges();
+                        Console.WriteLine("End");
+                        Console.ReadLine();
+
+
+                    }
                     Console.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
                     Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
 
@@ -435,6 +542,23 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    try
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                        bankContext.Customers.Attach(existingCustomer);
+                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                        bankContext.SaveChanges();
+                    }
+                    finally
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = true;
+                    }
+                }
 
                 Console.WriteLine(customer_id + " has been removed");
                 cam.dictionaryOfcustomers.Remove(customer_id);
@@ -467,11 +591,11 @@ namespace Gabriel_Bank_Management_System.ViewModel
             }
 
         }
-        public void RemoveEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp, string employee_id)
+        public void RemoveEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp, string bankemployee_id)
         {
             string output = string.Empty;
-            Dictionary<string, BankEmployees> viewRemoveEmployeeResult = bemp.DeleteById(employee_id);
-            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/DeleteById/" + employee_id);
+            Dictionary<string, BankEmployees> viewRemoveEmployeeResult = bemp.DeleteById(bankemployee_id);
+            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/DeleteById/" + bankemployee_id);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -481,11 +605,27 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 viewRemoveEmployeeResult = readTask.Result;
             }
 
-            if (eam.dictionaryOfEmployees.ContainsKey(employee_id))
+            if (eam.dictionaryOfEmployees.ContainsKey(bankemployee_id))
             {
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    try
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = false;
 
-                Console.WriteLine(employee_id + " has been removed");
-                eam.dictionaryOfEmployees.Remove(employee_id);
+
+                        BankEmployees existingEmployee = eam.dictionaryOfEmployees.Where(x => x.Key == bankemployee_id).FirstOrDefault().Value;
+                        bankContext.Employees.Attach(existingEmployee);
+                        bankContext.Entry(existingEmployee).State = EntityState.Deleted;
+                        bankContext.SaveChanges();
+                    }
+                    finally
+                    {
+                        bankContext.Configuration.ValidateOnSaveEnabled = true;
+                    }
+                }
+                Console.WriteLine(bankemployee_id + " has been removed");
+                eam.dictionaryOfEmployees.Remove(bankemployee_id);
             }
             else
             {
@@ -615,12 +755,39 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var interests = Divide(interestamount, 100);
 
             decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
+            cam.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cam.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
+            using (BankManagementContexts bankContext = new BankManagementContexts())
+            {
+                Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                try
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                    bankContext.Customers.Attach(existingCustomer);
+                    bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                    bankContext.SaveChanges();
+                }
+                finally
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = true;
+                }
+                Console.WriteLine("Updated loan approval to db");
+                Console.ReadLine();
+                bankContext.Customers.Add(existingCustomer);
+                bankContext.SaveChanges();
+                Console.WriteLine("End");
+                Console.ReadLine();
+
+
+            }
 
             Console.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
             //decimal totalloanamount = CalculateLoanAmount(0, 0, 0);
             Console.WriteLine("Loan application : ID : " + cam.dictionaryOfcustomers[customer_id] + " " + cam.dictionaryOfcustomers[customer_id].customer_name);
 
-            cam.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cam.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
+            
             FileManager fh = new FileManager(); fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
         }
 
@@ -679,9 +846,62 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
                     Console.WriteLine("Loan amount left: $" + remainingLoanLeft.ToString("F"));
                     cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+
+                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    {
+                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                        try
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                            bankContext.Customers.Attach(existingCustomer);
+                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                            bankContext.SaveChanges();
+                        }
+                        finally
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = true;
+                        }
+                        Console.WriteLine("Updated loan repayment to db");
+                        Console.ReadLine();
+                        bankContext.Customers.Add(existingCustomer);
+                        bankContext.SaveChanges();
+                        Console.WriteLine("End");
+                        Console.ReadLine();
+
+
+                    }
                     if (remainingLoanLeft == 0)
                     {
                         cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
+                        using (BankManagementContexts bankContext = new BankManagementContexts())
+                        {
+                            Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                            try
+                            {
+                                bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                                bankContext.Customers.Attach(existingCustomer);
+                                bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                                bankContext.SaveChanges();
+                            }
+                            finally
+                            {
+                                bankContext.Configuration.ValidateOnSaveEnabled = true;
+                            }
+                            Console.WriteLine("Updated loan fully repaid to db");
+                            Console.ReadLine();
+                            bankContext.Customers.Add(existingCustomer);
+                            bankContext.SaveChanges();
+                            Console.WriteLine(DateTime.Now);
+                            Console.ReadLine();
+
+
+                        }
 
                     }
                     FileManager fh1 = new FileManager();
@@ -694,6 +914,8 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 decimal amountToRepay = decimal.Parse(repayLoan);
                 Console.WriteLine("Amount to repay is: $" + amountToRepay);
                 decimal remainingLoanLeft = SubtractLoan(cam.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
+
+                
                 if (amountToRepay > cam.dictionaryOfcustomers[customer_id].loan_amount)
                 {
                     Console.WriteLine("Exceed loan repayment, key again");
@@ -702,9 +924,63 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 {
                     Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
                     cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
+
+                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    {
+                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                        try
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                            bankContext.Customers.Attach(existingCustomer);
+                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                            bankContext.SaveChanges();
+                        }
+                        finally
+                        {
+                            bankContext.Configuration.ValidateOnSaveEnabled = true;
+                        }
+                        Console.WriteLine("Updated loan repayment to db");
+                        Console.ReadLine();
+                        bankContext.Customers.Add(existingCustomer);
+                        bankContext.SaveChanges();
+                        Console.WriteLine("End");
+                        Console.ReadLine();
+
+
+                    }
                     if (remainingLoanLeft == 0)
                     {
                         cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
+
+                        using (BankManagementContexts bankContext = new BankManagementContexts())
+                        {
+                            Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
+                            try
+                            {
+                                bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+
+                                bankContext.Customers.Attach(existingCustomer);
+                                bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                                bankContext.SaveChanges();
+                            }
+                            finally
+                            {
+                                bankContext.Configuration.ValidateOnSaveEnabled = true;
+                            }
+                            Console.WriteLine("Updated loan fully repaid to db");
+                            Console.ReadLine();
+                            bankContext.Customers.Add(existingCustomer);
+                            bankContext.SaveChanges();
+                            Console.WriteLine(DateTime.Now);
+                            Console.ReadLine();
+
+
+                        }
 
                     }
                     FileManager fh1 = new FileManager();
@@ -725,7 +1001,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
         }
         public Dictionary<string, Customer> CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
         {
-            Dictionary<string, Customer> checkPhoneresult = cust.CustomerAdd(new_user);
+            Dictionary<string, Customer> checkUserresult = cust.CustomerAddNew(cam, new_user);
             //var json = JsonConvert.SerializeObject(new_user);
             //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             
@@ -739,7 +1015,17 @@ namespace Gabriel_Bank_Management_System.ViewModel
             //    readTask.Wait();
             //    checkPhoneresult = readTask.Result;
             //}
-            return checkPhoneresult;
+            return checkUserresult;
+        }
+        public Dictionary<string, BankEmployees> EmployeeAdd(EmployeeAccountManagerController eam, BankEmployeeController emp, string id, BankEmployees new_user)
+        {
+            Dictionary<string, BankEmployees> checkUserresult = emp.EmployeeAddNew(eam, new_user);
+            return checkUserresult;
+        }
+        public Dictionary<string, BankManagers> ManagerAdd(ManagerAccountManagerController mam, string id, BankManagers new_user)
+        {
+            Dictionary<string, BankManagers> checkUserresult = mam.ManagerAddNew(mam, new_user);
+            return checkUserresult;
         }
 
     }

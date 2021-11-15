@@ -33,12 +33,12 @@ namespace BankingWebAPI.Controllers
                 dictionaryOfcustomers.Add("2222", cust2);
                 //bankContext.Customers.Remove(cust1);
                 //bankContext.Customers.Remove(cust2);
-                bankContext.Customers.Add(cust1);
-                bankContext.Customers.Add(cust2);
-                bankContext.SaveChanges();
+                //bankContext.Customers.Add(cust1);
+                //bankContext.Customers.Add(cust2);
+                //bankContext.SaveChanges();
             }
-            Console.WriteLine("End");
-            Console.ReadLine();
+            //Console.WriteLine("End");
+            //Console.ReadLine();
             _customerList = new List<Customer>();
             
             

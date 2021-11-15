@@ -31,10 +31,10 @@ namespace BankingWebAPI.Controllers
                 dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
                 dictionaryOfEmployees.Add("1235", new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alansmith", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
                 dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
-                bankContext.SaveChanges();
+                //bankContext.SaveChanges();
             }
-            Console.WriteLine("End");
-            Console.ReadLine();
+            //Console.WriteLine("End");
+            //Console.ReadLine();
             
             
         }
@@ -109,6 +109,36 @@ namespace BankingWebAPI.Controllers
             if (existingEmployee != null)
                 return dictionaryOfEmployees;
             dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+            return dictionaryOfEmployees;
+
+        }
+        [HttpPost]
+        [Route("Test/AddNew")]
+        public Dictionary<string, BankEmployees> EmployeeAddNew(EmployeeAccountManagerController eam, BankEmployees new_user)
+        {
+            Console.WriteLine("At here");
+
+            try
+            {
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = new_user.bankemployee_id, bank_branch = "South Branch" };
+                    List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
+                    bankEmployeeBranchList.Add(emp1);
+                    bankContext.employeeDetails.Add(emp1);
+
+                    eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+                    bankContext.Employees.Add(new_user);
+                    bankContext.SaveChanges();
+                }
+                Console.WriteLine("End");
+                Console.ReadLine();
+
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("cannot be null");
+            }
             return dictionaryOfEmployees;
 
         }

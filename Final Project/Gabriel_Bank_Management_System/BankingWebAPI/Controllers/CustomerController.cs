@@ -117,15 +117,47 @@ namespace BankingWebAPI.Controllers
             //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
             //if (existingcustomer != null)
             //    return dictionaryOfcustomers;
+            Console.WriteLine("At here");
+            
             try
             {
                 dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+                    
             }
             catch(NullReferenceException)
             {
                 Console.WriteLine("cannot be null");
             }
             
+            return dictionaryOfcustomers;
+
+        }
+        [HttpPost]
+        [Route("Test/AddNew")]
+        public Dictionary<string, Customer> CustomerAddNew(CustomerAccountManagerController cam, Customer new_user)
+        {
+            //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
+            //if (existingcustomer != null)
+            //    return dictionaryOfcustomers;
+            Console.WriteLine("At here");
+
+            try
+            {
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+                    bankContext.Customers.Add(new_user);
+                    bankContext.SaveChanges();
+                }
+                Console.WriteLine("End");
+                Console.ReadLine();
+
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("cannot be null");
+            }
+
             return dictionaryOfcustomers;
 
         }

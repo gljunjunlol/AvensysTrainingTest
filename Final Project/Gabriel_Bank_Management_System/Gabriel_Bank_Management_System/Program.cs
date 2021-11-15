@@ -18,8 +18,8 @@ namespace Gabriel_Bank_Management_System
         static void Main(string[] args)
         {
             CustomerAccountManagerController cam = new CustomerAccountManagerController(); EmployeeAccountManagerController eam = new EmployeeAccountManagerController(); ManagerAccountManagerController mam = new ManagerAccountManagerController();
-            
-
+            CustomerController cust = new CustomerController();
+            BankEmployeeController emp = new BankEmployeeController();
 
             List<int> loginTries = new List<int>(); Program p = new Program();
             
@@ -144,9 +144,9 @@ namespace Gabriel_Bank_Management_System
                                                 }
                                                 else
                                                 {
-                                                    CustomerController cust = new CustomerController();
-                                                    //mv.CustomerAdd(cam, cust, new_user.customer_id, new_user);
-                                                    cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+                                                    
+                                                    mv.CustomerAdd(cam, cust, new_user.customer_id, new_user);
+                                                    //cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
                                                     FileManager fileHandling = new FileManager();
                                                     fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
                                                     
@@ -161,7 +161,7 @@ namespace Gabriel_Bank_Management_System
                                         }
                                     case 2:
                                         {
-                                            CustomerController cust = new CustomerController();
+                                            
                                             Console.WriteLine("Key in customer id to remove");
                                             string customer_id = Console.ReadLine();
                                             mv.RemoveCustomers(cam, cust, customer_id);
@@ -179,7 +179,7 @@ namespace Gabriel_Bank_Management_System
                                             {
                                                 numberofTries--;
                                                 Console.WriteLine("Key in your login information" + "\nEnter login id " + " (" + "number of tries left " + numberofTries + " )");
-
+                                                
                                                 string customer_id = Console.ReadLine();
                                                 Console.WriteLine("and pw");
                                                 string customer_pw = Console.ReadLine();
@@ -217,12 +217,12 @@ namespace Gabriel_Bank_Management_System
                                                                                     Console.WriteLine("Key in customer id");
                                                                                     string customerid = Console.ReadLine();
                                                                                     
-                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid))
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid) && customerid == customer_id)
                                                                                     {
                                                                                         Console.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal");
-
+                                                                                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                                                                                         decimal withdrawAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
-                                                                                        mv.customerWithdrawl(cam, eam, mam, customer_id, withdrawAmountKeyedInByCustomer);
+                                                                                        mv.customerWithdrawl(cam, eam, mam, customer_id, withdrawAmountKeyedInByCustomer, existingCustomer);
                                                                                     }
                                                                                     else
                                                                                     {
@@ -236,11 +236,12 @@ namespace Gabriel_Bank_Management_System
                                                                                     Console.WriteLine("Key in customer id");
                                                                                     string customerid = Console.ReadLine();
                                                                                     
-                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid))
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customerid) && customerid == customer_id)
                                                                                     {
                                                                                         Console.WriteLine("Key in amount for deposit - we will use cheque if more than 5k");
+                                                                                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                                                                                         decimal depositAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
-                                                                                        mv.customerDeposit(cam, eam, mam, customerid, depositAmountKeyedInByCustomer);
+                                                                                        mv.customerDeposit(cam, eam, mam, customerid, depositAmountKeyedInByCustomer, existingCustomer);
                                                                                         
                                                                                     }
                                                                                     else
@@ -255,7 +256,15 @@ namespace Gabriel_Bank_Management_System
                                                                                     SavingsController sav = new SavingsController();
                                                                                     Console.WriteLine("Key in customer id");
                                                                                     string customer_id4 = Console.ReadLine();
-                                                                                    mv.ViewBalance(cam, sav, customer_id4);
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id4) && customer_id4 == customer_id)
+                                                                                    {
+                                                                                        mv.ViewBalance(cam, sav, customer_id4);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("No such account");
+                                                                                    }
+                                                                                    
                                                                                     break;
                                                                                 }
                                                                             case "4":
@@ -322,7 +331,7 @@ namespace Gabriel_Bank_Management_System
                                                                                 {
                                                                                     Console.WriteLine("Enter customer ID again to ensure of taking loan again");
                                                                                     string customer_id2 = Console.ReadLine();
-                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id2))
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id2) && customer_id2 == customer_id)
                                                                                     {
                                                                                         if (cam.dictionaryOfcustomers[customer_id2].customer_loan_applied == false)
                                                                                         {
@@ -354,14 +363,22 @@ namespace Gabriel_Bank_Management_System
                                                                                     TakingLoanController tk = new TakingLoanController();
                                                                                     Console.WriteLine("Enter customer ID");
                                                                                     string customer_id2 = Console.ReadLine();
-                                                                                    mv.ViewLoan(cam, tk, customer_id2);
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id2) && customer_id2 == customer_id)
+                                                                                    {
+                                                                                        mv.ViewLoan(cam, tk, customer_id2);
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        Console.WriteLine("Invalid Account");
+                                                                                    }
+                                                                                    
                                                                                     break;
                                                                                 }
                                                                             case "4":
                                                                                 {
                                                                                     Console.WriteLine("Enter customer ID");
                                                                                     string customer_id3 = Console.ReadLine();
-                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id3))
+                                                                                    if (cam.dictionaryOfcustomers.ContainsKey(customer_id3) && customer_id3 == customer_id)
                                                                                     {
                                                                                         if (cam.dictionaryOfcustomers[customer_id3].customer_loan_applied == true)
                                                                                         {
@@ -533,7 +550,8 @@ namespace Gabriel_Bank_Management_System
                                                     }
                                                     else
                                                     {
-                                                        eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+                                                        mv.EmployeeAdd(eam, emp, new_user.bankemployee_id, new_user);
+                                                        //eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
                                                         FileManager fileHandling = new FileManager();
                                                         fileHandling.ReadingandWritingEmployee(new_user.bankemployee_id, cam, eam, mam);
                                                     }
@@ -746,7 +764,8 @@ namespace Gabriel_Bank_Management_System
                                                     }
                                                     else
                                                     {
-                                                        mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+                                                        mv.ManagerAdd(mam, new_user.bankmanager_id, new_user);
+                                                        //mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
                                                         FileManager fileHandling = new FileManager();
                                                         fileHandling.ReadingandWritingManager(new_user.bankmanager_id, cam, eam, mam);
                                                     }
@@ -815,7 +834,7 @@ namespace Gabriel_Bank_Management_System
                                                                         {
                                                                             case "1":
                                                                                 {
-                                                                                    CustomerController cust = new CustomerController();
+                                                                                    
                                                                                     mv.ListCustomers(cam, cust);
                                                                                     break;
                                                                                 }

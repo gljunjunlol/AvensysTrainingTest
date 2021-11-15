@@ -28,11 +28,11 @@ namespace BankingWebAPI.Controllers
                 dictionaryOfManagers = new Dictionary<string, BankManagers>();
                 BankManagers bmgr1 = new BankManagers() { bankmanager_id = "1111", bankmanager_name = "Peterson Jr", bankmanager_address = "23 hillview", bankmanager_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankmanager_designation = "Relationship Manager", bankmanager_yearsOfService = "13", bankmanager_pw = "Peterson12345678$" };
                 dictionaryOfManagers.Add("1111", bmgr1);
-                bankContext.Managers.Add(bmgr1);
-                bankContext.SaveChanges();
+                //bankContext.Managers.Add(bmgr1);
+                //bankContext.SaveChanges();
             }
-            Console.WriteLine("End");     // these writeline readline is essential
-            Console.ReadLine();
+            //Console.WriteLine("End");     // these writeline readline is essential
+            //Console.ReadLine();
             _managersList = new List<BankManagers>();
             
             
@@ -64,6 +64,31 @@ namespace BankingWebAPI.Controllers
         public Dictionary<string, BankManagers> ManagerAdd(BankManagers new_user)
         {
             dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+            return dictionaryOfManagers;
+
+        }
+        [HttpPost]
+        [Route("Test/AddNew")]
+        public Dictionary<string, BankManagers> ManagerAddNew(ManagerAccountManagerController mam, BankManagers new_user)
+        {
+            Console.WriteLine("At here");
+
+            try
+            {
+                using (BankManagementContexts bankContext = new BankManagementContexts())
+                {
+                    mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+                    bankContext.Managers.Add(new_user);
+                    bankContext.SaveChanges();
+                }
+                Console.WriteLine("End");
+                Console.ReadLine();
+
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("cannot be null");
+            }
             return dictionaryOfManagers;
 
         }
