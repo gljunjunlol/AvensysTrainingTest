@@ -3,8 +3,10 @@ using Xunit;
 using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
-using WebApiLibrary.Controllers;
-using WebApiLibrary.Models;
+using BankingWebAPI.Controllers;
+using BankingWebAPI.Models;
+using BankingWebAPI.Interfaces;
+using System.Linq;
 
 namespace BankEmployeeTest
 {
@@ -207,25 +209,36 @@ namespace BankEmployeeTest
 
         //    mockConsoleIO.Verify(t => t.WriteLine($"CUSTOMER ID: {itemid}"), Times.Once);
         //}
-        //[Theory]
-        //[InlineData("1")]
-        //[InlineData("abcd")]
-        //[InlineData("12345")]
-        //public void TestUserEmployeeLoginAccount(string empid)
-        //{
-        //    EmployeeAccountManager bemgt = new EmployeeAccountManager();
-        //    var mockConsoleIO = new Mock<IConsoleIO>();
-        //    mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(empid);
+        [Theory]
+        [InlineData("1")]
+        [InlineData("abcd")]
+        [InlineData("12345")]
+        public void TestUserEmployeeLoginAccount(string empid)
+        {
+            string pw = "Hello12345678$";
+            EmployeeAccountManagerController bemgt = new EmployeeAccountManagerController();
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(empid);
 
-        //    var mockBankEmployeesManagement = new Mock<EmployeeAccountManagerController>();
+            var mockBankEmployeesManagement = new Mock<EmployeeAccountManagerController>();
 
-        //    mockBankEmployeesManagement.Setup(x => x.dictionaryOfEmployees).Returns(new Dictionary<string, WebApiLibrary.Models.BankEmployees>() { { empid, new BankEmployees() { bankemployee_id = empid } } });
+            mockBankEmployeesManagement.Setup(x => x.dictionaryOfEmployees).Returns(new Dictionary<string, BankingWebAPI.Models.BankEmployees>() { { empid, new BankEmployees() { bankemployee_id = empid } } });
 
-        //    EmployeeAccountManagerController usr = new EmployeeAccountManagerController(mockConsoleIO.Object);
-        //    usr.UserLogin(mockBankEmployeesManagement.Object);
+            EmployeeAccountManagerController usr = new EmployeeAccountManagerController(mockConsoleIO.Object);
+            usr.UserLogin(empid, pw);
 
-        //    mockConsoleIO.Verify(t => t.WriteLine($"Congratulations, {bemgt.dictionaryOfEmployees[empid].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bemgt.dictionaryOfEmployees[empid].bankemployee_id} { bemgt.dictionaryOfEmployees[empid].bankemployee_name} { bemgt.dictionaryOfEmployees[empid].bankemployee_designation} { bemgt.dictionaryOfEmployees[empid].bankemployee_yearsOfService}"), Times.Once);
-        //}
+            mockConsoleIO.Verify(t => t.WriteLine($"Congratulations, {bemgt.dictionaryOfEmployees[empid].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { bemgt.dictionaryOfEmployees[empid].bankemployee_id} { bemgt.dictionaryOfEmployees[empid].bankemployee_name} { bemgt.dictionaryOfEmployees[empid].bankemployee_designation} { bemgt.dictionaryOfEmployees[empid].bankemployee_yearsOfService}"), Times.Once);
+        }
+        [Theory]
+        [InlineData("1")]
+        [InlineData("abcd")]
+        [InlineData("12345")]
+        public void TestUserBankEmployee(string empid)
+        {
+            Assert.NotNull(empid);
+            BankEmployeeController bemgt = new BankEmployeeController();
+            
+        }
         //[Theory]
         //[InlineData("1")]
         //[InlineData("abcd")]
@@ -279,7 +292,7 @@ namespace BankEmployeeTest
         //    var mockConsoleIO = new Mock<IConsoleIO>();
         //    mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(input);
 
-            
+
 
         //    //mockCustomerManagement.Setup(x => x.dictionaryOfcustomers).Returns(new Dictionary<string, Customer>() { { itemid, new Customer() { customer_id = itemid } } });
 
@@ -310,5 +323,111 @@ namespace BankEmployeeTest
 
         //    mockConsoleIO.Verify(t => t.WriteLine("1: Find customer by ID: "), Times.Once);
         //}
+        [Fact]
+        public void TestCreateEmployeeAccount1()
+        {
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            //string employee_id = "1";
+
+
+
+            Dictionary<string, BankEmployees> mockdictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+            BankEmployees emp = new BankEmployees();
+            BankEmployees emp1 = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
+            mockdictionaryOfEmployees.Add("1", emp1);
+            EmployeeAccountManagerController user = new EmployeeAccountManagerController(mockConsoleIO.Object);
+            foreach (var employee in mockdictionaryOfEmployees)
+            {
+                Console.WriteLine("{0} > {1}", employee.Key, employee.Value);
+                Console.WriteLine(" Viewing all employees here");
+            }
+        }
+        [Fact]
+        public void TestEmployeeGetAll()
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            emp.GetAll();
+        }
+        [Theory]
+        [InlineData("User")]
+        public void TestEmployeeGET(string customer_id)
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            emp.GET(customer_id);
+        }
+        [Theory]
+        [InlineData("1111")]
+        public void TestEmployeePATCH(string customer_id)
+        {
+            string updatedName = "Hello";
+            BankEmployeeController emp = new BankEmployeeController();
+            emp.Patch(customer_id, updatedName);
+        }
+        [Fact]
+        public void TestEmployeeAddTo()
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            BankEmployees emp1 = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
+            emp.EmployeeAddTo(emp1);
+        }
+        [Fact]
+        public void TestEmployeeAdd()
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            var new_user = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
+            emp.EmployeeAdd(new_user);
+        }
+        [Fact]
+        public void TestEmployeeAddNew()
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            EmployeeAccountManagerController eam = new EmployeeAccountManagerController();
+            var new_user = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
+            emp.EmployeeAddNew(eam, new_user);
+        }
+        [Fact]
+        public void TestEmployeePut()
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            var new_user = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678$");
+            emp.PUT(new_user);
+        }
+        [Theory]
+        [InlineData("1111")]
+        public void TestEmployeeDelete(string customer_id)
+        {
+            BankEmployees employee = new BankEmployees();
+            BankEmployeeController emp = new BankEmployeeController();
+            emp.Delete(customer_id, employee);
+        }
+        [Theory]
+        [InlineData("1111")]
+        public void TestEmployeeDeleteByID(string customer_id)
+        {
+            BankEmployeeController emp = new BankEmployeeController();
+            emp.DeleteById(customer_id);
+        }
+        [Theory]
+        [InlineData("User")]
+        public void TestEmployeeNotNull(string bankemployee_id)
+        {
+            Assert.NotNull(bankemployee_id);
+            //string updatedName = "hello1";
+            //string bankemployee_id = "hello";
+            //BankEmployeeController bec = new BankEmployeeController();
+            //bec.Patch(bankemployee_id, updatedName);
+            //Dictionary<string, BankEmployees> mockdictionaryOfEmployees = new Dictionary<string, BankEmployees>();
+            //BankEmployees new_user = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678");
+            //mockdictionaryOfEmployees.Add(bankemployee_id, new_user);
+            //BankEmployees existingEmployee = mockdictionaryOfEmployees[bankemployee_id];
+            //Assert.Null(existingEmployee);
+            
+
+
+
+            //    BankEmployees emp = new BankEmployees();
+            //    BankEmployees emp2 = new BankEmployees("1", "george", "23 hillview", DateTime.Now, "loan employee", "3", "George12345678");
+            //    mockdictionaryOfEmployees.Add("1", emp);
+        }
     }
 }

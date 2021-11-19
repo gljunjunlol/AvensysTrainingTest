@@ -5,7 +5,7 @@
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<BankingWebAPI.EntityFramework.BankManagementContexts>
+    internal sealed class Configuration : DbMigrationsConfiguration<BankingWebAPI.EntityFramework.ManagementContext>
     {
         public Configuration()
         {
@@ -13,7 +13,7 @@
             //AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(BankingWebAPI.EntityFramework.BankManagementContexts context) // seed is initial create
+        protected override void Seed(BankingWebAPI.EntityFramework.ManagementContext context) // seed is initial create
         {
             //  This method will be called after migrating to the latest version.
 

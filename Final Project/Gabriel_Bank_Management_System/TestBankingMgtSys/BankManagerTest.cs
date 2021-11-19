@@ -5,8 +5,9 @@ using System.Linq;
 using System.Collections.Generic;
 using Moq;
 using System.IO;
-using WebApiLibrary.Controllers;
-using WebApiLibrary.Models;
+using BankingWebAPI.Controllers;
+using BankingWebAPI.Models;
+using BankingWebAPI.Interfaces;
 
 namespace BankManagerTest
 {
@@ -31,9 +32,9 @@ namespace BankManagerTest
         //    CustomerAccountManagerController cmgt = new CustomerAccountManagerController();
         //    Dictionary<string, Customer> mockdictionaryOfcustomers = new Dictionary<string, Customer>();
         //    Customer cust = new Customer("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "John12345678", "123", 0, Guid.Empty, true, 0);
-            
-            
-            
+
+
+
         //    decimal expected = 0;
         //    Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
         //    BankManagersManager bankManagerTest = new BankManagersManager();
@@ -98,13 +99,13 @@ namespace BankManagerTest
         //    var res2 = mockdictionaryOfcustomers["2"].customerBalance = 100;
         //    var res3 = res + res2;
         //    decimal expected = 200;
-            
+
         //    Assert.Equal(expected, res3);
 
-            
 
-            
-            
+
+
+
 
         //}
         //[Fact]
@@ -123,7 +124,7 @@ namespace BankManagerTest
         //    mockdictionaryOfcustomers.Add("1", cust);
         //    Mock<IBankManagersManager> bankingmanagermock = new Mock<IBankManagersManager>();
         //    bankingmanagermock.Setup(t => t.TotalLoanAmount(cmgt));
-            
+
         //    BankManagersManager bankManagerTest = new BankManagersManager();
         //    decimal res = bankManagerTest.TotalLoanAmount(cmgt);
         //    Assert.Equal(expected, actual);
@@ -275,5 +276,59 @@ namespace BankManagerTest
 
         //    mockConsoleIO.Verify(t => t.WriteLine("1. List of total customers / 1: View all users (customers)"), Times.Once);
         //}
+        [Theory]
+        [InlineData("123456")]
+        [InlineData("abcd")]
+        [InlineData("12345")]
+        public void TestManagerLoginAccount(string managerid)
+        {
+            string bankmanager_pw = "Hello12345678$";
+            ManagerAccountManagerController cmgt = new ManagerAccountManagerController();
+            var mockConsoleIO = new Mock<IConsoleIO>();
+            mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(managerid);
+
+            var mockManagerManagement = new Mock<ManagerAccountManagerController>();
+
+            mockManagerManagement.Setup(x => x.dictionaryOfManagers).Returns(new Dictionary<string, BankManagers>() { { managerid, new BankManagers() { bankmanager_id = managerid } } });
+
+            ManagerAccountManagerController usr = new ManagerAccountManagerController(mockConsoleIO.Object);
+            //usr.UserLogin(mockCustomerManagement.Object);
+            usr.UserLogin(managerid, bankmanager_pw);
+
+            mockConsoleIO.Verify(t => t.WriteLine($"Congratulations, {cmgt.dictionaryOfManagers[managerid].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { cmgt.dictionaryOfManagers[managerid].bankmanager_id} { cmgt.dictionaryOfManagers[managerid].bankmanager_name} { cmgt.dictionaryOfManagers[managerid].bankmanager_designation} { cmgt.dictionaryOfManagers[managerid].bankmanager_yearsOfService}"), Times.Once);
+        }
+        [Fact]
+        public void TestCreateManagerAccount()
+        {
+
+
+
+            ManagerAccountManagerController bmgt = new ManagerAccountManagerController();
+
+
+            Dictionary<string, BankManagers> mockdictionaryOfManagers = new Dictionary<string, BankManagers>();
+            var new_user = new BankManagers("1", "karen", "23 hillview", DateTime.Now, "loan manager", "3", "karen12345678");
+            Assert.NotNull(new_user);
+            Assert.Null(new_user);
+            Assert.Contains(mockdictionaryOfManagers, item => item.Key == new_user.bankmanager_id);
+
+
+            mockdictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
+
+        }
+        [Fact]
+        public void TestManagerAdd()
+        {
+            ManagerAccountManagerController mam = new ManagerAccountManagerController();
+            BankManagers mgr = new BankManagers("1", "karen", "25 hillview", DateTime.Now, "loan manager", "3", "Karen12345678$");
+            mam.ManagerAdd(mgr);
+        }
+        [Fact]
+        public void TestManagerAddNew()
+        {
+            ManagerAccountManagerController mam = new ManagerAccountManagerController();
+            BankManagers mgr = new BankManagers("1", "karen", "25 hillview", DateTime.Now, "loan manager", "3", "Karen12345678$");
+            mam.ManagerAddNew(mam, mgr);
+        }
     }
 }

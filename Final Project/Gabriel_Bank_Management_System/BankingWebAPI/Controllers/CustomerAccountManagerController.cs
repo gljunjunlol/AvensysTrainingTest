@@ -19,18 +19,24 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/Authentication")]
     public class CustomerAccountManagerController : ApiController, ICustomerAccountManager
     {
+        private readonly IConsoleIO ConsoleIO;
+        public CustomerAccountManagerController(IConsoleIO consoleIO)
+        {
+            ConsoleIO = consoleIO;
+        }
         private IList<Customer> _customerList;
-        public Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
+        public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
 
         public CustomerAccountManagerController()
         {
-            using (BankManagementContexts bankContext = new BankManagementContexts())
+            ConsoleIO = new ConsoleIO();
+            using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfcustomers = new Dictionary<string, Customer>();
-                Customer cust1 = new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "1111" };
-                Customer cust2 = new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "2222" };
-                dictionaryOfcustomers.Add("1111", cust1);
-                dictionaryOfcustomers.Add("2222", cust2);
+                Customer cust1 = new Customer() { customer_id = "1232", customer_name = "bobbysmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "bobby@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "A1232" };
+                Customer cust2 = new Customer() { customer_id = "1233", customer_name = "petersmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "peter@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "A1233" };
+                dictionaryOfcustomers.Add("1232", cust1);
+                dictionaryOfcustomers.Add("1233", cust2);
                 //bankContext.Customers.Remove(cust1);
                 //bankContext.Customers.Remove(cust2);
                 //bankContext.Customers.Add(cust1);
@@ -51,7 +57,7 @@ namespace BankingWebAPI.Controllers
             {
                 if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
                 {
-                    Console.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name} { dictionaryOfcustomers[customer_id].customer_email} { dictionaryOfcustomers[customer_id].account_number}");
+                    ConsoleIO.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name}");
                     return true;
 
                 }
@@ -59,7 +65,7 @@ namespace BankingWebAPI.Controllers
             }
             catch(ArgumentNullException)
             {
-                Console.WriteLine("cannot be null");
+                ConsoleIO.WriteLine("cannot be null");
             }
             return false;
             
@@ -197,20 +203,6 @@ namespace BankingWebAPI.Controllers
                         }
                     }
                 }
-                
-
-                //List<Customer> userList = JsonConvert.DeserializeObject<List<Customer>>(_fileHandling.ReadAllText("User.json"));
-                //if (userList != null)
-                //{
-                //    foreach (Customer customer in userList)
-                //    {
-                //        if (Equals(customer.customer_name, username))
-                //        {
-                //            type = UserNameResultType.DuplicateUser;
-                //            break;
-                //        }
-                //    }
-                //}
             }
             catch (IOException)
             {
@@ -233,19 +225,6 @@ namespace BankingWebAPI.Controllers
                 {
                     type = IdResultType.IdIncorrect;
                 }
-                
-                //List<Customer> userList = JsonConvert.DeserializeObject<List<Customer>>(_fileHandling.ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam));
-                //if (userList != null)
-                //{
-                //    foreach (Customer customer in userList)
-                //    {
-                //        if (Equals(customer.customer_id, idNumber))
-                //        {
-                //            type = IdResultType.DuplicateId;
-                //            break;
-                //        }
-                //    }
-                //}
             }
             catch (IOException)
             {

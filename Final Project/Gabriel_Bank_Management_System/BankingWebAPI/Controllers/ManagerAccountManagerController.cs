@@ -16,6 +16,12 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/ManagerAuthentication")]
     public class ManagerAccountManagerController : ApiController, IManagerAccountManager
     {
+        private readonly IConsoleIO ConsoleIO;
+        //private IManagerAccountManager _user;
+        public ManagerAccountManagerController(IConsoleIO consoleIO)
+        {
+            ConsoleIO = consoleIO;
+        }
         private IList<BankManagers> _managersList;
         public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
 
@@ -23,7 +29,8 @@ namespace BankingWebAPI.Controllers
 
         public ManagerAccountManagerController()
         {
-            using (BankManagementContexts bankContext = new BankManagementContexts())
+            ConsoleIO = new ConsoleIO();
+            using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfManagers = new Dictionary<string, BankManagers>();
                 BankManagers bmgr1 = new BankManagers() { bankmanager_id = "1111", bankmanager_name = "Peterson Jr", bankmanager_address = "23 hillview", bankmanager_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankmanager_designation = "Relationship Manager", bankmanager_yearsOfService = "13", bankmanager_pw = "Peterson12345678$" };
@@ -71,17 +78,17 @@ namespace BankingWebAPI.Controllers
         [Route("Test/AddNew")]
         public Dictionary<string, BankManagers> ManagerAddNew(ManagerAccountManagerController mam, BankManagers new_user)
         {
-            Console.WriteLine("At here");
+            Console.WriteLine("Saving as at..");
 
             try
             {
-                using (BankManagementContexts bankContext = new BankManagementContexts())
+                using (ManagementContext bankContext = new ManagementContext())
                 {
                     mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
                     bankContext.Managers.Add(new_user);
                     bankContext.SaveChanges();
                 }
-                Console.WriteLine("End");
+                Console.WriteLine(DateTime.Now + " Done");
                 Console.ReadLine();
 
             }

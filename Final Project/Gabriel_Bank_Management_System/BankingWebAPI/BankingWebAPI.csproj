@@ -92,10 +92,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="ConsoleIO.cs" />
     <Compile Include="EntityFramework\BankDBInitializer.cs" />
     <Compile Include="EntityFramework\BankManagementConfiguration.cs" />
-    <Compile Include="EntityFramework\BankManagementContext.cs" />
-    <Compile Include="EntityFramework\DataContext.cs" />
+    <Compile Include="EntityFramework\ManagementContext.cs" />
     <Compile Include="Controllers\BankEmployeeController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomerAccountManagerController.cs" />
@@ -108,12 +108,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IConsoleIO.cs" />
     <Compile Include="Interfaces\ICustomerAccountManager.cs" />
+    <Compile Include="Interfaces\IDataContext.cs" />
     <Compile Include="Interfaces\IEmployeeAccountManager.cs" />
     <Compile Include="Interfaces\IFileManager.cs" />
     <Compile Include="Interfaces\IManagerAccountManager.cs" />
-    <Compile Include="Interfaces\ISavings.cs" />
-    <Compile Include="Interfaces\ITakingLoan.cs" />
     <Compile Include="Migrations\202111140959530_InitialModel.cs" />
     <Compile Include="Migrations\202111140959530_InitialModel.designer.cs">
       <DependentUpon>202111140959530_InitialModel.cs</DependentUpon>
@@ -121,6 +121,10 @@
     <Compile Include="Migrations\202111141432562_BankEmployeeBranch.cs" />
     <Compile Include="Migrations\202111141432562_BankEmployeeBranch.designer.cs">
       <DependentUpon>202111141432562_BankEmployeeBranch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202111190254502_ChangedbankCu.cs" />
+    <Compile Include="Migrations\202111190254502_ChangedbankCu.designer.cs">
+      <DependentUpon>202111190254502_ChangedbankCu.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BankEmployees.cs" />
@@ -140,9 +144,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Bank.Common\Bank.Common.csproj">
       <Project>{b14ba633-251f-4d4f-93b7-8adf06954b9f}</Project>
@@ -155,6 +157,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202111141432562_BankEmployeeBranch.resx">
       <DependentUpon>202111141432562_BankEmployeeBranch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111190254502_ChangedbankCu.resx">
+      <DependentUpon>202111190254502_ChangedbankCu.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

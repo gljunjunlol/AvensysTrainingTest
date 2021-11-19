@@ -12,9 +12,9 @@ namespace BankingWebAPI.Models
     {
         [Key]
         public string customer_id { get; set; }
-        [Column("CustomerName", Order = 0, TypeName = "text")]
+        //[Column("CustomerName", Order = 0, TypeName = "text")]
         public string customer_name { get; set; }
-        [Column("CustomerAddress", Order = 1, TypeName = "text")]
+        //[Column("CustomerAddress", Order = 1, TypeName = "text")]
         public string customer_address { get; set; }
         public DateTime customer_dateOfBirth { get; set; }
         public string customer_email { get; set; }
@@ -26,8 +26,8 @@ namespace BankingWebAPI.Models
         public decimal customerBalance { get; set; }
         public bool customer_loan_applied { get; set; }
         public decimal loan_amount { get; set; }
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
+        //[Timestamp]
+        //public byte[] RowVersion { get; set; }
 
         public Customer(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {

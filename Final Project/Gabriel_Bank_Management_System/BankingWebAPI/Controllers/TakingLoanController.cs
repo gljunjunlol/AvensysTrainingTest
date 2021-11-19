@@ -19,13 +19,13 @@ namespace BankingWebAPI.Controllers
     public class TakingLoanController : ApiController
     {
         private string customerRecords;
-        private void Read()
+        public void Read()
         {
             customerRecords = File.ReadAllText("List of customers.json");
             dictionaryOfcustomers = JsonConvert.DeserializeObject<Dictionary<string, Customer>>(customerRecords);
 
         }
-        private void Write()
+        public void Write()
         {
             string write = JsonConvert.SerializeObject(dictionaryOfcustomers);
             File.WriteAllText("List of customers.json", write);
@@ -36,8 +36,8 @@ namespace BankingWebAPI.Controllers
         {
             //_customerList = new List<Customer>();
             dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1111", customer_name = "HulkSmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "hulk@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Hulk12345678$", account_number = "1111" });
-            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "2222", customer_name = "MarySmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "mary@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Mary12345678$", account_number = "2222" });
+            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1232", customer_name = "bobbysmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "bobby@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "A1232" });
+            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "1233", customer_name = "petersmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "peter@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "A1233" });
         }
         [HttpGet]
         [Route("customer/{id}")]                       // https://localhost:44360/api/TakingLoan/customer/2
@@ -66,28 +66,21 @@ namespace BankingWebAPI.Controllers
             decimal totalloanamount = dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
             return totalloanamount;
         }
-        [HttpPatch]
-        [Route("Customer/Patch")]
-        public Dictionary<string, Customer> Patch(string id, bool loan_applied, decimal loanamount)
-        {
-            //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == id).FirstOrDefault().Value;
-            //if (existingcustomer == null)
-            //    return null;
-            //dictionaryOfcustomers.Remove(id);
-            //existingcustomer.customer_name = updatedName;
-            //dictionaryOfcustomers.Add(id, existingcustomer);
-            //return dictionaryOfcustomers;
+        //[HttpPatch]
+        //[Route("Customer/Patch")]
+        //public Dictionary<string, Customer> Patch(string id, bool loan_applied, decimal loanamount)
+        //{
 
-            Customer existingCustomer = dictionaryOfcustomers[id];
-            if (existingCustomer != null)
-                dictionaryOfcustomers.Remove(id);
-            else
-            {
-                existingCustomer.loan_amount = loanamount;
-                existingCustomer.customer_loan_applied = true;
-                dictionaryOfcustomers.Add(id, existingCustomer);
-            }
-            return dictionaryOfcustomers;
-        }
+        //    Customer existingCustomer = dictionaryOfcustomers[id];
+        //    if (existingCustomer != null)
+        //        dictionaryOfcustomers.Remove(id);
+        //    else
+        //    {
+        //        existingCustomer.loan_amount = loanamount;
+        //        existingCustomer.customer_loan_applied = true;
+        //        dictionaryOfcustomers.Add(id, existingCustomer);
+        //    }
+        //    return dictionaryOfcustomers;
+        //}
     }
 }

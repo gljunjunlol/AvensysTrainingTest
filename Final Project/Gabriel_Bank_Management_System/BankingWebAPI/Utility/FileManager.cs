@@ -15,7 +15,7 @@ namespace BankingWebAPI.Utility
         {
             try
             {
-                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_address} { cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].customer_phone} { cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F")} { cam.dictionaryOfcustomers[customer_id].customer_loan_applied} { cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F")}");
+                
 
                 
                 Customer cust = new Customer()
@@ -27,13 +27,14 @@ namespace BankingWebAPI.Utility
                     customer_email = cam.dictionaryOfcustomers[customer_id].customer_email,
                     customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone,
                     customer_pw = cam.dictionaryOfcustomers[customer_id].customer_pw,
-                    account_number = cam.dictionaryOfcustomers[customer_id].customer_id,
+                    account_number = "A" + cam.dictionaryOfcustomers[customer_id].customer_id,
                     cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number,
                     customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance,
                     customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied,
                     loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
 
                 };
+                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_address} { cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].customer_phone} { cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F")} { cam.dictionaryOfcustomers[customer_id].customer_loan_applied} { cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F")}");
                 string jsontext = "ID " + customer_id + " " + cam.dictionaryOfcustomers[customer_id].customer_name + ".json";
 
                 List<Customer> customerList = new List<Customer>(); customerList.Add(cust);
@@ -91,7 +92,7 @@ namespace BankingWebAPI.Utility
         {
             try
             {
-                Console.WriteLine($"Dear Employee, your details for your checking, please check the detailed report: { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_address} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_dateOfBirth} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
+                
 
 
                 BankEmployees bemp = new BankEmployees()
@@ -102,9 +103,11 @@ namespace BankingWebAPI.Utility
                     bankemployee_dateOfBirth = eam.dictionaryOfEmployees[bankemployee_id].bankemployee_dateOfBirth,
                     bankemployee_designation = eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation,
                     bankemployee_yearsOfService = eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService,
+                    bankemployee_pw = "",
                     
 
                 };
+                Console.WriteLine($"Dear Employee, your details for your checking, please check the detailed report: { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_address} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_dateOfBirth} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
                 string jsontext = "Employee ID " + bankemployee_id + " " + eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name + ".json";
 
                 List<BankEmployees> employeeList = new List<BankEmployees>(); employeeList.Add(bemp);
@@ -138,7 +141,7 @@ namespace BankingWebAPI.Utility
         {
             try
             {
-                Console.WriteLine($"Dear Sir / Mam, your details for your checking, please check the detailed report: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_address} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_dateOfBirth} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
+                
 
 
                 BankManagers bmgr = new BankManagers()
@@ -149,9 +152,11 @@ namespace BankingWebAPI.Utility
                     bankmanager_dateOfBirth = mam.dictionaryOfManagers[bankmanager_id].bankmanager_dateOfBirth,
                     bankmanager_designation = mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation,
                     bankmanager_yearsOfService = mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService,
+                    bankmanager_pw = "",
 
 
                 };
+                Console.WriteLine($"Dear Sir / Mam, your details for your checking, please check the detailed report: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_address} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_dateOfBirth} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
                 string jsontext = "Manager ID " + bankmanager_id + " " + mam.dictionaryOfManagers[bankmanager_id].bankmanager_name + ".json";
 
                 List<BankManagers> managerList = new List<BankManagers>(); managerList.Add(bmgr);

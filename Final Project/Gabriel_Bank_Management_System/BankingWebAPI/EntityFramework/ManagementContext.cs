@@ -1,18 +1,19 @@
 ﻿using System.Data.Entity;
+using BankingWebAPI.Interfaces;
 using BankingWebAPI.Migrations;
 using BankingWebAPI.Models;
 
 
 namespace BankingWebAPI.EntityFramework
 {
-    public class BankManagementContexts : DbContext
+    public class ManagementContext : DbContext, IDataContext
     {
-        public BankManagementContexts() : base("Name=BankDBConnectionString")
+        public ManagementContext() : base("Name=BankDBConnectionString")
         {
             //Database.SetInitializer(new CreateDatabaseIfNotExists<BankManagementContexts>());
             //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<BankManagementContexts>());
-            Database.SetInitializer(new DropCreateDatabaseAlways<BankManagementContexts>());
-            //Database.SetInitializer(new BankDBInitializer());
+            //Database.SetInitializer(new DropCreateDatabaseAlways<BankManagementContexts>());
+            Database.SetInitializer(new BankDBInitializer());
             //Database.SetInitializer(new MigrateDatabaseToLatestVersion< BankManagementContexts, Configuration>()); // re-run if change in database schema
         }
 
@@ -25,10 +26,10 @@ namespace BankingWebAPI.EntityFramework
             //modelBuilder.Types().Configure(t => t.MapToStoredProcedures());
         }
 
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<BankEmployees> Employees { get; set; }
-        public DbSet<BankManagers> Managers { get; set; }
-        public DbSet<Models.BankEmployeeBranch> employeeDetails { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<BankEmployees> Employees { get; set; }
+        public virtual DbSet<BankManagers> Managers { get; set; }
+        public virtual DbSet<Models.BankEmployeeBranch> employeeDetails { get; set; }
     }
 
 }

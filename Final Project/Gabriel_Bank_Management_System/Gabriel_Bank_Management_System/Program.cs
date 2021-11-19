@@ -32,7 +32,9 @@ namespace Gabriel_Bank_Management_System
 
             do
             {
-                Console.WriteLine("Starting Program..");
+                Console.Clear();
+                Console.WriteLine(DateTime.Now);
+                Console.WriteLine("Beginning the Program..");
 
                 p.Initialize();
                 Console.WriteLine("ENTER YOUR CHOICE:");
@@ -62,6 +64,7 @@ namespace Gabriel_Bank_Management_System
                                             string input11;
                                             do
                                             {
+                                                Console.WriteLine("Hello, Welcome.");
                                                 Console.WriteLine("Key in customer id - 4 digits");
                                                 input11 = Console.ReadLine();
                                                 string output = mv.CheckIdNumber(input11);
@@ -97,8 +100,6 @@ namespace Gabriel_Bank_Management_System
                                             //string input14;
                                             Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
                                             DateTime customer_dob = DateTime.Parse(Console.ReadLine());
-
-                                            Console.WriteLine(customer_dob);
                                             
                                             string input15;
                                             do
@@ -132,7 +133,7 @@ namespace Gabriel_Bank_Management_System
                                             }
                                             while (mv.validatePassword(input17) == false);
                                             while (insideMenu) ;
-                                            BankingWebAPI.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input15, input16, input17, input11, 0, Guid.Empty, false, 0);
+                                            BankingWebAPI.Models.Customer new_user = mv.SignUp(input11, input12, input13, customer_dob, input16, input15, input17, "A" + input11, 0, Guid.Empty, false, 0);
                                             //Console.WriteLine(new_user);
                                             if (new_user != null)
                                             {
@@ -184,10 +185,6 @@ namespace Gabriel_Bank_Management_System
                                                 Console.WriteLine("and pw");
                                                 string customer_pw = Console.ReadLine();
                                                 bool checkLoginOutput = mv.UserLogin(cam, loginTries, customer_id, customer_pw);
-                                                
-                                                //bool checkLoginOutput = cm.UserLogin(cm, loginTries, customer_id, customer_pw);
-                                                //if (checkLoginOutput == false)
-                                                //if (cam.UserLogin(cam, loginTries, customer_id, customer_pw) == true)
                                                 if (checkLoginOutput == true)
                                                 {
                                                     while (!exited)
@@ -206,7 +203,7 @@ namespace Gabriel_Bank_Management_System
                                                                     bool exit11 = false;
                                                                     while (!exit11)
                                                                     {
-
+                                                                        Console.Clear();
                                                                         Console.WriteLine("In Savings account, key in operation" + "\n1: withdraw money" + "\n2: deposit money" + "\n3: view the balance" + "\n4: Exit savings operation");
                                                                         var choice2 = Console.ReadLine();
 
@@ -259,6 +256,8 @@ namespace Gabriel_Bank_Management_System
                                                                                     if (cam.dictionaryOfcustomers.ContainsKey(customer_id4) && customer_id4 == customer_id)
                                                                                     {
                                                                                         mv.ViewBalance(cam, sav, customer_id4);
+                                                                                        Console.WriteLine("");
+                                                                                        Console.ReadLine();
                                                                                     }
                                                                                     else
                                                                                     {
@@ -285,6 +284,7 @@ namespace Gabriel_Bank_Management_System
                                                                 }
                                                             case "2":
                                                                 {
+                                                                    Console.Clear();
                                                                     Console.WriteLine("Taking loan here");
                                                                     bool exit12 = false;
                                                                     while (!exit12)
@@ -517,8 +517,6 @@ namespace Gabriel_Bank_Management_System
                                                 Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
                                                 DateTime customer_dob = DateTime.Parse(Console.ReadLine());
 
-                                                Console.WriteLine(customer_dob);
-
                                                 string input22;
                                                 Console.WriteLine("key to employee designation: ");
                                                 input22 = Console.ReadLine();
@@ -614,7 +612,7 @@ namespace Gabriel_Bank_Management_System
                                                                 case "2":
                                                                     {
 
-                                                                        Console.WriteLine("1. Search any customer information by customer name");
+                                                                        Console.WriteLine("2. Search any customer information by customer name");
                                                                         string customer_name = Console.ReadLine();
                                                                         mv.SearchCustomerByName(cam, customer_name);
                                                                         
@@ -730,8 +728,6 @@ namespace Gabriel_Bank_Management_System
                                                 //string input28;
                                                 Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
                                                 DateTime manager_dob = DateTime.Parse(Console.ReadLine());
-
-                                                Console.WriteLine(manager_dob);
 
                                                 string input29;
                                                 Console.WriteLine("key to manager designation: ");
@@ -940,25 +936,25 @@ namespace Gabriel_Bank_Management_System
             Console.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
             Console.WriteLine("customers with a loan and a savings account");
             Console.WriteLine("Employees to view customer info: ");
-            Console.WriteLine("Bank Managers to view all customers + additional function: \n");
-            Console.WriteLine("________________________________");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|________________________________");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
-            Console.WriteLine("|");
+            Console.WriteLine("Bank Managers to view all customers + additional function:\n");
+            //Console.WriteLine("________________________________");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|________________________________");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
+            //Console.WriteLine("|");
             Console.WriteLine("");
             Console.WriteLine("*******************************");
             Console.WriteLine(" << Bank Management System >> \n");
             Console.WriteLine("1: Bank customers (Create new users)\n");
-            Console.WriteLine("2: Bank Employee (Find customers / Employee Information\n ");
-            Console.WriteLine("3: Bank Manager\n");
+            Console.WriteLine("2: Bank Employee (Find customers by Id/ name)\n ");
+            Console.WriteLine("3: Bank Manager(View all)\n");
             Console.WriteLine("4: Exit the room\n");
             Console.WriteLine("*******************************");
             

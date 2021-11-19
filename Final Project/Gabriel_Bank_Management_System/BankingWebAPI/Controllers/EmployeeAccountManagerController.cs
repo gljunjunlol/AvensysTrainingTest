@@ -17,13 +17,20 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/EmployeeAuthentication")]
     public class EmployeeAccountManagerController : ApiController, IEmployeeAccountManager
     {
+        private readonly IConsoleIO ConsoleIO;
+        //private IEmployeeAccountManager _user;
+        public EmployeeAccountManagerController(IConsoleIO consoleIO)
+        {
+            ConsoleIO = consoleIO;
+        }
         private IList<BankEmployees> _employeeList;
         public virtual Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
 
 
         public EmployeeAccountManagerController()
         {
-            using (BankManagementContexts bankContext = new BankManagementContexts())
+            ConsoleIO = new ConsoleIO();
+            using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
                 BankEmployees bemp1 = new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" };
@@ -35,20 +42,19 @@ namespace BankingWebAPI.Controllers
                 //bankContext.Employees.Add(bemp1);
                 //bankContext.Employees.Add(bemp2);
                 //bankContext.Employees.Add(bemp3);
-
-                //BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = "1111", bank_branch = "Singapore Branch" };
-                //BankEmployeeBranch emp2 = new BankEmployeeBranch() { bankemployee_id = "1235", bank_branch = "Hong Kong Branch" };
-                //BankEmployeeBranch emp3 = new BankEmployeeBranch() { bankemployee_id = "1236", bank_branch = "South Branch" };
-                //List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
-                //bankEmployeeBranchList.Add(emp1);
-                //bankEmployeeBranchList.Add(emp2);
-                //bankEmployeeBranchList.Add(emp3);
+                BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = "1111", bank_branch = "Singapore Branch" };
+                BankEmployeeBranch emp2 = new BankEmployeeBranch() { bankemployee_id = "1235", bank_branch = "Hong Kong Branch" };
+                BankEmployeeBranch emp3 = new BankEmployeeBranch() { bankemployee_id = "1236", bank_branch = "South Branch" };
+                List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
+                bankEmployeeBranchList.Add(emp1);
+                bankEmployeeBranchList.Add(emp2);
+                bankEmployeeBranchList.Add(emp3);
                 //bankContext.employeeDetails.Add(emp1);
                 //bankContext.employeeDetails.Add(emp2);
                 //bankContext.employeeDetails.Add(emp3);
                 //bankContext.SaveChanges();
             }
-            //Console.WriteLine("End");    // these writeline readline is essential
+            //Console.WriteLine("End");
             //Console.ReadLine();
             _employeeList = new List<BankEmployees>();
             

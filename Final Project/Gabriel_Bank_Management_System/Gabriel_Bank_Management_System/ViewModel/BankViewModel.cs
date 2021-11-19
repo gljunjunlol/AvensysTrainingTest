@@ -163,9 +163,9 @@ namespace Gabriel_Bank_Management_System.ViewModel
         }
         public BankingWebAPI.Models.Customer SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
-            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
+            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations");
 
-            var new_user = new BankingWebAPI.Models.Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, " ", 0, Guid.Empty, false, 0);
+            var new_user = new BankingWebAPI.Models.Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, 0, Guid.Empty, false, 0);
             return new_user;
         }
         public BankingWebAPI.Models.BankEmployees SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
@@ -276,7 +276,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
                 Console.WriteLine("Amount is larger than 5000, we will process the cheque\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].ToString() + "\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customer_name.ToString()); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
 
-                using (BankManagementContexts bankContext = new BankManagementContexts())
+                using (ManagementContext bankContext = new ManagementContext())
                 {
                     try
                     {
@@ -313,7 +313,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Customer cust = new Customer();
                 cust.deposit(depositAmountKeyedInByCustomer); cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmountKeyedInByCustomer;
 
-                using (BankManagementContexts bankContext = new BankManagementContexts())
+                using (ManagementContext bankContext = new ManagementContext())
                 {
                     try
                     {
@@ -360,7 +360,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 {
                     cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
 
-                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    using (ManagementContext bankContext = new ManagementContext())
                     {
                         try
                         {
@@ -410,7 +410,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
                     Console.WriteLine("{0} > {1} > {2}", cam.dictionaryOfcustomers[customer_id], cam.dictionaryOfcustomers[customer_id].customer_name, cam.dictionaryOfcustomers[customer_id].cheque_book_number);
 
-                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    using (ManagementContext bankContext = new ManagementContext())
                     {
                         try
                         {
@@ -539,26 +539,27 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 readTask.Wait();
                 viewRemoveCustomerResult = readTask.Result;
             }
+            using (ManagementContext bankContext = new ManagementContext())
+            {
+                try
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = false;
 
+
+                    Customer existingCustomer = bankContext.Customers.Single(x => x.customer_id == customer_id);
+                    //bankContext.Customers.Remove(existingCustomer);
+                    //bankContext.Customers.Attach(existingCustomer);
+                    bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+                    bankContext.SaveChanges();
+                }
+                finally
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = true;
+                }
+            }
             if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
             {
-                using (BankManagementContexts bankContext = new BankManagementContexts())
-                {
-                    try
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                        bankContext.Customers.Attach(existingCustomer);
-                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                        bankContext.SaveChanges();
-                    }
-                    finally
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = true;
-                    }
-                }
+                
 
                 Console.WriteLine(customer_id + " has been removed");
                 cam.dictionaryOfcustomers.Remove(customer_id);
@@ -607,7 +608,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             if (eam.dictionaryOfEmployees.ContainsKey(bankemployee_id))
             {
-                using (BankManagementContexts bankContext = new BankManagementContexts())
+                using (ManagementContext bankContext = new ManagementContext())
                 {
                     try
                     {
@@ -756,7 +757,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
             cam.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cam.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
-            using (BankManagementContexts bankContext = new BankManagementContexts())
+            using (ManagementContext bankContext = new ManagementContext())
             {
                 Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                 try
@@ -847,7 +848,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                     Console.WriteLine("Loan amount left: $" + remainingLoanLeft.ToString("F"));
                     cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
 
-                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    using (ManagementContext bankContext = new ManagementContext())
                     {
                         Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                         try
@@ -876,7 +877,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                     if (remainingLoanLeft == 0)
                     {
                         cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-                        using (BankManagementContexts bankContext = new BankManagementContexts())
+                        using (ManagementContext bankContext = new ManagementContext())
                         {
                             Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                             try
@@ -925,7 +926,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                     Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
                     cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
 
-                    using (BankManagementContexts bankContext = new BankManagementContexts())
+                    using (ManagementContext bankContext = new ManagementContext())
                     {
                         Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                         try
@@ -955,7 +956,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                     {
                         cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
 
-                        using (BankManagementContexts bankContext = new BankManagementContexts())
+                        using (ManagementContext bankContext = new ManagementContext())
                         {
                             Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
                             try
@@ -999,9 +1000,9 @@ namespace Gabriel_Bank_Management_System.ViewModel
         {
             return x - y;
         }
-        public Dictionary<string, Customer> CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
+        public void CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
         {
-            Dictionary<string, Customer> checkUserresult = cust.CustomerAddNew(cam, new_user);
+            var checkUserresult = cust.CustomerAddNew(cam, new_user);
             //var json = JsonConvert.SerializeObject(new_user);
             //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             
@@ -1015,7 +1016,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
             //    readTask.Wait();
             //    checkPhoneresult = readTask.Result;
             //}
-            return checkUserresult;
+            //return checkUserresult;
         }
         public Dictionary<string, BankEmployees> EmployeeAdd(EmployeeAccountManagerController eam, BankEmployeeController emp, string id, BankEmployees new_user)
         {

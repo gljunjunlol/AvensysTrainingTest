@@ -4,7 +4,9 @@ using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
 using System.IO;
-using WebApiLibrary.Interfaces;
+using BankingWebAPI.Interfaces;
+using BankingWebAPI.Models;
+using BankingWebAPI.Controllers;
 
 namespace TakingLoan_Test
 {
@@ -54,54 +56,149 @@ namespace TakingLoan_Test
 
 
         //}
-        //[Fact]
+        [Fact]
 
-        //public void Test_Adding_negative_funds()
-        //{
-        //    Customer cust = new Customer();
+        public void Test_Adding_negative_funds()
+        {
+            Customer cust = new Customer();
             
-        //    cust.customerBalance = 1000;
-        //    var account = new Customer();
-        //    account.deposit(1000);
+            cust.customerBalance = 1000;
+            var account = new Customer();
+            account.deposit(1000);
 
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => account.deposit(-1000));
-        //}
-        //[Fact]
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.deposit(-1000));
+        }
+        [Fact]
 
-        //public void Test_Withdraw_negative_funds()
-        //{
-        //    Customer cust = new Customer();
+        public void Test_Withdraw_negative_funds()
+        {
+            Customer cust = new Customer();
 
-        //    cust.customerBalance = 1000;
-        //    var account = new Customer();
-            
-
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(-1000));
-        //}
-        //[Fact]
-
-        //public void Test_Withdraw_More_Than_funds()
-        //{
-        //    Customer cust = new Customer();
-
-        //    cust.customerBalance = 1000;
-        //    var account = new Customer();
+            cust.customerBalance = 1000;
+            var account = new Customer();
             
 
-        //    Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(2000));
-        //}
-        //[Fact]
-        //public void TestCustomerWithdrawl()
-        //{
-            
-        //    decimal expected = 5;
-        //    Customer cust = new Customer();
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(-1000));
+        }
+        [Fact]
 
-        //    cust.customerBalance = 10;
-        //    cust.withdraw(5);
-        //    cust.customerBalance = 5;
-        //    Assert.Equal(expected, cust.customerBalance);
-        //}
+        public void Test_Withdraw_More_Than_funds()
+        {
+            Customer cust = new Customer();
+
+            cust.customerBalance = 1000;
+            var account = new Customer();
+            
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(2000));
+        }
+        [Fact]
+        public void TestCustomerWithdrawl()
+        {
+            
+            decimal expected = 5;
+            Customer cust = new Customer();
+
+            cust.customerBalance = 10;
+            cust.withdraw(5);
+            cust.customerBalance = 5;
+            Assert.Equal(expected, cust.customerBalance);
+        }
+        [Fact]
+        public void TestRead()
+        {
+            SavingsController sav = new SavingsController();
+            sav.Read();
+        }
+        [Fact]
+        public void TestWrite()
+        {
+            SavingsController sav = new SavingsController();
+            sav.Write();
+        }
+        [Theory]
+        [InlineData("1111")]
+        public void TestcustomerDepositPatch(string customer_id)
+        {
+            decimal depositAmountKeyedInByCustomer = 4000;
+            SavingsController sav = new SavingsController();
+            sav.customerDepositPatch(customer_id, depositAmountKeyedInByCustomer);
+        }
+        [Theory]
+        [InlineData("1111")]
+        public void customerWithdrawl(string customer_id)
+        {
+            decimal depositAmountKeyedInByCustomer = 4000;
+            SavingsController sav = new SavingsController();
+            sav.customerWithdrawl(customer_id, depositAmountKeyedInByCustomer);
+        }
+        [Theory]
+        [InlineData("User")]
+        public void TestViewBalance(string customer_id)
+        {
+            SavingsController sav = new SavingsController();
+            sav.ViewBalance(customer_id);
+        }
+        [Fact]
+        public void TestTotalSavings()
+        {
+            SavingsController sav = new SavingsController();
+            sav.TotalSavingsAmount();
+        }
+        [Theory]
+        [InlineData(4000, 4000)]
+        public void TestAddSavings(decimal x, decimal y)
+        {
+            SavingsController.AddSavings(x, y);
+            Assert.Equal(8000, x + y);
+        }
+        [Theory]
+        [InlineData(4000, 4000)]
+        public void TestSubtractSavings(decimal x, decimal y)
+        {
+            SavingsController.SubtractSaving(x, y);
+            Assert.Equal(0, x - y);
+        }
+        [Theory]
+        [InlineData(4000, 40, 2)]
+        public void TestMultiplySavings(decimal x, decimal y, decimal z)
+        {
+            SavingsController.Multiply(x, y, z);
+            Assert.Equal(320000, x * y * z);
+        }
+        [Theory]
+        [InlineData(4000, 4000)]
+        public void TestDivide(decimal x, decimal y)
+        {
+            SavingsController.Divide(x, y);
+            Assert.Equal(1, x / y);
+        }
+        [Fact]
+        public void TestDivideByZero()
+        {
+            var num1 = 1;
+            var num2 = 0;
+            
+            var ex = Assert.Throws<DivideByZeroException>(() => SavingsController.Divide(num1, num2));
+            string expectedErrorMessage = "Divide error";
+            Assert.Equal(expectedErrorMessage, ex.Message);
+        }
+        [Fact]
+        public void TestModulusByZero()
+        {
+            var num1 = 1;
+            var num2 = 0;
+            var ex = Assert.Throws<DivideByZeroException>(() => SavingsController.Modulus(num1, num2));
+            string expectedErrorMessage = "Divide error";
+            Assert.Equal(expectedErrorMessage, ex.Message);
+        }
+        [Theory]
+        [InlineData(4000, 4000)]
+        public void TestModulus(decimal x, decimal y)
+        {
+            SavingsController.Modulus(x, y);
+            Assert.Equal(0, x % y);
+        }
         //[Theory]
         //[InlineData("1")]
         //[InlineData("abcd")]
@@ -109,7 +206,7 @@ namespace TakingLoan_Test
         //public void TestViewBalance(string itemid)
         //{
         //    CustomerAccountManager cmgt = new CustomerAccountManager();
-            
+
         //    var mockConsoleIO = new Mock<IConsoleIO>();
         //    mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(itemid);
         //    var mockCustomerManagement = new Mock<CustomerAccountManager>();
@@ -123,14 +220,14 @@ namespace TakingLoan_Test
         //    var input = new StringReader("12345");
         //    Console.SetIn(input);
         //    Savings saving = new Savings();
-            
-            
+
+
         //    Assert.Equal(output.ToString(), string.Format("Key in customer id"));
 
-            
 
-            
-            
+
+
+
 
         //    mockConsoleIO.Verify(t => t.WriteLine("Customer balance is " + cmgt.dictionaryOfcustomers[itemid].customerBalance), Times.Once);
 
@@ -160,7 +257,7 @@ namespace TakingLoan_Test
         //    Console.SetIn(input);
         //    Savings saving = new Savings();
         //    saving.customerDeposit(cmgt, bemgt, bmgt);
-            
+
         //    Assert.Equal(output.ToString(), string.Format("Key in customer id\r\nAccount id not found\r\n"));
 
 
@@ -181,7 +278,7 @@ namespace TakingLoan_Test
         //    Console.SetIn(input);
         //    Savings saving = new Savings();
         //    saving.customerWithdrawl(cmgt, bemgt, bmgt);
-            
+
         //    Assert.Equal(output.ToString(), string.Format("Key in customer id\r\nAccount id not found\r\n"));
         //}
 
@@ -248,11 +345,11 @@ namespace TakingLoan_Test
         //[Fact]
         //public void Modulus_DivideByZero()
         //{
-            
-            
+
+
         //    var num1 = 1;
         //    var num2 = 0;
-            
+
         //    var ex = Assert.Throws<DivideByZeroException>(() => Savings.Modulus(num1, num2));
         //    string expectedErrorMessage = "Divide error";
         //    Assert.Equal(expectedErrorMessage, ex.Message);
@@ -303,7 +400,7 @@ namespace TakingLoan_Test
 
         //    mockConsoleIO.Verify(t => t.WriteLine("Account id not found"), Times.Once);
 
-            
+
         //}
         //[Theory]
         //[InlineData("1")]
@@ -326,7 +423,7 @@ namespace TakingLoan_Test
 
         //    mockConsoleIO.Verify(t => t.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal"), Times.Once);
 
-            
+
         //}
         //[Theory]
         //[InlineData("1")]
@@ -359,7 +456,7 @@ namespace TakingLoan_Test
         //    CustomerAccountManager cmgt = new CustomerAccountManager();
         //    EmployeeAccountManager bemgt = new EmployeeAccountManager();
         //    ManagerAccountManager bmgt = new ManagerAccountManager();
-            
+
         //    var mockConsoleIO = new Mock<IConsoleIO>();
         //    mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(withdrawalamount.ToString());
 
@@ -370,7 +467,7 @@ namespace TakingLoan_Test
         //    Savings tk = new Savings(mockConsoleIO.Object);
         //    tk.customerDeposit(mockCustomerManagement.Object, bemgt, bmgt);
 
-            
+
         //}
         //[Theory]
         //[InlineData(6000)]
@@ -380,7 +477,7 @@ namespace TakingLoan_Test
         //    mockConsoleIO.SetupSequence(t => t.ReadLine()).Returns(deposit.ToString());
 
         //    var mockCustomerManagement = new Mock<CustomersManager>();
-            
+
         //    Savings tk = new Savings();
         //    tk.DepositLimit();
         //    Assert.True(deposit > tk.DepositLimit());
@@ -429,7 +526,7 @@ namespace TakingLoan_Test
         //    input.Setup(t => t.TakeDepositInput()).Returns(str);
         //    Mock<ISavings> input2 = new Mock<ISavings>();
         //    input2.Setup(t => t.DepositLimit()).Returns(depositAmount);
-            
+
 
         //    Assert.True(str > depositAmount);
 

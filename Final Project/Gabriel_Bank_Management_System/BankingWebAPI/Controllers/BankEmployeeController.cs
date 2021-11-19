@@ -11,7 +11,6 @@ using Bank.Common.Common;
 using BankingWebAPI.Utility;
 using System.Web.Http;
 using BankingWebAPI.Filters;
-using BankingWebAPI.BankManagementContext;
 
 namespace BankingWebAPI.Controllers
 {
@@ -25,7 +24,7 @@ namespace BankingWebAPI.Controllers
 
         public BankEmployeeController()
         {
-            using (BankManagementContexts bankContext = new BankManagementContexts())
+            using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
                 dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
@@ -116,11 +115,11 @@ namespace BankingWebAPI.Controllers
         [Route("Test/AddNew")]
         public Dictionary<string, BankEmployees> EmployeeAddNew(EmployeeAccountManagerController eam, BankEmployees new_user)
         {
-            Console.WriteLine("At here");
+            Console.WriteLine("Saving as at..");
 
             try
             {
-                using (BankManagementContexts bankContext = new BankManagementContexts())
+                using (ManagementContext bankContext = new ManagementContext())
                 {
                     BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = new_user.bankemployee_id, bank_branch = "South Branch" };
                     List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
@@ -130,9 +129,10 @@ namespace BankingWebAPI.Controllers
                     eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
                     bankContext.Employees.Add(new_user);
                     bankContext.SaveChanges();
+                    Console.WriteLine(DateTime.Now + " Done");
+                    Console.ReadLine();
                 }
-                Console.WriteLine("End");
-                Console.ReadLine();
+                
 
             }
             catch (NullReferenceException)

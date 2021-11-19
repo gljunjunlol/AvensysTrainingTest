@@ -62,9 +62,7 @@
     <Compile Include="Utility\FileManager.cs" />
     <Compile Include="Utility\FormatDecimalConverter.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

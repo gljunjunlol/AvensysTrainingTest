@@ -4,7 +4,8 @@ using Gabriel_Bank_Management_System;
 using Moq;
 using System.Collections.Generic;
 using System.IO;
-using WebApiLibrary.Controllers;
+using BankingWebAPI.Controllers;
+using BankingWebAPI.Models;
 
 namespace TakingLoan_Test
 {
@@ -520,6 +521,35 @@ namespace TakingLoan_Test
         //    tk.performOperation(mockCustomerManagement.Object, bemgt, bmgt);
 
         //    mockConsoleIO.Verify(t => t.WriteLine("Taking loan here"), Times.Once);
+        //}
+        [Fact]
+        public void TestRead()
+        {
+            TakingLoanController tk = new TakingLoanController();
+            tk.Read();
+            tk.Write();
+        }
+        [Theory]
+        [InlineData("User")]
+        public void TestViewLoan(string customer_id)
+        {
+            TakingLoanController tk = new TakingLoanController();
+            tk.ViewLoan(customer_id);
+        }
+        [Fact]
+        public void TestTotalLoan()
+        {
+            TakingLoanController tk = new TakingLoanController();
+            tk.TotalLoanAmount();
+        }        
+        //[Theory]
+        //[InlineData("User")]
+        //public void TestLoanPatch(string customer_id)
+        //{
+        //    bool loan_applied = false;
+        //    decimal loan_amount = 4000;
+        //    TakingLoanController tk = new TakingLoanController();
+        //    tk.Patch(customer_id, loan_applied, loan_amount);
         //}
     }
 }
