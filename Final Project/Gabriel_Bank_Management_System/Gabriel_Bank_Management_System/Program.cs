@@ -1,15 +1,8 @@
-﻿using Gabriel_Bank_Management_System.ViewModel;
+﻿using Gabriel_Bank_Management_System.Interfaces;
+using Gabriel_Bank_Management_System.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bank.Common.Common;
-using BankingWebAPI.Controllers;
-using BankingWebAPI.Interfaces;
-using BankingWebAPI.Models;
-using BankingWebAPI.Utility;
-using System.Web.Http;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -17,42 +10,29 @@ namespace Gabriel_Bank_Management_System
     {
         static void Main(string[] args)
         {
-            CustomerAccountManagerController cam = new CustomerAccountManagerController(); EmployeeAccountManagerController eam = new EmployeeAccountManagerController(); ManagerAccountManagerController mam = new ManagerAccountManagerController();
-            CustomerController cust = new CustomerController();
-            BankEmployeeController emp = new BankEmployeeController();
-
-            List<int> loginTries = new List<int>(); Program p = new Program();
-            
-            
-            
+            Initialize();
+            List<int> loginTries = new List<int>();
             bool exit = false;
-
-            BankViewModel mv = new BankViewModel();
-
-
+            IBankViewModel mv = new BankViewModel();
             do
             {
                 Console.Clear();
                 Console.WriteLine(DateTime.Now);
                 Console.WriteLine("Beginning the Program..");
-
-                p.Initialize();
                 Console.WriteLine("ENTER YOUR CHOICE:");
                 var action = Console.ReadLine();
-
                 switch (action)
                 {
                     case "1":
                         {
-
                             Console.Clear();
-
-                            Console.WriteLine("Screen 1 -- customers only" + "\n1. Create User" + "\n2: Remove User" + "\nSeek help from bank operator" + "\n3: Ask user to log in" + "\n4: Return to home screen");
-
+                            Console.WriteLine("Screen 1 -- customers only" + "\n1. Create User" 
+                                + "\n2: Remove User" 
+                                + "\nSeek help from bank operator" 
+                                + "\n3: Ask user to log in" 
+                                + "\n4: Return to home screen");
                             string inputStr = Console.ReadLine();
-
                             mv.ParseInputString(inputStr, out var input);
-
                             if (input == null)
                                 Console.WriteLine("Invalid input." + Environment.NewLine);
                             else
@@ -90,27 +70,17 @@ namespace Gabriel_Bank_Management_System
                                             while (insideMenu);
                                             insideMenu = true;
                                             string input13;
-
-
                                             Console.WriteLine("Key in customer address");
                                             input13 = Console.ReadLine();
-                                            
-
-
-                                            //string input14;
                                             Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
                                             DateTime customer_dob = DateTime.Parse(Console.ReadLine());
-                                            
                                             string input15;
                                             do
                                             {
                                                 Console.WriteLine("key to create a new user phone: format such as (xxx)xxx-xxxx");
                                                 input15 = Console.ReadLine();
-
-                                                
                                             }
                                             while (mv.validatePhone(input15) == false);
-                                            
                                             insideMenu = true;
                                             string input16;
                                             do
@@ -121,7 +91,6 @@ namespace Gabriel_Bank_Management_System
                                                 insideMenu = false;
                                             }
                                             while (mv.validateEmail(input16) == false);
-                                            
                                             insideMenu = true;
                                             string input17;
                                             do
@@ -917,38 +886,14 @@ namespace Gabriel_Bank_Management_System
             while (!exit);
             Console.WriteLine("Exiting the program");
             Console.ReadLine();
-            while (!exit)
-            {
-                try
-                {
-                    //p.performOperation(cam, cam1, eam, eam1, mam, mam1, loginTries, p);
-                }
-                catch (Exception)
-                {
-                    Console.Write("Incorrect format. Please try again");
-                    Console.ReadLine();
-                }
-            }
         }
-        public void Initialize()
+        private static void Initialize()
         {
             Console.WriteLine("We have the Requirements and necessary information:");
             Console.WriteLine("3 different type of users in the program: mainly customers, bank employees, bank managers");
             Console.WriteLine("customers with a loan and a savings account");
             Console.WriteLine("Employees to view customer info: ");
             Console.WriteLine("Bank Managers to view all customers + additional function:\n");
-            //Console.WriteLine("________________________________");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|________________________________");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
-            //Console.WriteLine("|");
             Console.WriteLine("");
             Console.WriteLine("*******************************");
             Console.WriteLine(" << Bank Management System >> \n");
@@ -957,8 +902,6 @@ namespace Gabriel_Bank_Management_System
             Console.WriteLine("3: Bank Manager(View all)\n");
             Console.WriteLine("4: Exit the room\n");
             Console.WriteLine("*******************************");
-            
-
         }
     }
 }

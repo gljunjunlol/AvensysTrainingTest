@@ -1,34 +1,18 @@
-﻿using System;
+﻿using Bank.Common.Common;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BankingWebAPI.Controllers;
-using BankingWebAPI.Interfaces;
-using Bank.Common.Common;
-using BankingWebAPI.Models;
-using System.Threading;
-using BankingWebAPI.Utility;
-using System.IO;
-using System.Net.Http;
-using Newtonsoft.Json;
-using BankingWebAPI.EntityFramework;
 using System.Data.Entity;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
     internal class BankViewModel
     {
-        CustomerAccountManagerController cam;
-
-
         private readonly HttpClient _bankClient;
-        
-
-
         List<int> loginTries = new List<int>();
-        Program p = new Program();
-
         internal BankViewModel()
         {
             _bankClient = new HttpClient();
@@ -37,23 +21,10 @@ namespace Gabriel_Bank_Management_System.ViewModel
 #else
             _bankClient.BaseAddress = new Uri("http://mybankapi.me");
 #endif
-
-            var responseTask = _bankClient.GetAsync("api/Customer");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-
-            }
-
-            cam = new CustomerAccountManagerController();
-
         }
         public string CheckIdNumber(string idNumber)
         {
             string output = string.Empty;
-            IdResultType checkIdResult = cam.CheckId(idNumber);
-            //IdResultType checkIdResult = IdResultType.UnhandledIdError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkid?idNumber=" + idNumber); // to call a web api
             responseTask.Wait();
             var result = responseTask.Result;
@@ -61,24 +32,23 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<IdResultType>();
                 readTask.Wait();
-                checkIdResult = readTask.Result;
-            }
-            switch (checkIdResult)
-            {
-                case IdResultType.None:
-                    break;
-                case IdResultType.DuplicateId:
-                    output = "Duplicate idNumber.";
-                    break;
-                case IdResultType.IdIncorrect:
-                    output = "Invalid ID Number";
-                    break;
-                case IdResultType.IdDataAccessError:
-                    output = "Unable to find file.";
-                    break;
-                case IdResultType.UnhandledIdError:
-                    output = "Unexpected Error.";
-                    break;
+                switch (readTask.Result)
+                {
+                    case IdResultType.None:
+                        break;
+                    case IdResultType.DuplicateId:
+                        output = "Duplicate idNumber.";
+                        break;
+                    case IdResultType.IdIncorrect:
+                        output = "Invalid ID Number";
+                        break;
+                    case IdResultType.IdDataAccessError:
+                        output = "Unable to find file.";
+                        break;
+                    case IdResultType.UnhandledIdError:
+                        output = "Unexpected Error.";
+                        break;
+                }
             }
             return output;
         }
@@ -86,8 +56,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string CheckUserName(string userName)
         {
             string output = string.Empty;
-            UserNameResultType checkUserNameResult = cam.CheckUserName(userName);
-            //UserNameResultType checkUserNameResult = UserNameResultType.UnhandledUserError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkusername?username=" + userName);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -95,33 +63,32 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<UserNameResultType>();
                 readTask.Wait();
-                checkUserNameResult = readTask.Result;
-            }
-            switch (checkUserNameResult)
-            {
-                case UserNameResultType.None:
-                    break;
-                case UserNameResultType.DuplicateUser:
-                    output = "Duplicate Username.";
-                    break;
-                case UserNameResultType.UnhandledUserError:
-                    output = "Unexpected Error.";
-                    break;
-                case UserNameResultType.UserNameContainsSpace:
-                    output = "Please Create A Username Without Space.";
-                    break;
-                case UserNameResultType.UserNameDataAccessError:
-                    output = "Unable to find file.";
-                    break;
-                case UserNameResultType.UserNameLengthIncorrect:
-                    output = "Please create a username between 6 to 24 characters.";
-                    break;
+                switch (readTask.Result)
+                {
+                    case UserNameResultType.None:
+                        break;
+                    case UserNameResultType.DuplicateUser:
+                        output = "Duplicate Username.";
+                        break;
+                    case UserNameResultType.UnhandledUserError:
+                        output = "Unexpected Error.";
+                        break;
+                    case UserNameResultType.UserNameContainsSpace:
+                        output = "Please Create A Username Without Space.";
+                        break;
+                    case UserNameResultType.UserNameDataAccessError:
+                        output = "Unable to find file.";
+                        break;
+                    case UserNameResultType.UserNameLengthIncorrect:
+                        output = "Please create a username between 6 to 24 characters.";
+                        break;
+                }
             }
             return output;
         }
+
         public bool validateEmail(string email)
         {
-            bool checkEmailresult = cam.validateEmail(email);
             var responseTask = _bankClient.GetAsync("api/Authentication/checkemail?email=" + email);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -129,13 +96,13 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkEmailresult = readTask.Result;
+                return readTask.Result;
             }
-            return checkEmailresult;
+            return false;
         }
+
         public bool validatePhone(string phone)
         {
-            bool checkPhoneresult = cam.validatePhone(phone);
             var responseTask = _bankClient.GetAsync("api/Authentication/checkphonenumber?phone=" + phone);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -143,13 +110,13 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkPhoneresult = readTask.Result;
+                return readTask.Result;
             }
-            return checkPhoneresult;
+            return false;
         }
+
         public bool validatePassword(string password)
         {
-            bool checkPasswordresult = cam.validatePassword(password);
             var responseTask = _bankClient.GetAsync("api/Authentication/checkpassword?customer_pw=" + password);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -157,10 +124,11 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkPasswordresult = readTask.Result;
+                return readTask.Result;
             }
-            return checkPasswordresult;
+            return false;
         }
+
         public BankingWebAPI.Models.Customer SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
             Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations");
@@ -182,70 +150,26 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var new_user = new BankingWebAPI.Models.BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
             return new_user;
         }
-        public bool UserLogin(CustomerAccountManagerController cam, List<int> loginTries, string customer_id, string customer_pw)
+        public bool UserLogin(string customer_id, string customer_pw, int loginType)
         {
-            bool checkUserLoginResult = cam.UserLogin(customer_id, customer_pw);
-            var responseTask = _bankClient.GetAsync("api/Authentication/login?customer_id=" + customer_id + "&customer_pw=" + customer_pw);
+            Task<HttpResponseMessage> responseTask=null;
+            if (loginType==0)
+                responseTask = _bankClient.GetAsync("api/Authentication/login?customer_id=" + customer_id + "&customer_pw=" + customer_pw);
+            else if(loginType==1)
+                responseTask = _bankClient.GetAsync("api/EmployeeAuthentication/employeelogin?bankemployee_id=" + customer_id + "&bankemployee_pw=" + customer_pw);
+            else if (loginType == 2)
+                responseTask = _bankClient.GetAsync("api/ManagerAuthentication/managerlogin?bankmanager_id=" + bankmanager_id + "&bankmanager_pw=" + bankmanager_pw);
             responseTask.Wait();
             var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
+            if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
+                return readTask.Result;
             }
-            return checkUserLoginResult;
-
-
-
-
-            //if (cam.UserLogin(customer_id, customer_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
+            return false;
         }
-        public bool UserLogin(EmployeeAccountManagerController eam, List<int> loginTries, string bankemployee_id, string bankemployee_pw)
-        {
-            bool checkUserLoginResult = eam.UserLogin(bankemployee_id, bankemployee_pw);
-            var responseTask = _bankClient.GetAsync("api/EmployeeAuthentication/employeelogin?bankemployee_id=" + bankemployee_id + "&bankemployee_pw=" + bankemployee_pw);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
-            {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
-            }
-            return checkUserLoginResult;
-            //if (eam.UserLogin(bankemployee_id, bankemployee_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
-        }
-        public bool UserLogin(ManagerAccountManagerController mam, List<int> loginTries, string bankmanager_id, string bankmanager_pw)
-        {
-            bool checkUserLoginResult = mam.UserLogin(bankmanager_id, bankmanager_pw);
-            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/managerlogin?bankmanager_id=" + bankmanager_id + "&bankmanager_pw=" + bankmanager_pw);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
-            {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
-            }
-            return checkUserLoginResult;
-            //if (mam.UserLogin(bankmanager_id, bankmanager_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
-        }
+       
         public void ParseInputString(string input, out int? value)
         {
             try
@@ -261,12 +185,14 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 value = null;
             }
         }
+
         public decimal DepositLimit()
         {
             decimal maximumamount = 5000;
             return maximumamount;
         }
-        public void customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal depositAmountKeyedInByCustomer, Customer existingCustomer)
+
+        public void customerDeposit(string customer_id, decimal depositAmountKeyedInByCustomer, Customer existingCustomer)
         {
 
 
