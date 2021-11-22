@@ -112,10 +112,6 @@
       <Project>{b14ba633-251f-4d4f-93b7-8adf06954b9f}</Project>
       <Name>Bank.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BankingWebAPI\BankingWebAPI.csproj">
-      <Project>{a05e97fa-28a0-4bdd-a5e6-00f61d015c4a}</Project>
-      <Name>BankingWebAPI</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
