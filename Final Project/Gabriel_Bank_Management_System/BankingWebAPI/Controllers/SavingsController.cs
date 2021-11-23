@@ -12,6 +12,7 @@ using BankingWebAPI.Interfaces;
 using BankingWebAPI.Models;
 using BankingWebAPI.Utility;
 using Newtonsoft.Json;
+using System.Data.Entity;
 
 namespace BankingWebAPI.Controllers
 {
@@ -20,7 +21,7 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/Savings")]
     public class SavingsController : ApiController
     {
-        public static Dictionary<int, Guid> cheque = new Dictionary<int, Guid>();
+        IDataContext dataContext;
         
         private string customerRecords;
         public void Read()
@@ -35,43 +36,44 @@ namespace BankingWebAPI.Controllers
             File.WriteAllText("List of customers.json", write);
         }
         public Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
+        public SavingsController(IDataContext datacontext)
+        {
+            dataContext = datacontext;
+        }
 
         public SavingsController()
         {
-            //_customerList = new List<Customer>();
-            dictionaryOfcustomers = new Dictionary<string, Customer>();
-            dictionaryOfcustomers.Add("1", new Customer() { customer_id = "1232", customer_name = "bobbysmith", customer_address = "23 hillview", customer_dateOfBirth = DateTime.Parse("01 Feb 1985"), customer_email = "bobby@mail.com", customer_phone = "(333)-444-9555", customerBalance = 1000, customer_loan_applied = true, loan_amount = 2000, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c44301de-2926-4875-8bf7-d7fce72fe2a7"), account_number = "A1232" });
-            dictionaryOfcustomers.Add("2", new Customer() { customer_id = "1233", customer_name = "petersmith", customer_address = "15 church street", customer_dateOfBirth = DateTime.Parse("01 Apr 1985"), customer_email = "peter@gmail.com", customer_phone = "(338)-445-1126", customerBalance = 1000, customer_loan_applied = true, loan_amount = 1500, customer_pw = "Test12345678$", cheque_book_number = Guid.Parse("c152f04e-975a-4cfd-bdcf-88d136b1f23e"), account_number = "A1233" });
+            dataContext = new ManagementContext();
         }
-        [HttpPatch]
-        [Route("deposit")]
-        public Dictionary<string, Customer> customerDepositPatch(string id, decimal depositAmountKeyedInByCustomer)
-        {
+        //[HttpPatch]
+        //[Route("deposit")]
+        //public Dictionary<string, Customer> customerDepositPatch(string id, decimal depositAmountKeyedInByCustomer)
+        //{
 
-            Customer existingCustomer = dictionaryOfcustomers[id];
-            if (existingCustomer != null)
-                dictionaryOfcustomers.Remove(id);
-            else
-            {
-                existingCustomer.customerBalance = existingCustomer.customerBalance + depositAmountKeyedInByCustomer;
-                dictionaryOfcustomers.Add(id, existingCustomer);
-            }
-            return dictionaryOfcustomers;
-        }
-        [HttpPatch]
-        [Route("withdrawal")]
-        public Dictionary<string, Customer> customerWithdrawl(string id, decimal withdrawAmountKeyedInByCustomer)
-        {
-            Customer existingCustomer = dictionaryOfcustomers[id];
-            if (existingCustomer != null)
-                dictionaryOfcustomers.Remove(id);
-            else
-            {
-                existingCustomer.customerBalance = existingCustomer.customerBalance - withdrawAmountKeyedInByCustomer;
-                dictionaryOfcustomers.Add(id, existingCustomer);
-            }
-            return dictionaryOfcustomers;
-        }
+        //    Customer existingCustomer = dictionaryOfcustomers[id];
+        //    if (existingCustomer != null)
+        //        dictionaryOfcustomers.Remove(id);
+        //    else
+        //    {
+        //        existingCustomer.customerBalance = existingCustomer.customerBalance + depositAmountKeyedInByCustomer;
+        //        dictionaryOfcustomers.Add(id, existingCustomer);
+        //    }
+        //    return dictionaryOfcustomers;
+        //}
+        //[HttpPatch]
+        //[Route("withdrawal")]
+        //public Dictionary<string, Customer> customerWithdrawl(string id, decimal withdrawAmountKeyedInByCustomer)
+        //{
+        //    Customer existingCustomer = dictionaryOfcustomers[id];
+        //    if (existingCustomer != null)
+        //        dictionaryOfcustomers.Remove(id);
+        //    else
+        //    {
+        //        existingCustomer.customerBalance = existingCustomer.customerBalance - withdrawAmountKeyedInByCustomer;
+        //        dictionaryOfcustomers.Add(id, existingCustomer);
+        //    }
+        //    return dictionaryOfcustomers;
+        //}
         [HttpGet]
         [Route("customer/{id}")]                       // https://localhost:44360/api/Savings/customer/2
         public decimal ViewBalance(string id)
@@ -93,7 +95,7 @@ namespace BankingWebAPI.Controllers
             
         }
         [HttpGet]
-        [Route("")]                                // https://localhost:44360/api/Savings
+        [Route("viewtotalsavings")]                                // https://localhost:44360/api/Savings/viewtotalsavings
         public decimal TotalSavingsAmount()
         {
             decimal totalSavingsamount = dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
@@ -135,6 +137,109 @@ namespace BankingWebAPI.Controllers
                 throw new DivideByZeroException("Divide error");
 
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="withdrawAmountKeyedInByCustomer"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("withdrawal")]
+        public IHttpActionResult customerWithdrawal(string customer_id, decimal withdrawAmountKeyedInByCustomer)
+        {
+            Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
+            if (withdrawAmountKeyedInByCustomer < 0)
+            {
+                return Ok("withdrawal amount should be more than 0");
+            }
+            if (customer.customerBalance > withdrawAmountKeyedInByCustomer && customer != null && customer.customerBalance > 0 && withdrawAmountKeyedInByCustomer > 5000)
+            {
+                var guid1 = Guid.NewGuid();
+                customer.cheque_book_number = guid1;
+                customer.customerBalance = customer.customerBalance - withdrawAmountKeyedInByCustomer;
+                dataContext.Entry(customer).State = EntityState.Modified;
+                dataContext.SaveChanges();
+                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque withdrawal to db \n Successfully withdrawed Product ID: {customer_id}. Quantity: {withdrawAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance.ToString("F")}");
+            }
+            
+            if (customer.customerBalance > withdrawAmountKeyedInByCustomer && customer != null && customer.customerBalance > 0)
+            {
+                customer.customerBalance = customer.customerBalance - withdrawAmountKeyedInByCustomer;
+                dataContext.Entry(customer).State = EntityState.Modified;
+                dataContext.SaveChanges();
+                return Ok($"Updated withdrawal to db \n Successfully withdrawed Product ID: {customer_id}. Quantity: {withdrawAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance.ToString("F")}");
+            }
+            
+            if (customer != null && customer.customerBalance < 0 || customer.customerBalance < withdrawAmountKeyedInByCustomer)
+            {
+                
+                return Ok($"Your balance does not meet the requirement, insufficient funds in balance. your current balance is: {customer.customerBalance.ToString("F")}");
+            }
+            else
+            {
+                return BadRequest("Invalid Customer ID");
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="depositAmountKeyedInByCustomer"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("deposit")]
+        public IHttpActionResult customerDeposit(string customer_id, decimal depositAmountKeyedInByCustomer)
+        {
+            Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
+            if (customer != null && depositAmountKeyedInByCustomer < 0)
+            {
+                return Ok("deposit amount should be more than 0");
+                
+            }
+            if (customer != null && depositAmountKeyedInByCustomer > 5000)
+            {
+                var guid1 = Guid.NewGuid();
+                customer.cheque_book_number = guid1;
+                customer.customerBalance = customer.customerBalance + depositAmountKeyedInByCustomer;
+                dataContext.Entry(customer).State = EntityState.Modified;
+                dataContext.SaveChanges();
+                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque deposit to db \n Successfully deposit Product ID: {customer_id}. Quantity: {depositAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance}");
+            }
+
+            if (customer != null && depositAmountKeyedInByCustomer < 5001)
+            {
+                customer.customerBalance = customer.customerBalance + depositAmountKeyedInByCustomer;
+                dataContext.Entry(customer).State = EntityState.Modified;
+                dataContext.SaveChanges();
+                return Ok($"Updated deposit to db \n Successfully deposit Product ID: {customer_id}. Quantity: {depositAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance}");
+            }
+            else
+            {
+                return BadRequest("Invalid Customer ID");
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("viewbalance")]
+        public IHttpActionResult viewBalance(string customer_id)
+        {
+            Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
+            if (customer != null)
+            {
+                return Ok($"Dear Customer, your current balance is: {customer.customerBalance.ToString("F")}");
+            }
+            else
+            {
+                return BadRequest("Account id not found");
+            }
+            
         }
     }
 }

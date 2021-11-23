@@ -7,7 +7,7 @@ using System.Web;
 
 namespace BankingWebAPI.EntityFramework
 {
-    public class BankDBInitializer : DropCreateDatabaseAlways<ManagementContext>
+    public class BankDBInitializer : CreateDatabaseIfNotExists<ManagementContext>
     {
         protected override void Seed(ManagementContext context) // seed get called only once (initial data you want) - usually value of first row loaded into the table
         {

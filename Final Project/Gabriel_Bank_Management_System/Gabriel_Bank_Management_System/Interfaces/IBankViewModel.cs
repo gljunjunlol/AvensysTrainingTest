@@ -1,5 +1,4 @@
-﻿using BankingWebAPI.Controllers;
-using BankingWebAPI.Models;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +11,39 @@ namespace Gabriel_Bank_Management_System.Interfaces
     {
         string CheckIdNumber(string idNumber);
         string CheckUserName(string userName);
-        bool validateEmail(string email);
-        bool validatePhone(string phone);
+        string validateEmail(string email);
+        string validatePhone(string phone);
         bool validatePassword(string password);
+        string SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt);
+        string SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw);
+        string SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw);
+        string RemoveCustomers(string customer_id);
+        string RemoveEmployees(string bankemployee_id);
+        (string, bool?) CheckLogin(string userName, string passWord);
+        (string, bool?) CheckEmployeeLogin(string userName, string passWord);
+        (string, bool?) CheckManagerLogin(string userName, string passWord);
+        string customerWithdrawl(string customer_id, decimal withdrawAmountKeyedInByCustomer);
+        string customerDeposit(string customer_id, decimal depositAmountKeyedInByCustomer);
+        void ParseInputStringInt(string input, out int? value);
         void ParseInputString(string input, out int? value);
+        string LoanAccount(string customer_id, decimal loanamount, decimal monthsIn, decimal interestamount);
+        string ViewLoan(string customer_id);
+        string RepayLoan(string customer_id, string repayLoan);
         decimal DepositLimit();
-        void customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal depositAmountKeyedInByCustomer, Customer existingCustomer);
-        void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal withdrawAmountKeyedInByCustomer, Customer existingCustomer);
-        void ViewBalance(CustomerAccountManagerController cam, SavingsController sav, string customer_id);
-        void ListCustomers(CustomerAccountManagerController cam, CustomerController cust);
-        void RemoveCustomers(CustomerAccountManagerController cam, CustomerController cust, string customer_id);
+        
+        
+        
+        string ViewBalance(string customer_id);
+        
+        string ListCustomers();
+        string ListEmployees();
+        string SearchCustomerByID(string customer_id);
+        string SearchCustomerByName(string customer_name);
+        
+        string TotalLoanAmount();
+        string TotalSavingsAccount();
+        string ViewManagers();
+
 
 
     }

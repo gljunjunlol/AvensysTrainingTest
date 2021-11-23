@@ -1,34 +1,19 @@
-﻿using System;
+﻿using Bank.Common.Common;
+using Gabriel_Bank_Management_System.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BankingWebAPI.Controllers;
-using BankingWebAPI.Interfaces;
-using Bank.Common.Common;
-using BankingWebAPI.Models;
-using System.Threading;
-using BankingWebAPI.Utility;
-using System.IO;
-using System.Net.Http;
-using Newtonsoft.Json;
-using BankingWebAPI.EntityFramework;
 using System.Data.Entity;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
-    internal class BankViewModel
+    internal class BankViewModel : IBankViewModel
     {
-        CustomerAccountManagerController cam;
-
-
         private readonly HttpClient _bankClient;
-        
-
-
-        List<int> loginTries = new List<int>();
-        Program p = new Program();
-
         internal BankViewModel()
         {
             _bankClient = new HttpClient();
@@ -37,23 +22,18 @@ namespace Gabriel_Bank_Management_System.ViewModel
 #else
             _bankClient.BaseAddress = new Uri("http://mybankapi.me");
 #endif
-
-            var responseTask = _bankClient.GetAsync("api/Customer");
+            var responseTask = _bankClient.GetAsync("api");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
 
             }
-
-            cam = new CustomerAccountManagerController();
-
         }
         public string CheckIdNumber(string idNumber)
         {
             string output = string.Empty;
-            IdResultType checkIdResult = cam.CheckId(idNumber);
-            //IdResultType checkIdResult = IdResultType.UnhandledIdError;
+            IdResultType checkIdResult = IdResultType.UnhandledIdError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkid?idNumber=" + idNumber); // to call a web api
             responseTask.Wait();
             var result = responseTask.Result;
@@ -62,6 +42,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 var readTask = result.Content.ReadAsAsync<IdResultType>();
                 readTask.Wait();
                 checkIdResult = readTask.Result;
+                
             }
             switch (checkIdResult)
             {
@@ -86,8 +67,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string CheckUserName(string userName)
         {
             string output = string.Empty;
-            UserNameResultType checkUserNameResult = cam.CheckUserName(userName);
-            //UserNameResultType checkUserNameResult = UserNameResultType.UnhandledUserError;
+            UserNameResultType checkUserNameResult = UserNameResultType.UnhandledUserError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkusername?username=" + userName);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -96,6 +76,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 var readTask = result.Content.ReadAsAsync<UserNameResultType>();
                 readTask.Wait();
                 checkUserNameResult = readTask.Result;
+                
             }
             switch (checkUserNameResult)
             {
@@ -119,37 +100,95 @@ namespace Gabriel_Bank_Management_System.ViewModel
             }
             return output;
         }
-        public bool validateEmail(string email)
+
+        public string validateEmail(string email)
         {
-            bool checkEmailresult = cam.validateEmail(email);
+            string output = string.Empty;
+            EmailAddressResultType checkEmailresult = EmailAddressResultType.UnhandledEmailAddressError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkemail?email=" + email);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
+                var readTask = result.Content.ReadAsAsync<EmailAddressResultType>();
                 readTask.Wait();
                 checkEmailresult = readTask.Result;
             }
-            return checkEmailresult;
+            switch (checkEmailresult)
+            {
+                case EmailAddressResultType.None:
+                    {
+                        break;
+                    }
+                case EmailAddressResultType.DuplicateEmailAddress:
+                    {
+                        output = "Duplicate EmailAddress.";
+                        break;
+                    }
+                case EmailAddressResultType.EmailAddressIncorrect:
+                    {
+                        output = "Invalid Email";
+                        break;
+                    }
+                case EmailAddressResultType.EmailAddressNullError:
+                    {
+                        output = "Input cannot be Null.";
+                        break;
+                    }
+                case EmailAddressResultType.UnhandledEmailAddressError:
+                    {
+                        output = "Unexpected Error.";
+                        break;
+                    }
+            }
+            return output;
         }
-        public bool validatePhone(string phone)
+
+        public string validatePhone(string phone)
         {
-            bool checkPhoneresult = cam.validatePhone(phone);
+            string output = string.Empty;
+            PhoneNumberResultType checkPhoneNumberResult = PhoneNumberResultType.UnhandledPhoneNumberError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkphonenumber?phone=" + phone);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
+                var readTask = result.Content.ReadAsAsync<PhoneNumberResultType>();
                 readTask.Wait();
-                checkPhoneresult = readTask.Result;
+                checkPhoneNumberResult = readTask.Result;
             }
-            return checkPhoneresult;
+            switch (checkPhoneNumberResult)
+            {
+                case PhoneNumberResultType.None:
+                    {
+                        break;
+                    }
+                case PhoneNumberResultType.DuplicatePhoneNumber:
+                    {
+                        output = "Duplicate Phone Number.";
+                        break;
+                    }
+                case PhoneNumberResultType.PhoneNumberIncorrect:
+                    {
+                        output = "Invalid Phone Number";
+                        break;
+                    }
+                case PhoneNumberResultType.PhoneNumberNullError:
+                    {
+                        output = "Input cannot be Null.";
+                        break;
+                    }
+                case PhoneNumberResultType.UnhandledPhoneNumberError:
+                    {
+                        output = "Unexpected Error.";
+                        break;
+                    }
+            }
+            return output;
         }
+
         public bool validatePassword(string password)
         {
-            bool checkPasswordresult = cam.validatePassword(password);
             var responseTask = _bankClient.GetAsync("api/Authentication/checkpassword?customer_pw=" + password);
             responseTask.Wait();
             var result = responseTask.Result;
@@ -157,95 +196,419 @@ namespace Gabriel_Bank_Management_System.ViewModel
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkPasswordresult = readTask.Result;
+                return readTask.Result;
             }
-            return checkPasswordresult;
+            return false;
         }
-        public BankingWebAPI.Models.Customer SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="customer_name"></param>
+        /// <param name="customer_address"></param>
+        /// <param name="customer_dob"></param>
+        /// <param name="customer_email"></param>
+        /// <param name="customer_phone"></param>
+        /// <param name="customer_pw"></param>
+        /// <param name="account_no"></param>
+        /// <param name="account_bal"></param>
+        /// <param name="cheque_bk_number"></param>
+        /// <param name="loan_app"></param>
+        /// <param name="loan_with_amt"></param>
+        /// <returns></returns>
+        public string SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
-            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations");
+            //Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations");
+            string output2 = string.Empty;
+            //(string, string, string, DateTime, string, string, string, string, decimal, Guid, bool, decimal) output;
+            
+            var responseTask = _bankClient.GetAsync("api/Customer/signup?customer_id=" + customer_id + 
+                "&customer_name=" + customer_name + 
+                "&customer_address=" + customer_address + 
+                "&customer_dob=" + customer_dob + 
+                "&customer_email=" + customer_email + 
+                "&customer_phone=" + customer_phone + 
+                "&customer_pw=" + customer_pw + 
+                "&account_no=" + account_no + 
+                "&account_bal=" + account_bal + 
+                "&cheque_bk_number=" + cheque_bk_number + 
+                "&loan_app=" + loan_app + 
+                "&loan_with_amt=" + loan_with_amt);
+            responseTask.Wait();
+            //output.Item1 = customer_id;
+            //output.Item2 = customer_name;
+            //output.Item3 = customer_address;
+            //output.Item4 = customer_dob;
+            //output.Item5 = customer_email;
+            //output.Item6 = customer_phone;
+            //output.Item7 = customer_pw;
+            //output.Item8 = account_no;
+            //output.Item9 = account_bal;
+            //output.Item10 = cheque_bk_number;
+            //output.Item11 = loan_app;
+            //output.Item12 = loan_with_amt;
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+                bool signUpResult = readTask.Result;
 
-            var new_user = new BankingWebAPI.Models.Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, 0, Guid.Empty, false, 0);
-            return new_user;
+                if (signUpResult)
+                {
+                    output2 = "New account has been registered.";
+                }
+            }
+            else
+            {
+                output2 = "Error has occured.";
+            }
+            return output2;
+
+
+
+
+
+            //var new_user = new BankingWebAPI.Models.Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, 0, Guid.Empty, false, 0);
+            //return new_user;
         }
-        public BankingWebAPI.Models.BankEmployees SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
+        public string SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
         {
             Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
 
-            var new_user = new BankingWebAPI.Models.BankEmployees(bankemployee_id, bankemployee_name, bankemployee_address, bankemployee_dob, bankemployee_designation, bankemployee_yos, bankemployee_pw);
-            return new_user;
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/signup?username=" + bankemployee_name +
+                "&idNumber=" + bankemployee_id +
+                "&address=" + bankemployee_address +
+                "$dateofbirth=" + bankemployee_dob +
+                "$designation=" + bankemployee_designation +
+                "$yearsofservice=" + bankemployee_yos +
+                "&password=" + bankemployee_pw);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+                bool signUpResult = readTask.Result;
+
+                if (signUpResult)
+                {
+                    output = "New account has been registered.";
+                }
+            }
+            else
+            {
+                output = "Error has occured.";
+            }
+            return output;
+            //var new_user = new BankingWebAPI.Models.BankEmployees(bankemployee_id, bankemployee_name, bankemployee_address, bankemployee_dob, bankemployee_designation, bankemployee_yos, bankemployee_pw);
+            //return new_user;
         }
-        public BankingWebAPI.Models.BankManagers SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw)
+        public string SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw)
         {
             Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
 
-            var new_user = new BankingWebAPI.Models.BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
-            return new_user;
-        }
-        public bool UserLogin(CustomerAccountManagerController cam, List<int> loginTries, string customer_id, string customer_pw)
-        {
-            bool checkUserLoginResult = cam.UserLogin(customer_id, customer_pw);
-            var responseTask = _bankClient.GetAsync("api/Authentication/login?customer_id=" + customer_id + "&customer_pw=" + customer_pw);
+
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/BankManager/signup?username=" + bankmanager_name +
+                "&idNumber=" + bankmanager_id +
+                "&address=" + bankmanager_address +
+                "$dateofbirth=" + bankmanager_dob +
+                "$designation=" + bankmanager_designation +
+                "$yearsofservice=" + bankmanager_yos +
+                "&password=" + bankmanager_pw);
             responseTask.Wait();
             var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
+            if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
+                bool signUpResult = readTask.Result;
+
+                if (signUpResult)
+                {
+                    output = "New account has been registered.";
+                }
             }
-            return checkUserLoginResult;
-
-
-
-
-            //if (cam.UserLogin(customer_id, customer_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
+            else
+            {
+                output = "Error has occured.";
+            }
+            return output;
+            //var new_user = new BankingWebAPI.Models.BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
+            //return new_user;
         }
-        public bool UserLogin(EmployeeAccountManagerController eam, List<int> loginTries, string bankemployee_id, string bankemployee_pw)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="customer_name"></param>
+        /// <param name="customer_address"></param>
+        /// <param name="customer_dob"></param>
+        /// <param name="customer_email"></param>
+        /// <param name="customer_phone"></param>
+        /// <param name="customer_pw"></param>
+        /// <param name="account_no"></param>
+        /// <param name="account_bal"></param>
+        /// <param name="cheque_bk_number"></param>
+        /// <param name="loan_app"></param>
+        /// <param name="loan_with_amt"></param>
+        /// <returns></returns>
+        public string RemoveCustomers(string customer_id)
         {
-            bool checkUserLoginResult = eam.UserLogin(bankemployee_id, bankemployee_pw);
-            var responseTask = _bankClient.GetAsync("api/EmployeeAuthentication/employeelogin?bankemployee_id=" + bankemployee_id + "&bankemployee_pw=" + bankemployee_pw);
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/Customer/delete?customer_id=" + customer_id);  // getaync instead of deleteasync
             responseTask.Wait();
             var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
+            if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
+                bool RemoveCustomerResult = readTask.Result;
+
+                if (RemoveCustomerResult)
+                {
+                    output = "Removed customer";
+                }
             }
-            return checkUserLoginResult;
-            //if (eam.UserLogin(bankemployee_id, bankemployee_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
+            else
+            {
+                output = "Error has occured";
+            }
+
+            return output;
         }
-        public bool UserLogin(ManagerAccountManagerController mam, List<int> loginTries, string bankmanager_id, string bankmanager_pw)
+        public string RemoveEmployees(string bankemployee_id)
         {
-            bool checkUserLoginResult = mam.UserLogin(bankmanager_id, bankmanager_pw);
-            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/managerlogin?bankmanager_id=" + bankmanager_id + "&bankmanager_pw=" + bankmanager_pw);
+            string output = string.Empty;
+            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/delete/" + bankemployee_id);
             responseTask.Wait();
             var result = responseTask.Result;
-            if (result.IsSuccessStatusCode && checkUserLoginResult == true)
+            if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                checkUserLoginResult = readTask.Result;
-                return true;
+                bool RemoveEmployeeResult = readTask.Result;
+
+                if (RemoveEmployeeResult)
+                {
+                    output = bankemployee_id + " has been removed";
+                }
             }
-            return checkUserLoginResult;
-            //if (mam.UserLogin(bankmanager_id, bankmanager_pw) == true)
-            //{
-            //    return true;
-            //}
-            //return false;
+            else
+            {
+                output = "Account doesn't exist";
+            }
+            return output;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
+        public (string, bool?) CheckLogin(string userName, string passWord)
+        {
+            string output = string.Empty;
+            (bool, bool?) isLoginSuccess = (false, null);
+            var responseTask = _bankClient.GetAsync("api/Authentication/login?username=" + userName + "&password=" + passWord);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<(bool, bool?)>();
+                readTask.Wait();
+                isLoginSuccess = readTask.Result;
+            }
+            if (isLoginSuccess.Item1 == true)
+            {
+                if (isLoginSuccess.Item2 == true)
+                {
+                    output = "\nWelcome Owner." +
+                        "\nWould you like to" +
+                        "\n1.) Savings" +
+                        "\n2.) Loan" +
+                        "\n3.) Go Back.";
+
+                    Console.WriteLine(DateTime.Now.ToString());
+                }
+                else if (isLoginSuccess.Item2 == false)
+                {
+                    //output = $"Welcome {userName}." +
+                    //    "\nWould you like to" +
+                    //    "\n1.) Play Slots?" +
+                    //    "\n2.) Logout?";
+                }
+            }
+            return (output, isLoginSuccess.Item2);
+        }
+        public (string, bool?) CheckEmployeeLogin(string userName, string passWord)
+        {
+            string output = string.Empty;
+            (bool, bool?) isLoginSuccess = (false, null);
+            var responseTask = _bankClient.GetAsync("api/EmployeeAuthentication/login?username=" + userName + "&password=" + passWord);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<(bool, bool?)>();
+                readTask.Wait();
+                isLoginSuccess = readTask.Result;
+            }
+            if (isLoginSuccess.Item1 == true)
+            {
+                if (isLoginSuccess.Item2 == true)
+                {
+                    output = "\nWelcome Owner." +
+                        "\nWould you like to" +
+                        "\n1: Find customer by ID: " +
+                        "\n2: Find customer by name" +
+                        "\n3: Logout and go back";
+
+                    Console.WriteLine(DateTime.Now.ToString());
+                }
+                else if (isLoginSuccess.Item2 == false)
+                {
+                    //output = $"Welcome {userName}." +
+                    //    "\nWould you like to" +
+                    //    "\n1.) Play Slots?" +
+                    //    "\n2.) Logout?";
+                }
+            }
+            return (output, isLoginSuccess.Item2);
+        }
+        public (string, bool?) CheckManagerLogin(string userName, string passWord)
+        {
+            string output = string.Empty;
+            (bool, bool?) isLoginSuccess = (false, null);
+            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/login?username=" + userName + "&password=" + passWord);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<(bool, bool?)>();
+                readTask.Wait();
+                isLoginSuccess = readTask.Result;
+            }
+            if (isLoginSuccess.Item1 == true)
+            {
+                if (isLoginSuccess.Item2 == true)
+                {
+                    output = "\nWelcome Owner." +
+                        "\nWould you like to" +
+                        "\n1: Find customer by ID: " +
+                        "\n2: Find customer by name" +
+                        "\n3: Advanced access" +
+                        "\n4: Logout and go back";
+
+                    Console.WriteLine(DateTime.Now.ToString());
+                }
+                else if (isLoginSuccess.Item2 == false)
+                {
+                    //output = $"Welcome {userName}." +
+                    //    "\nWould you like to" +
+                    //    "\n1.) Play Slots?" +
+                    //    "\n2.) Logout?";
+                }
+            }
+            return (output, isLoginSuccess.Item2);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="withdrawAmountKeyedInByCustomer"></param>
+        /// <returns></returns>
+        public string customerWithdrawl(string customer_id, decimal withdrawAmountKeyedInByCustomer)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/Savings/withdrawal?customer_id=" + customer_id + "&withdrawAmountKeyedInByCustomer=" + withdrawAmountKeyedInByCustomer).Result;
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = responseTask.Content.ReadAsAsync<bool>();
+                //readTask.Wait();
+                //bool signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+                //if (signUpResult)
+                //{
+                //    output = "withdrawal has been registered.";
+                //}
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+            }
+            return output;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="depositAmountKeyedInByCustomer"></param>
+        /// <returns></returns>
+        public string customerDeposit(string customer_id, decimal depositAmountKeyedInByCustomer)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/Savings/deposit?customer_id=" + customer_id + "&depositAmountKeyedInByCustomer=" + depositAmountKeyedInByCustomer).Result;
+            //responseTask.Wait();
+            //var result = responseTask.Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
+            }
+            return output;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="value"></param>
+        public void ParseInputStringInt(string input, out int? value)
+        {
+            try
+            {
+                value = Convert.ToInt32(input);
+            }
+            catch (FormatException)
+            {
+                value = null;
+            }
+            catch (OverflowException)
+            {
+                value = null;
+            }
+        }
+
         public void ParseInputString(string input, out int? value)
         {
             try
@@ -261,213 +624,154 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 value = null;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="loanamount"></param>
+        /// <param name="monthsIn"></param>
+        /// <param name="interestamount"></param>
+        /// <returns></returns>
+        public string LoanAccount(string customer_id, decimal loanamount, decimal monthsIn, decimal interestamount)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/loan?customer_id=" + customer_id +
+                "&loanamount=" + loanamount +
+                "&monthsIn=" + monthsIn +
+                "&interestamount=" + interestamount).Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
+            }
+            return output;
+
+        }
+
+        public string ViewLoan(string customer_id)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewloan?customer_id=" + customer_id).Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
+            }
+            return output;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="repayLoan"></param>
+        /// <returns></returns>
+        public string RepayLoan(string customer_id, string repayLoan)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/repayLoan?customer_id=" + customer_id +
+                "&repayLoan=" + repayLoan).Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
+            }
+            return output;
+
+
+
+        }
+        
+
         public decimal DepositLimit()
         {
             decimal maximumamount = 5000;
             return maximumamount;
         }
-        public void customerDeposit(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal depositAmountKeyedInByCustomer, Customer existingCustomer)
-        {
 
-
-            if (depositAmountKeyedInByCustomer > DepositLimit())
-            {
-                var guid1 = Guid.NewGuid(); cam.dictionaryOfcustomers[customer_id].cheque_book_number = guid1; cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmountKeyedInByCustomer;
-
-                Console.WriteLine("Amount is larger than 5000, we will process the cheque\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].ToString() + "\n"); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customer_name.ToString()); Console.WriteLine(cam.dictionaryOfcustomers[customer_id].cheque_book_number.ToString());
-
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    try
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                        bankContext.Customers.Attach(existingCustomer);
-                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                        bankContext.SaveChanges();
-                    }
-                    finally
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = true;
-                    }
-                    Console.WriteLine("Updated cheque deposit to db");
-                    Console.ReadLine();
-                    bankContext.Customers.Add(existingCustomer);
-                    bankContext.SaveChanges();
-                    Console.WriteLine("End");
-                    Console.ReadLine();
-
-
-                }
-                Console.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-
-                FileManager fh = new FileManager();
-                fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-
-            }
-            if (depositAmountKeyedInByCustomer <= DepositLimit())
-            {
-                Customer cust = new Customer();
-                cust.deposit(depositAmountKeyedInByCustomer); cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance + depositAmountKeyedInByCustomer;
-
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    try
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = false;
-                        
-
-
-                        bankContext.Customers.Attach(existingCustomer);
-                        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                        bankContext.SaveChanges();
-                    }
-                    finally
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = true;
-                    }
-                    Console.WriteLine("Updated deposit to db");
-                    Console.ReadLine();
-                    bankContext.Customers.Add(existingCustomer);
-                    bankContext.SaveChanges();
-                    Console.WriteLine("End");
-                    Console.ReadLine();
-
-
-                }
-                Console.WriteLine($"Dear Customer, your deposit is: " + depositAmountKeyedInByCustomer.ToString("F") + " and current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-                FileManager fh = new FileManager();
-                fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-            }
-        }
-        public void customerWithdrawl(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal withdrawAmountKeyedInByCustomer, Customer existingCustomer)
-        {
-            if (withdrawAmountKeyedInByCustomer <= 0)
-            {
-                Console.WriteLine("withdrawal amount should be more than 0");
-            }
-            else
-            {
-                if (cam.dictionaryOfcustomers[customer_id].customerBalance < withdrawAmountKeyedInByCustomer)
-                {
-                    Console.WriteLine("Your balance does not meet the requirement, insufficient funds in balance " + $"\nDear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance);
-                }
-                if (cam.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer <= DepositLimit())
-                {
-                    cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
-
-                    using (ManagementContext bankContext = new ManagementContext())
-                    {
-                        try
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                            bankContext.Customers.Attach(existingCustomer);
-                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                            bankContext.SaveChanges();
-                        }
-                        finally
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = true;
-                        }
-                        Console.WriteLine("Updated withdrawal to db");
-                        Console.ReadLine();
-                        bankContext.Customers.Add(existingCustomer);
-                        bankContext.SaveChanges();
-                        Console.WriteLine("End");
-                        Console.ReadLine();
-
-
-                    }
-
-
-
-
-
-
-                    Console.WriteLine($"Dear Customer, you withdrawed: " + withdrawAmountKeyedInByCustomer.ToString("F"));
-                    Console.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
-                    Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-
-                    FileManager fh = new FileManager();
-                    fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-
-                }
-                if (cam.dictionaryOfcustomers[customer_id].customerBalance >= withdrawAmountKeyedInByCustomer && withdrawAmountKeyedInByCustomer > DepositLimit())
-                {
-
-                    cam.dictionaryOfcustomers[customer_id].customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance - withdrawAmountKeyedInByCustomer;
-                    Console.WriteLine("Amount is larger than 5000, we will search for the cheque");
-
-                    var guid2 = Guid.NewGuid(); cam.dictionaryOfcustomers[customer_id].cheque_book_number = guid2;
-
-                    Console.WriteLine("{0} > {1} > {2}", cam.dictionaryOfcustomers[customer_id], cam.dictionaryOfcustomers[customer_id].customer_name, cam.dictionaryOfcustomers[customer_id].cheque_book_number);
-
-                    using (ManagementContext bankContext = new ManagementContext())
-                    {
-                        try
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                            bankContext.Customers.Attach(existingCustomer);
-                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                            bankContext.SaveChanges();
-                        }
-                        finally
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = true;
-                        }
-                        Console.WriteLine("Updated cheque withdrawal to db");
-                        Console.ReadLine();
-                        bankContext.Customers.Add(existingCustomer);
-                        bankContext.SaveChanges();
-                        Console.WriteLine("End");
-                        Console.ReadLine();
-
-
-                    }
-                    Console.WriteLine("Total Balance amount in the account...."); Thread.Sleep(5000);
-                    Console.WriteLine(cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-
-                    FileManager fh = new FileManager();
-                    fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-
-
-                    Console.WriteLine($"Dear Customer, your current balance is: " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-                }
-            }
-        }
-        public void ViewBalance(CustomerAccountManagerController cam, SavingsController sav, string customer_id)
+        
+        
+        public string ViewBalance(string customer_id)
         {
             string output = string.Empty;
-            decimal viewBalanceResult = sav.ViewBalance(customer_id);
-            var responseTask = _bankClient.GetAsync("api/Savings/customer/" + customer_id);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/Savings/viewbalance?customer_id=" + customer_id).Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<decimal>();
-                readTask.Wait();
-                viewBalanceResult = readTask.Result;
-            }       
-            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
-            {
-                Console.WriteLine("Customer balance is " + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
             }
             else
             {
-                Console.WriteLine("Account id not found");
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
             }
+            return output;
         }
         public static decimal AddSavings(decimal x, decimal y)
         {
@@ -506,528 +810,217 @@ namespace Gabriel_Bank_Management_System.ViewModel
 
             }
         }
-        public void ListCustomers(CustomerAccountManagerController cam, CustomerController cust)
+        public string ListCustomers()
         {
             string output = string.Empty;
-            Dictionary<string, Customer> viewAllCustomerResult = cust.GetAll();
-            var responseTask = _bankClient.GetAsync("api/Customer");
+            var responseTask = _bankClient.GetAsync("api/Customers/viewallcustomers");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+                var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                viewAllCustomerResult = readTask.Result;
             }
-            Console.WriteLine("\n Listing all current customers in database: ");
-            foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            {
-                Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} {kvp.Value.customer_address} {kvp.Value.customerBalance.ToString("F")} {kvp.Value.loan_amount.ToString("F")} {kvp.Value.customer_dateOfBirth}");
+            Console.WriteLine("\n Viewing all customers here");
+            return output;
+            //Console.WriteLine("\n Listing all current customers in database: ");
+            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
+            //{
+            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} {kvp.Value.customer_address} {kvp.Value.customerBalance.ToString("F")} {kvp.Value.loan_amount.ToString("F")} {kvp.Value.customer_dateOfBirth}");
 
-            }
+            //}
         }
-        public void RemoveCustomers(CustomerAccountManagerController cam, CustomerController cust, string customer_id)
+        
+        public string ListEmployees()
         {
             string output = string.Empty;
-            Dictionary<string, Customer> viewRemoveCustomerResult = cust.DeleteById(customer_id);
-            var responseTask = _bankClient.DeleteAsync("api/Customer/Customer/DeleteById/" + customer_id);
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/viewallemployees");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+                var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                viewRemoveCustomerResult = readTask.Result;
-            }
-            using (ManagementContext bankContext = new ManagementContext())
-            {
-                try
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-                    Customer existingCustomer = bankContext.Customers.Single(x => x.customer_id == customer_id);
-                    //bankContext.Customers.Remove(existingCustomer);
-                    //bankContext.Customers.Attach(existingCustomer);
-                    bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                    bankContext.SaveChanges();
-                }
-                finally
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = true;
-                }
-            }
-            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
-            {
-                
-
-                Console.WriteLine(customer_id + " has been removed");
-                cam.dictionaryOfcustomers.Remove(customer_id);
-                Console.ReadLine();
-            }
-            else
-            {
-                Console.WriteLine("Account doesn't exist");
-                Console.ReadLine();
-            }
-        }
-        public void ListEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp)
-        {
-            string output = string.Empty;
-            Dictionary<string, BankEmployees> viewAllEmployeeResult = bemp.GetAll();
-            var responseTask = _bankClient.GetAsync("api/BankEmployee");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-                var readTask = result.Content.ReadAsAsync<Dictionary<string, BankEmployees>>();
-                readTask.Wait();
-                viewAllEmployeeResult = readTask.Result;
+                bool viewAllEmployeeResult = readTask.Result;
             }
             Console.WriteLine("\n Viewing all employees here");
-            foreach (KeyValuePair<string, BankingWebAPI.Models.BankEmployees> kvp in eam.dictionaryOfEmployees)
-            {
-                Console.WriteLine($"{kvp.Value.bankemployee_id} {kvp.Value.bankemployee_name}");
-
-            }
+            return output;
 
         }
-        public void RemoveEmployees(EmployeeAccountManagerController eam, BankEmployeeController bemp, string bankemployee_id)
+        
+        public string SearchCustomerByID(string customer_id)
         {
             string output = string.Empty;
-            Dictionary<string, BankEmployees> viewRemoveEmployeeResult = bemp.DeleteById(bankemployee_id);
-            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/DeleteById/" + bankemployee_id);
+            var responseTask = _bankClient.GetAsync("api/Customer/getcustomerbyid/" + customer_id);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<Dictionary<string, BankEmployees>>();
+                var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                viewRemoveEmployeeResult = readTask.Result;
             }
-
-            if (eam.dictionaryOfEmployees.ContainsKey(bankemployee_id))
-            {
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    try
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-                        BankEmployees existingEmployee = eam.dictionaryOfEmployees.Where(x => x.Key == bankemployee_id).FirstOrDefault().Value;
-                        bankContext.Employees.Attach(existingEmployee);
-                        bankContext.Entry(existingEmployee).State = EntityState.Deleted;
-                        bankContext.SaveChanges();
-                    }
-                    finally
-                    {
-                        bankContext.Configuration.ValidateOnSaveEnabled = true;
-                    }
-                }
-                Console.WriteLine(bankemployee_id + " has been removed");
-                eam.dictionaryOfEmployees.Remove(bankemployee_id);
-            }
-            else
-            {
-                Console.WriteLine("Account doesn't exist");
-            }
+            return output;
+            //if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
+            //{
+            //    Console.WriteLine("\n" + "ok found" + "\n");
+            //    Console.WriteLine("CUSTOMER ID: " + cam.dictionaryOfcustomers[customer_id].customer_id);
+            //    Console.WriteLine("CUSTOMER NAME: " + cam.dictionaryOfcustomers[customer_id].customer_name);
+            //    Console.WriteLine("CUSTOMER ADDRESS: " + cam.dictionaryOfcustomers[customer_id].customer_address);
+            //    Console.WriteLine("CUSTOMER DATEOFBIRTH: " + cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth);
+            //    Console.WriteLine("CUSTOMER EMAIL: " + cam.dictionaryOfcustomers[customer_id].customer_email);
+            //    Console.WriteLine("CUSTOMER PHONE: " + cam.dictionaryOfcustomers[customer_id].customer_phone);
+            //    Console.WriteLine("CUSTOMER CHEQUE IF ANY: " + cam.dictionaryOfcustomers[customer_id].cheque_book_number);
+            //    Console.WriteLine("CUSTOMER BALANCE: $" + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
+            //    Console.WriteLine("CUSTOMER LOAN APPLIED IF ANY: " + cam.dictionaryOfcustomers[customer_id].customer_loan_applied);
+            //    Console.WriteLine("CUSTOMER LOAN AMOUNT IF ANY: " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
+            //    Console.WriteLine("");
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Account doesn't exist");
+            //}
         }
-        public void SearchCustomerByID(CustomerAccountManagerController cam, string customer_id)
-        {
-            
-            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
-            {
-                Console.WriteLine("\n" + "ok found" + "\n");
-                Console.WriteLine("CUSTOMER ID: " + cam.dictionaryOfcustomers[customer_id].customer_id);
-                Console.WriteLine("CUSTOMER NAME: " + cam.dictionaryOfcustomers[customer_id].customer_name);
-                Console.WriteLine("CUSTOMER ADDRESS: " + cam.dictionaryOfcustomers[customer_id].customer_address);
-                Console.WriteLine("CUSTOMER DATEOFBIRTH: " + cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth);
-                Console.WriteLine("CUSTOMER EMAIL: " + cam.dictionaryOfcustomers[customer_id].customer_email);
-                Console.WriteLine("CUSTOMER PHONE: " + cam.dictionaryOfcustomers[customer_id].customer_phone);
-                Console.WriteLine("CUSTOMER CHEQUE IF ANY: " + cam.dictionaryOfcustomers[customer_id].cheque_book_number);
-                Console.WriteLine("CUSTOMER BALANCE: $" + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-                Console.WriteLine("CUSTOMER LOAN APPLIED IF ANY: " + cam.dictionaryOfcustomers[customer_id].customer_loan_applied);
-                Console.WriteLine("CUSTOMER LOAN AMOUNT IF ANY: " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
-                Console.WriteLine("");
-            }
-            else
-            {
-                Console.WriteLine("Account doesn't exist");
-            }
-        }
-        public void SearchCustomerByName(CustomerAccountManagerController cam, string customer_name)
-        {
-            int permissionError = 0;
-            foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            {
-                if (kvp.Value.customer_name == customer_name)
-                {
-                    Console.WriteLine("\n" + "Search for " + customer_name + "\n");
-                    Console.WriteLine($"CUSTOMER ID: {kvp.Value.customer_id}");
-                    Console.WriteLine($"CUSTOMER NAME: {kvp.Value.customer_name}");
-                    Console.WriteLine($"CUSTOMER ADDRESS: {kvp.Value.customer_address}");
-                    Console.WriteLine($"CUSTOMER DATEOFBIRTH: {kvp.Value.customer_dateOfBirth}");
-                    Console.WriteLine($"CUSTOMER EMAIL: {kvp.Value.customer_email}");
-                    Console.WriteLine($"CUSTOMER PHONE: {kvp.Value.customer_phone}");
-                    Console.WriteLine($"CUSTOMER CHEQUE IF ANY: {kvp.Value.cheque_book_number}");
-                    Console.WriteLine($"CUSTOMER BALANCE: ${kvp.Value.customerBalance.ToString("F")}");
-                    Console.WriteLine($"CUSTOMER LOAN APPLIED IF ANY: {kvp.Value.customer_loan_applied}");
-                    Console.WriteLine($"CUSTOMER LOAN AMOUNT IF ANY: {kvp.Value.loan_amount.ToString("F")}\n");
-                    Console.WriteLine("");
-                    Console.WriteLine("");
-                    Console.WriteLine("");
-                    Console.WriteLine("");
-                    Console.WriteLine("");
-                    Console.WriteLine("");
-                    return;
-                }
-                else
-                {
-                    permissionError = 1;
-
-                }
-            }
-            if (permissionError == 1)
-            {
-                Console.WriteLine("Account doesn't exist");
-            }
-        }
-        public decimal TotalLoanAmount(CustomerAccountManagerController cam, TakingLoanController tk)
+        public string SearchCustomerByName(string customer_name)
         {
             string output = string.Empty;
-            decimal viewTotalLoanAmountResult = tk.TotalLoanAmount();
-            var responseTask = _bankClient.GetAsync("api/TakingLoan");
+            var responseTask = _bankClient.GetAsync("api/Customer/getcustomerbyname/" + customer_name);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+            }
+            return output;
+            //int permissionError = 0;
+            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
+            //{
+            //    if (kvp.Value.customer_name == customer_name)
+            //    {
+            //        Console.WriteLine("\n" + "Search for " + customer_name + "\n");
+            //        Console.WriteLine($"CUSTOMER ID: {kvp.Value.customer_id}");
+            //        Console.WriteLine($"CUSTOMER NAME: {kvp.Value.customer_name}");
+            //        Console.WriteLine($"CUSTOMER ADDRESS: {kvp.Value.customer_address}");
+            //        Console.WriteLine($"CUSTOMER DATEOFBIRTH: {kvp.Value.customer_dateOfBirth}");
+            //        Console.WriteLine($"CUSTOMER EMAIL: {kvp.Value.customer_email}");
+            //        Console.WriteLine($"CUSTOMER PHONE: {kvp.Value.customer_phone}");
+            //        Console.WriteLine($"CUSTOMER CHEQUE IF ANY: {kvp.Value.cheque_book_number}");
+            //        Console.WriteLine($"CUSTOMER BALANCE: ${kvp.Value.customerBalance.ToString("F")}");
+            //        Console.WriteLine($"CUSTOMER LOAN APPLIED IF ANY: {kvp.Value.customer_loan_applied}");
+            //        Console.WriteLine($"CUSTOMER LOAN AMOUNT IF ANY: {kvp.Value.loan_amount.ToString("F")}\n");
+            //        Console.WriteLine("");
+            //        Console.WriteLine("");
+            //        Console.WriteLine("");
+            //        Console.WriteLine("");
+            //        Console.WriteLine("");
+            //        Console.WriteLine("");
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        permissionError = 1;
+
+            //    }
+            //}
+            //if (permissionError == 1)
+            //{
+            //    Console.WriteLine("Account doesn't exist");
+            //}
+        }
+        public string TotalLoanAmount()
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalloan/");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<decimal>();
                 readTask.Wait();
-                viewTotalLoanAmountResult = readTask.Result;
             }
-            foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            {
-                Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Loan amt: {kvp.Value.loan_amount.ToString("F")}");
+            return output;
+            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
+            //{
+            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Loan amt: {kvp.Value.loan_amount.ToString("F")}");
 
-            }
-            var totalloanamount = cam.dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
+            //}
+            //var totalloanamount = cam.dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
 
-            Console.WriteLine("Total outstanding loan taken:  " + totalloanamount.ToString("F"));
-            return totalloanamount;
+            //Console.WriteLine("Total outstanding loan taken:  " + totalloanamount.ToString("F"));
+            //return totalloanamount;
 
         }
-        public decimal TotalSavingsAccount(CustomerAccountManagerController cam, SavingsController sav)
+        public string TotalSavingsAccount()
         {
             string output = string.Empty;
-            decimal viewTotalSavingsAmountResult = sav.TotalSavingsAmount();
-            var responseTask = _bankClient.GetAsync("api/Savings");
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalsavings/");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
                 var readTask = result.Content.ReadAsAsync<decimal>();
                 readTask.Wait();
-                viewTotalSavingsAmountResult = readTask.Result;
             }
-            foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            {
-                Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Customer balance: {kvp.Value.customerBalance.ToString("F")}");
+            return output;
+            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
+            //{
+            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Customer balance: {kvp.Value.customerBalance.ToString("F")}");
 
-            }
-            var totalsavingsofCustomers = cam.dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
-            Console.WriteLine("Total savings of the bank " + totalsavingsofCustomers.ToString("F"));
-            return totalsavingsofCustomers;
+            //}
+            //var totalsavingsofCustomers = cam.dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
+            //Console.WriteLine("Total savings of the bank " + totalsavingsofCustomers.ToString("F"));
+            //return totalsavingsofCustomers;
         }
-        public void ViewManagers(ManagerAccountManagerController mam)
+        public string ViewManagers()
         {
             Console.WriteLine("\n Viewing all managers here");
-            foreach (KeyValuePair<string, BankingWebAPI.Models.BankManagers> kvp in mam.dictionaryOfManagers)
-            {
-                Console.WriteLine($"{kvp.Value.bankmanager_id} {kvp.Value.bankmanager_name}");
-
-            }
-        }
-        public void LoanAccount(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, decimal loanamount, decimal monthsIn, decimal interestamount)
-        {
-            // principal loan amount * interest rate * number of years in term = total interest paid
-            var months = Divide(monthsIn, 12);
-
-            var interests = Divide(interestamount, 100);
-
-            decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
-            cam.dictionaryOfcustomers[customer_id].customer_loan_applied = true; cam.dictionaryOfcustomers[customer_id].loan_amount = totalloanamount;
-            using (ManagementContext bankContext = new ManagementContext())
-            {
-                Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                try
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                    bankContext.Customers.Attach(existingCustomer);
-                    bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                    bankContext.SaveChanges();
-                }
-                finally
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = true;
-                }
-                Console.WriteLine("Updated loan approval to db");
-                Console.ReadLine();
-                bankContext.Customers.Add(existingCustomer);
-                bankContext.SaveChanges();
-                Console.WriteLine("End");
-                Console.ReadLine();
-
-
-            }
-
-            Console.WriteLine("Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly");
-            //decimal totalloanamount = CalculateLoanAmount(0, 0, 0);
-            Console.WriteLine("Loan application : ID : " + cam.dictionaryOfcustomers[customer_id] + " " + cam.dictionaryOfcustomers[customer_id].customer_name);
-
-            
-            FileManager fh = new FileManager(); fh.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-        }
-
-        public void ViewLoan(CustomerAccountManagerController cam, TakingLoanController tk, string customer_id)
-        {
             string output = string.Empty;
-            decimal viewLoanResult = tk.ViewLoan(customer_id);
-            var responseTask = _bankClient.GetAsync("api/TakingLoan/customer/" + customer_id);
+            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/viewallmanagers");
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<decimal>();
+                var readTask = result.Content.ReadAsAsync<bool>();
                 readTask.Wait();
-                viewLoanResult = readTask.Result;
+                bool viewAllEmployeeResult = readTask.Result;
             }
-            if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
-            {
-                if (cam.dictionaryOfcustomers[customer_id].customer_loan_applied == true)
-                {
-                    Console.WriteLine("Current loan is at $" + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
-                }
-                else
-                {
-                    Console.WriteLine("Current loan is at $0");
-                }
-
-            }
-            else
-            {
-                Console.WriteLine("Account doesn't exist in our database record");
-            }
-        }
-        public void RepayLoan(CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam, string customer_id, string repayLoan)
-        {
-
-
-            if (repayLoan.Contains("%") == true)
-            {
-                var charsToRemove = new string[] { "%" };
-                foreach (var c in charsToRemove)
-                {
-                    repayLoan = repayLoan.Replace(c, string.Empty);
-                }
-                decimal repayLoanParse = decimal.Parse(repayLoan);
-                decimal amountToRepay = Multiply(repayLoanParse, Divide(cam.dictionaryOfcustomers[customer_id].loan_amount, 100), 1);
-                Console.WriteLine("Amount to repay is: $" + amountToRepay.ToString("F"));
-                decimal remainingLoanLeft = SubtractLoan(cam.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
-                if (amountToRepay > cam.dictionaryOfcustomers[customer_id].loan_amount)
-                {
-                    Console.WriteLine("Exceed loan repayment, key again");
-                }
-                else
-                {
-
-
-                    Console.WriteLine("Loan amount left: $" + remainingLoanLeft.ToString("F"));
-                    cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
-
-                    using (ManagementContext bankContext = new ManagementContext())
-                    {
-                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                        try
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                            bankContext.Customers.Attach(existingCustomer);
-                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                            bankContext.SaveChanges();
-                        }
-                        finally
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = true;
-                        }
-                        Console.WriteLine("Updated loan repayment to db");
-                        Console.ReadLine();
-                        bankContext.Customers.Add(existingCustomer);
-                        bankContext.SaveChanges();
-                        Console.WriteLine("End");
-                        Console.ReadLine();
-
-
-                    }
-                    if (remainingLoanLeft == 0)
-                    {
-                        cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-                        using (ManagementContext bankContext = new ManagementContext())
-                        {
-                            Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                            try
-                            {
-                                bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                                bankContext.Customers.Attach(existingCustomer);
-                                bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                                bankContext.SaveChanges();
-                            }
-                            finally
-                            {
-                                bankContext.Configuration.ValidateOnSaveEnabled = true;
-                            }
-                            Console.WriteLine("Updated loan fully repaid to db");
-                            Console.ReadLine();
-                            bankContext.Customers.Add(existingCustomer);
-                            bankContext.SaveChanges();
-                            Console.WriteLine(DateTime.Now);
-                            Console.ReadLine();
-
-
-                        }
-
-                    }
-                    FileManager fh1 = new FileManager();
-                    fh1.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-                }
-            }
-            else
-            {
-                decimal amountToRepay = decimal.Parse(repayLoan);
-                Console.WriteLine("Amount to repay is: $" + amountToRepay);
-                decimal remainingLoanLeft = SubtractLoan(cam.dictionaryOfcustomers[customer_id].loan_amount, amountToRepay);
-
-                
-                if (amountToRepay > cam.dictionaryOfcustomers[customer_id].loan_amount)
-                {
-                    Console.WriteLine("Exceed loan repayment, key again");
-                }
-                else
-                {
-                    Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
-                    cam.dictionaryOfcustomers[customer_id].loan_amount = remainingLoanLeft;
-
-                    using (ManagementContext bankContext = new ManagementContext())
-                    {
-                        Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                        try
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                            bankContext.Customers.Attach(existingCustomer);
-                            bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                            bankContext.SaveChanges();
-                        }
-                        finally
-                        {
-                            bankContext.Configuration.ValidateOnSaveEnabled = true;
-                        }
-                        Console.WriteLine("Updated loan repayment to db");
-                        Console.ReadLine();
-                        bankContext.Customers.Add(existingCustomer);
-                        bankContext.SaveChanges();
-                        Console.WriteLine("End");
-                        Console.ReadLine();
-
-
-                    }
-                    if (remainingLoanLeft == 0)
-                    {
-                        cam.dictionaryOfcustomers[customer_id].customer_loan_applied = false;
-
-                        using (ManagementContext bankContext = new ManagementContext())
-                        {
-                            Customer existingCustomer = cam.dictionaryOfcustomers.Where(x => x.Key == customer_id).FirstOrDefault().Value;
-                            try
-                            {
-                                bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-
-                                bankContext.Customers.Attach(existingCustomer);
-                                bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-                                bankContext.SaveChanges();
-                            }
-                            finally
-                            {
-                                bankContext.Configuration.ValidateOnSaveEnabled = true;
-                            }
-                            Console.WriteLine("Updated loan fully repaid to db");
-                            Console.ReadLine();
-                            bankContext.Customers.Add(existingCustomer);
-                            bankContext.SaveChanges();
-                            Console.WriteLine(DateTime.Now);
-                            Console.ReadLine();
-
-
-                        }
-
-                    }
-                    FileManager fh1 = new FileManager();
-                    fh1.ReadingandWritingcustomer(customer_id, cam, eam, mam);
-
-                }
-
-            }
-
-        }
-        public static decimal AddLoan(decimal x, decimal y)
-        {
-            return x + y;
-        }
-        public static decimal SubtractLoan(decimal x, decimal y)
-        {
-            return x - y;
-        }
-        public void CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
-        {
-            var checkUserresult = cust.CustomerAddNew(cam, new_user);
-            //var json = JsonConvert.SerializeObject(new_user);
-            //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             
-            
-            //var responseTask = _bankClient.PostAsync("api/Customer/Test/Add", stringContent);
-            //responseTask.Wait();
-            //var result = responseTask.Result;
-            //if (result.IsSuccessStatusCode)
+            return output;
+            //foreach (KeyValuePair<string, BankingWebAPI.Models.BankManagers> kvp in mam.dictionaryOfManagers)
             //{
-            //    var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
-            //    readTask.Wait();
-            //    checkPhoneresult = readTask.Result;
+            //    Console.WriteLine($"{kvp.Value.bankmanager_id} {kvp.Value.bankmanager_name}");
+
             //}
-            //return checkUserresult;
         }
-        public Dictionary<string, BankEmployees> EmployeeAdd(EmployeeAccountManagerController eam, BankEmployeeController emp, string id, BankEmployees new_user)
-        {
-            Dictionary<string, BankEmployees> checkUserresult = emp.EmployeeAddNew(eam, new_user);
-            return checkUserresult;
-        }
-        public Dictionary<string, BankManagers> ManagerAdd(ManagerAccountManagerController mam, string id, BankManagers new_user)
-        {
-            Dictionary<string, BankManagers> checkUserresult = mam.ManagerAddNew(mam, new_user);
-            return checkUserresult;
-        }
+        
+        //public void CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
+        //{
+        //    var checkUserresult = cust.CustomerAddNew(cam, new_user);
+        //    //var json = JsonConvert.SerializeObject(new_user);
+        //    //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            
+            
+        //    //var responseTask = _bankClient.PostAsync("api/Customer/Test/Add", stringContent);
+        //    //responseTask.Wait();
+        //    //var result = responseTask.Result;
+        //    //if (result.IsSuccessStatusCode)
+        //    //{
+        //    //    var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
+        //    //    readTask.Wait();
+        //    //    checkPhoneresult = readTask.Result;
+        //    //}
+        //    //return checkUserresult;
+        //}
+        //public Dictionary<string, BankEmployees> EmployeeAdd(EmployeeAccountManagerController eam, BankEmployeeController emp, string id, BankEmployees new_user)
+        //{
+        //    Dictionary<string, BankEmployees> checkUserresult = emp.EmployeeAddNew(eam, new_user);
+        //    return checkUserresult;
+        //}
+        //public Dictionary<string, BankManagers> ManagerAdd(ManagerAccountManagerController mam, string id, BankManagers new_user)
+        //{
+        //    Dictionary<string, BankManagers> checkUserresult = mam.ManagerAddNew(mam, new_user);
+        //    return checkUserresult;
+        //}
 
     }
 }

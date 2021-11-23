@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,5 +15,8 @@ namespace BankingWebAPI.Interfaces
         DbSet<BankEmployees> Employees { get; set; }
         DbSet<BankManagers> Managers { get; set; }
         DbSet<Models.BankEmployeeBranch> employeeDetails { get; set; }
+
+        int SaveChanges();
+        DbEntityEntry Entry(object entity);
     }
 }

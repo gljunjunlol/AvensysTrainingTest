@@ -17,6 +17,12 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/EmployeeAuthentication")]
     public class EmployeeAccountManagerController : ApiController, IEmployeeAccountManager
     {
+        public BankEmployees CurrentUser { get; private set; }
+        IDataContext dataContext;
+        public EmployeeAccountManagerController(IDataContext datacontext)
+        {
+            dataContext = datacontext;
+        }
         private readonly IConsoleIO ConsoleIO;
         //private IEmployeeAccountManager _user;
         public EmployeeAccountManagerController(IConsoleIO consoleIO)
@@ -29,6 +35,7 @@ namespace BankingWebAPI.Controllers
 
         public EmployeeAccountManagerController()
         {
+            dataContext = new ManagementContext();
             ConsoleIO = new ConsoleIO();
             using (ManagementContext bankContext = new ManagementContext())
             {
@@ -60,26 +67,47 @@ namespace BankingWebAPI.Controllers
             
             
         }
-        [HttpGet]
-        [Route("employeelogin")]                       // https://localhost:44360/api/EmployeeAuthentication/employeelogin?bankemployee_id=hello&bankemployee_pw=hello
-        public bool UserLogin(string bankemployee_id, string bankemployee_pw)
-        {
-            try
-            {
-                if (dictionaryOfEmployees.ContainsKey(bankemployee_id) && dictionaryOfEmployees[bankemployee_id].bankemployee_pw == bankemployee_pw)
-                {
-                    Console.WriteLine($"Congratulations, {dictionaryOfEmployees[bankemployee_id].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfEmployees[bankemployee_id].bankemployee_id} { dictionaryOfEmployees[bankemployee_id].bankemployee_name} { dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
-                    return true;
+        //[HttpGet]
+        //[Route("employeelogin")]                       // https://localhost:44360/api/EmployeeAuthentication/employeelogin?bankemployee_id=hello&bankemployee_pw=hello
+        //public bool UserLogin(string bankemployee_id, string bankemployee_pw)
+        //{
+        //    try
+        //    {
+        //        if (dictionaryOfEmployees.ContainsKey(bankemployee_id) && dictionaryOfEmployees[bankemployee_id].bankemployee_pw == bankemployee_pw)
+        //        {
+        //            Console.WriteLine($"Congratulations, {dictionaryOfEmployees[bankemployee_id].bankemployee_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfEmployees[bankemployee_id].bankemployee_id} { dictionaryOfEmployees[bankemployee_id].bankemployee_name} { dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
+        //            return true;
 
-                }
-            }
-            catch(ArgumentNullException)
-            {
-                Console.WriteLine("cannot be null");
-            }
+        //        }
+        //    }
+        //    catch(ArgumentNullException)
+        //    {
+        //        Console.WriteLine("cannot be null");
+        //    }
             
-            return false;
+        //    return false;
 
+        //}
+        [HttpGet]
+        [Route("login")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public (bool, bool?) Login(string username, string password)
+        {
+            bool loginSuccess = false;
+            bool? isOwner = false;
+            CurrentUser = dataContext.Employees.Where(x => Equals(x.bankemployee_id, username) && Equals(x.bankemployee_pw, password)).FirstOrDefault();
+
+            if (CurrentUser != null)
+            {
+                loginSuccess = true;
+            }
+
+            return (loginSuccess, isOwner);
         }
     }
 }

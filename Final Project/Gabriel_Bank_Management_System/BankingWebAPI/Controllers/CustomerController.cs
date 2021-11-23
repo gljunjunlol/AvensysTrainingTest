@@ -11,6 +11,7 @@ using Bank.Common.Common;
 using BankingWebAPI.Utility;
 using System.Web.Http;
 using BankingWebAPI.Filters;
+using System.Data.Entity;
 
 namespace BankingWebAPI.Controllers
 {
@@ -97,7 +98,7 @@ namespace BankingWebAPI.Controllers
 
         }
         [HttpGet]
-        [Route("viewallcustomers")]
+        [Route("viewallcustomers")]                              //http://mybankapi.me/api/Customer/viewallcustomers
         public IHttpActionResult ViewAllCustomers()
         {
             IEnumerable<Customer> customer = dataContext.Customers.ToList();
@@ -110,36 +111,36 @@ namespace BankingWebAPI.Controllers
                 return BadRequest("Invalid Bank Customer ID");
             }
         }
-        [HttpPost]
-        [Route("Test/AddNew")]
-        public IHttpActionResult CustomerAddNew(CustomerAccountManagerController cam, Customer new_user)
-        {
-            //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
-            //if (existingcustomer != null)
-            //    return dictionaryOfcustomers;
-            Console.WriteLine("Saving as at..");
+        //[HttpPost]
+        //[Route("Test/AddNew")]
+        //public IHttpActionResult CustomerAddNew(CustomerAccountManagerController cam, Customer new_user)
+        //{
+        //    //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
+        //    //if (existingcustomer != null)
+        //    //    return dictionaryOfcustomers;
+        //    Console.WriteLine("Saving as at..");
 
-            try
-            {
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-                    bankContext.Customers.Add(new_user);
-                    bankContext.SaveChanges();
-                }
-                Console.WriteLine(DateTime.Now + " Done");
-                Console.ReadLine();
+        //    try
+        //    {
+        //        using (ManagementContext bankContext = new ManagementContext())
+        //        {
+        //            cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+        //            bankContext.Customers.Add(new_user);
+        //            bankContext.SaveChanges();
+        //        }
+        //        Console.WriteLine(DateTime.Now + " Done");
+        //        Console.ReadLine();
 
-            }
-            catch (NullReferenceException)
-            {
-                Console.WriteLine("cannot be null");
-            }
+        //    }
+        //    catch (NullReferenceException)
+        //    {
+        //        Console.WriteLine("cannot be null");
+        //    }
 
-            //return dictionaryOfcustomers;
-            return null;
+        //    //return dictionaryOfcustomers;
+        //    return null;
 
-        }
+        //}
         [HttpPut]
         [Route("Test/Put")]                                  // https://localhost:44360/api/Customer/Test/Put
         public Dictionary<string, Customer> PUT (Customer customer)
@@ -151,15 +152,15 @@ namespace BankingWebAPI.Controllers
             return dictionaryOfcustomers;
 
         }
-        [HttpDelete]
-        [Route("Customer/Delete")]                          // https://localhost:44360/api/Customer/Customer/Delete
-        public Dictionary<string, Customer> Delete(Customer customer)
-        {
-            Customer existingstudent = dictionaryOfcustomers.Where(x => x.Key == customer.customer_id).FirstOrDefault().Value;
-            if (existingstudent != null)
-                dictionaryOfcustomers.Remove(customer.customer_id);
-            return dictionaryOfcustomers;
-        }
+        //[HttpDelete]
+        //[Route("Customer/Delete")]                          // https://localhost:44360/api/Customer/Customer/Delete
+        //public Dictionary<string, Customer> Delete(Customer customer)
+        //{
+        //    Customer existingstudent = dictionaryOfcustomers.Where(x => x.Key == customer.customer_id).FirstOrDefault().Value;
+        //    if (existingstudent != null)
+        //        dictionaryOfcustomers.Remove(customer.customer_id);
+        //    return dictionaryOfcustomers;
+        //}
         [HttpDelete]
         [Route("Customer/DeleteById/{id}")]               // https://localhost:44360/api/Customer/Customer/DeleteById/2222
         public Dictionary<string, Customer> DeleteById(string id)
@@ -168,6 +169,120 @@ namespace BankingWebAPI.Controllers
             if (existingstudent != null)
                 dictionaryOfcustomers.Remove(id);
             return dictionaryOfcustomers;
+        }
+        
+        [HttpGet]
+        [Route("delete")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="customer_name"></param>
+        /// <param name="customer_address"></param>
+        /// <param name="customer_dob"></param>
+        /// <param name="customer_email"></param>
+        /// <param name="customer_phone"></param>
+        /// <param name="customer_pw"></param>
+        /// <param name="account_no"></param>
+        /// <param name="account_bal"></param>
+        /// <param name="cheque_bk_number"></param>
+        /// <param name="loan_app"></param>
+        /// <param name="loan_with_amt"></param>
+        /// <returns></returns>
+        public bool RemoveCustomer(string customer_id)
+        {
+            try
+            {
+                Customer existingCustomer = dataContext.Customers.Single(x => x.customer_id == customer_id);
+                dataContext.Entry(existingCustomer).State = EntityState.Deleted;
+                dataContext.SaveChanges();
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            return false;
+            
+            //using (ManagementContext bankContext = new ManagementContext())
+            //{
+            //    try
+            //    {
+            //        bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+            //        Customer existingCustomer = bankContext.Customers.Single(x => x.customer_id == customer_id);
+            //        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
+            //        bankContext.SaveChanges();
+            //        return true;
+            //    }
+            //    finally
+            //    {
+            //        bankContext.Configuration.ValidateOnSaveEnabled = true;
+            //    }
+            //}
+
+        }
+        [HttpGet]
+        [Route("signup")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="customer_id"></param>
+        /// <param name="customer_name"></param>
+        /// <param name="customer_address"></param>
+        /// <param name="customer_dob"></param>
+        /// <param name="customer_email"></param>
+        /// <param name="customer_phone"></param>
+        /// <param name="customer_pw"></param>
+        /// <param name="account_no"></param>
+        /// <param name="account_bal"></param>
+        /// <param name="cheque_bk_number"></param>
+        /// <param name="loan_app"></param>
+        /// <param name="loan_with_amt"></param>
+        /// <returns></returns>
+        public bool SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
+        {
+            Customer customer = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, account_bal, cheque_bk_number, loan_app, loan_with_amt);            
+            dataContext.Customers.Add(customer);
+            dataContext.SaveChanges();
+            return true;
+            //using (ManagementContext bankContext = new ManagementContext())
+            //{
+            //    bankContext.Customers.Add(customer);
+            //    bankContext.SaveChanges();
+            //    return true;
+            //}
+
+        }
+        [HttpGet]
+        [Route("getcustomerbyid")]
+        public IHttpActionResult GetCustomerByID(string id)
+        {
+            Customer customer = dataContext.Customers.Where(x => x.customer_id == id).FirstOrDefault();
+            if (customer != null)
+            {
+                return Ok(customer);
+            }
+            else
+            {
+                return BadRequest("Invalid Product ID");
+            }
+        }
+
+        [HttpGet]
+        [Route("getcustomerbyname")]
+        public IHttpActionResult GetCustomerByName(string name)
+        {
+            Customer customer = dataContext.Customers.Where(x => x.customer_name == name).FirstOrDefault();
+            if (customer != null)
+            {
+                return Ok(customer);
+            }
+            else
+            {
+                return BadRequest("Invalid Product Name");
+            }
         }
 
     }

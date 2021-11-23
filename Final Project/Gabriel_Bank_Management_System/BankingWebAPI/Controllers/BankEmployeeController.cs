@@ -11,6 +11,7 @@ using Bank.Common.Common;
 using BankingWebAPI.Utility;
 using System.Web.Http;
 using BankingWebAPI.Filters;
+using System.Data.Entity;
 
 namespace BankingWebAPI.Controllers
 {
@@ -19,11 +20,17 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/BankEmployee")]
     public class BankEmployeeController : ApiController
     {
+        IDataContext dataContext;
+        public BankEmployeeController(IDataContext datacontext)
+        {
+            dataContext = datacontext;
+        }
         //DataContext data = new DataContext();
         public Dictionary<string, BankEmployees> dictionaryOfEmployees { get; set; }
 
         public BankEmployeeController()
         {
+            dataContext = new ManagementContext();
             using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfEmployees = new Dictionary<string, BankEmployees>();
@@ -170,6 +177,72 @@ namespace BankingWebAPI.Controllers
             if (existingEmployee != null)
                 dictionaryOfEmployees.Remove(id);
             return dictionaryOfEmployees;
+        }
+        [HttpGet]
+        [Route("signup")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool SignUp(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
+        {
+            BankEmployees employee = new BankEmployees(bankemployee_id, bankemployee_name, bankemployee_address, bankemployee_dob, bankemployee_designation, bankemployee_yos, bankemployee_pw);
+            using (ManagementContext bankContext = new ManagementContext())
+            {
+                bankContext.Employees.Add(employee);
+                bankContext.SaveChanges();
+                return true;
+            }
+
+        }
+        [HttpGet]
+        [Route("delete")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="idNumber"></param>
+        /// <param name="phoneNumber"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public bool DeleteEmployee(string bankemployee_id)
+        {
+            using (ManagementContext bankContext = new ManagementContext())
+            {
+                try
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = false;
+
+
+                    BankEmployees existingEmployee = bankContext.Employees.Single(x => x.bankemployee_id == bankemployee_id);
+                    bankContext.Entry(existingEmployee).State = EntityState.Deleted;
+                    bankContext.SaveChanges();
+                    return true;
+                }
+                finally
+                {
+                    bankContext.Configuration.ValidateOnSaveEnabled = true;
+                }
+            }
+
+        }
+        [HttpGet]
+        [Route("viewallemployees")]
+        public IHttpActionResult ViewAllEmployees()
+        {
+            IEnumerable<BankEmployees> employee = dataContext.Employees.ToList();
+            if (employee.Count() > 0)
+            {
+                return Ok(employee);
+            }
+            else
+            {
+                return BadRequest("Invalid Employee ID");
+            }
         }
 
     }

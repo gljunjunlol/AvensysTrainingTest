@@ -10,6 +10,7 @@ namespace BankingWebAPI.Interfaces
 {
     public interface IManagerAccountManager
     {
-        bool UserLogin(string bankmanager_id, string bankmanager_pw);
+        (bool, bool?) Login(string username, string password);
+        //bool UserLogin(string bankmanager_id, string bankmanager_pw);
     }
 }

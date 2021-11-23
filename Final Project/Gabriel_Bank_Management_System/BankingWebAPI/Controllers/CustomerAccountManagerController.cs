@@ -19,6 +19,12 @@ namespace BankingWebAPI.Controllers
     [RoutePrefix("api/Authentication")]
     public class CustomerAccountManagerController : ApiController, ICustomerAccountManager
     {
+        public Customer CurrentUser { get; private set; }
+        IDataContext dataContext;
+        public CustomerAccountManagerController(IDataContext datacontext)
+        {
+            dataContext = datacontext;
+        }
         private readonly IConsoleIO ConsoleIO;
         public CustomerAccountManagerController(IConsoleIO consoleIO)
         {
@@ -29,6 +35,7 @@ namespace BankingWebAPI.Controllers
 
         public CustomerAccountManagerController()
         {
+            dataContext = new ManagementContext();
             ConsoleIO = new ConsoleIO();
             using (ManagementContext bankContext = new ManagementContext())
             {
@@ -49,28 +56,49 @@ namespace BankingWebAPI.Controllers
             
             
         }
+        //[HttpGet]
+        //[Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
+        //public bool UserLogin(string customer_id, string customer_pw)
+        //{
+        //    try
+        //    {
+        //        if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
+        //        {
+        //            ConsoleIO.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name}");
+        //            return true;
+
+        //        }
+        //        return false;
+        //    }
+        //    catch(ArgumentNullException)
+        //    {
+        //        ConsoleIO.WriteLine("cannot be null");
+        //    }
+        //    return false;
+
         [HttpGet]
-        [Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
-        public bool UserLogin(string customer_id, string customer_pw)
+        [Route("login")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public (bool, bool?) Login(string username, string password)
         {
-            try
-            {
-                if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
-                {
-                    ConsoleIO.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name}");
-                    return true;
+            bool loginSuccess = false;
+            bool? isOwner = false;
+            CurrentUser = dataContext.Customers.Where(x => Equals(x.customer_id, username) && Equals(x.customer_pw, password)).FirstOrDefault();
 
-                }
-                return false;
-            }
-            catch(ArgumentNullException)
+            if (CurrentUser != null)
             {
-                ConsoleIO.WriteLine("cannot be null");
+                loginSuccess = true;
+                isOwner = true;
             }
-            return false;
-            
 
+            return (loginSuccess, isOwner);
         }
+        //}
         [HttpGet]
         [Route("checkpassword")]                                 // https://localhost:44360/api/Authentication/checkpassword?customer_pw=John12345678$
         public bool validatePassword(string customer_pw)
@@ -123,60 +151,72 @@ namespace BankingWebAPI.Controllers
             
         }
         [HttpGet]
-        [Route("checkphonenumber")]                // https://localhost:44360/api/Authentication/checkphonenumber?phone=(222)333-4444
-        public bool validatePhone(string phone)
+        [Route("checkphonenumber")]                // https://mybankapi.me/api/Authentication/checkphonenumber?phone=(222)333-4444
+        public PhoneNumberResultType validatePhone(string phone)
         {
+            PhoneNumberResultType type = PhoneNumberResultType.None;
             while (true)
             {
                 try
                 {
+                    if (phone == null)
+                    {
+                        type = PhoneNumberResultType.PhoneNumberNullError;
+                    }
                     Regex regex = new Regex("\\(?\\d{3}\\)?-? *\\d{3}-? *-?\\d{4}");
                     if (regex.IsMatch(phone))
                     {
-                        Console.WriteLine("Phone id entered is valid");
-                        return true;
+                        //Console.WriteLine("Phone id entered is valid");
+
                     }
                     else
                     {
-                        Console.WriteLine("phone number is not valid, please try again");
-                        return false;
+                        //Console.WriteLine("phone number is not valid, please try again");
+                        type = PhoneNumberResultType.PhoneNumberIncorrect;
                         //throw new PhoneIncorrectException(phone);
                     }
                 }
                 catch
                 {
-                    return false;
+
                 }
+                return type;
 
             }
 
         }
         [HttpGet]
-        [Route("checkemail")]                                        // https://localhost:44360/api/Authentication/checkemail?email=john@mail.com
-        public bool validateEmail(string email)
+        [Route("checkemail")]                                        // https://mybankapi.me/api/Authentication/checkemail?email=john@mail.com
+        public EmailAddressResultType validateEmail(string email)
         {
+            EmailAddressResultType type = EmailAddressResultType.None;
             while (true)
             {
                 try
                 {
+                    if (email == null)
+                    {
+                        type = EmailAddressResultType.EmailAddressNullError;
+                    }
                     Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
                     if (regex.IsMatch(email))
                     {
-                        Console.WriteLine("Email id entered is valid");
+                        //Console.WriteLine("Email id entered is valid");
                         // validate the email Id
-                        return true;
                     }
                     else
                     {
-                        Console.WriteLine("Email is not valid, please try again");
-                        return false;
+                        type = EmailAddressResultType.EmailAddressIncorrect;
+                        //Console.WriteLine("Email is not valid, please try again");
+
                         //throw new EmailIncorrectException(email);
                     }
                 }
                 catch
                 {
-                    return false;
+
                 }
+                return type;
 
             }
 
@@ -236,5 +276,6 @@ namespace BankingWebAPI.Controllers
             }
             return type;
         }
+        
     }
 }
