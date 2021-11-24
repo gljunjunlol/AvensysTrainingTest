@@ -120,32 +120,8 @@ namespace Gabriel_Bank_Management_System
                                                 while (mv.validatePassword(input17) == false);
                                                 while (insideMenu) ;
                                                 string signUpOutput = mv.SignUp(input11, input12, input13, customer_dob, input16, input15, input17, "A" + input11, 0, Guid.Empty, false, 0);
-                                                Console.WriteLine("New user is " + signUpOutput);
-                                                Console.WriteLine("hello");
+                                                Console.WriteLine(signUpOutput);
                                                 Console.ReadLine();
-                                                //if (new_user != null)
-                                                //{
-
-                                                //    if (cam.dictionaryOfcustomers.ContainsKey(new_user.customer_id))
-                                                //    {
-                                                //        Console.WriteLine("Account already exists");
-                                                    
-                                                //    }
-                                                //    else
-                                                //    {
-                                                    
-                                                //        mv.CustomerAdd(cam, cust, new_user.customer_id, new_user);
-                                                //        //cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-                                                //        FileManager fileHandling = new FileManager();
-                                                //        fileHandling.ReadingandWritingcustomer(new_user.customer_id, cam, eam, mam);
-                                                    
-                                                //    }
-                                                //}
-                                                //else
-                                                //{
-                                                //    Console.WriteLine("User creation failed try again");
-                                                
-                                                //}
                                                 break;
                                             }
                                         case 2:
@@ -161,8 +137,6 @@ namespace Gabriel_Bank_Management_System
                                             }
                                         case 3:
                                             {
-
-
                                                 bool exited = false;
                                                 int numberofTries = 4;
                                                 int loginAttempts = 0;
@@ -236,7 +210,6 @@ namespace Gabriel_Bank_Management_System
                                                                                             {
                                                                                                 break;
                                                                                             }
-
                                                                                     }
 
                                                                                 }
@@ -283,7 +256,6 @@ namespace Gabriel_Bank_Management_System
                                                                                                 Console.WriteLine("Key in % of interest of loan");
                                                                                                 decimal interestamount = decimal.Parse(Console.ReadLine());
                                                                                                 mv.LoanAccount(customer_id2, loanamount, monthsIn, interestamount);
-                                                                                                //Console.WriteLine("Sorry cant take additional loan as previous loan is still outstanding");
                                                                                                 break;
                                                                                             }
                                                                                         case "3":
@@ -296,9 +268,6 @@ namespace Gabriel_Bank_Management_System
                                                                                             {
                                                                                                 Console.WriteLine("Enter customer ID");
                                                                                                 string customer_id3 = Console.ReadLine();
-
-
-                                                                                                //Console.WriteLine("Current loan is at " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
                                                                                                 Console.WriteLine("E.g. key in 100 to repay 100 or / key in  6% to repay 6%");
                                                                                                 string repayLoan = Console.ReadLine();
                                                                                                 mv.RepayLoan(customer_id3, repayLoan);
@@ -335,7 +304,6 @@ namespace Gabriel_Bank_Management_System
                                                         }
                                                         if (loginAttempts > 2)
                                                             Console.WriteLine("Incorrect user or pw");
-                                                        //Console.WriteLine("Too many tries, please wait 5 mins");
                                                         else
                                                             Console.WriteLine("Savings app");
                                                         break;
@@ -424,7 +392,7 @@ namespace Gabriel_Bank_Management_System
 
                                                     //string input21;
                                                     Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
-                                                    DateTime customer_dob = DateTime.Parse(Console.ReadLine());
+                                                    DateTime bankemployee_dob = DateTime.Parse(Console.ReadLine());
 
                                                     string input22;
                                                     Console.WriteLine("key to employee designation: ");
@@ -445,28 +413,9 @@ namespace Gabriel_Bank_Management_System
                                                     }
                                                     while (mv.validatePassword(input24) == false);
                                                     while (insideMenu) ;
-                                                    string new_user = mv.SignUpEmployee(input18, input19, input20, customer_dob, input22, input23, input24);
-                                                    //Console.WriteLine(new_user);
-                                                    //if (new_user != null)
-                                                    //{
-
-                                                    //    if (eam.dictionaryOfEmployees.ContainsKey(new_user.bankemployee_id))
-                                                    //    {
-                                                    //        Console.WriteLine("Account already exists");
-                                                        
-                                                    //    }
-                                                    //    else
-                                                    //    {
-                                                    //        mv.EmployeeAdd(eam, emp, new_user.bankemployee_id, new_user);
-                                                    //        //eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
-                                                    //        FileManager fileHandling = new FileManager();
-                                                    //        fileHandling.ReadingandWritingEmployee(new_user.bankemployee_id, cam, eam, mam);
-                                                    //    }
-                                                    //}
-                                                    //else
-                                                    //{
-                                                    //    Console.WriteLine("User creation failed try again");
-                                                    //}
+                                                    string new_user = mv.SignUpEmployee(input18, input19, input20, bankemployee_dob, input22, input23, input24);
+                                                    Console.WriteLine(new_user);
+                                                    Console.ReadLine();
                                                     break;
                                                 }
                                             case 2:
@@ -545,7 +494,6 @@ namespace Gabriel_Bank_Management_System
                                                                                 }
                                                                         }
                                                                     }
-                                                                    break;
                                                                 }
                                                                 else
                                                                 {
@@ -554,7 +502,6 @@ namespace Gabriel_Bank_Management_System
                                                             }
                                                             if (loginAttempts > 2)
                                                                 Console.WriteLine("Incorrect user or pw");
-                                                            //Console.WriteLine("Too many tries, please wait 5 mins");
                                                             else
                                                                 Console.WriteLine("Go back");
 
@@ -668,26 +615,7 @@ namespace Gabriel_Bank_Management_System
                                                     while (insideMenu) ;
                                                     string new_user = mv.SignUpManager(input25, input26, input27, manager_dob, input29, input30, input31);
                                                     Console.WriteLine(new_user);
-                                                    //if (new_user != null)
-                                                    //{
-
-                                                    //    if (mam.dictionaryOfManagers.ContainsKey(new_user.bankmanager_id))
-                                                    //    {
-                                                    //        Console.WriteLine("Account already exists");
-
-                                                    //    }
-                                                    //    else
-                                                    //    {
-                                                    //        mv.ManagerAdd(mam, new_user.bankmanager_id, new_user);
-                                                    //        //mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
-                                                    //        FileManager fileHandling = new FileManager();
-                                                    //        fileHandling.ReadingandWritingManager(new_user.bankmanager_id, cam, eam, mam);
-                                                    //    }
-                                                    //}
-                                                    //else
-                                                    //{
-                                                    //    Console.WriteLine("User creation failed try again");
-                                                    //}
+                                                    Console.ReadLine();
                                                     break;
                                                 }
                                             case 2:
@@ -802,7 +730,6 @@ namespace Gabriel_Bank_Management_System
                                                                 }
                                                                 if (loginAttempts > 2)
                                                                     Console.WriteLine("Incorrect user or pw");
-                                                                //Console.WriteLine("Too many tries, please wait 5 mins");
                                                                 else
                                                                     Console.WriteLine("Go back");
                                                                 break;

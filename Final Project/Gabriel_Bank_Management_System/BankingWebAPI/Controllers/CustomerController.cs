@@ -111,36 +111,6 @@ namespace BankingWebAPI.Controllers
                 return BadRequest("Invalid Bank Customer ID");
             }
         }
-        //[HttpPost]
-        //[Route("Test/AddNew")]
-        //public IHttpActionResult CustomerAddNew(CustomerAccountManagerController cam, Customer new_user)
-        //{
-        //    //Customer existingcustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
-        //    //if (existingcustomer != null)
-        //    //    return dictionaryOfcustomers;
-        //    Console.WriteLine("Saving as at..");
-
-        //    try
-        //    {
-        //        using (ManagementContext bankContext = new ManagementContext())
-        //        {
-        //            cam.dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-        //            bankContext.Customers.Add(new_user);
-        //            bankContext.SaveChanges();
-        //        }
-        //        Console.WriteLine(DateTime.Now + " Done");
-        //        Console.ReadLine();
-
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        Console.WriteLine("cannot be null");
-        //    }
-
-        //    //return dictionaryOfcustomers;
-        //    return null;
-
-        //}
         [HttpPut]
         [Route("Test/Put")]                                  // https://localhost:44360/api/Customer/Test/Put
         public Dictionary<string, Customer> PUT (Customer customer)
@@ -203,24 +173,6 @@ namespace BankingWebAPI.Controllers
                 return false;
             }
             return false;
-            
-            //using (ManagementContext bankContext = new ManagementContext())
-            //{
-            //    try
-            //    {
-            //        bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-            //        Customer existingCustomer = bankContext.Customers.Single(x => x.customer_id == customer_id);
-            //        bankContext.Entry(existingCustomer).State = EntityState.Deleted;
-            //        bankContext.SaveChanges();
-            //        return true;
-            //    }
-            //    finally
-            //    {
-            //        bankContext.Configuration.ValidateOnSaveEnabled = true;
-            //    }
-            //}
 
         }
         [HttpGet]
@@ -241,19 +193,12 @@ namespace BankingWebAPI.Controllers
         /// <param name="loan_app"></param>
         /// <param name="loan_with_amt"></param>
         /// <returns></returns>
-        public bool SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
+        public IHttpActionResult SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
             Customer customer = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, account_bal, cheque_bk_number, loan_app, loan_with_amt);            
             dataContext.Customers.Add(customer);
             dataContext.SaveChanges();
-            return true;
-            //using (ManagementContext bankContext = new ManagementContext())
-            //{
-            //    bankContext.Customers.Add(customer);
-            //    bankContext.SaveChanges();
-            //    return true;
-            //}
-
+            return Ok("validation success");
         }
         [HttpGet]
         [Route("getcustomerbyid")]

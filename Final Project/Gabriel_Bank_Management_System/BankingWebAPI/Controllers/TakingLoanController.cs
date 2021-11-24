@@ -59,16 +59,15 @@ namespace BankingWebAPI.Controllers
             catch(ArgumentNullException)
             {
                 return 0;
-            }
-            return 0;
-            
+            }            
         }
         [HttpGet]
-        [Route("viewtotalloan")]                            // https://localhost:44360/api/TakingLoan/viewtotalloan
-        public decimal TotalLoanAmount()
+        [Route("viewtotalloan")]                            // http://mybankapi.me/api/TakingLoan/viewtotalloan
+        public IHttpActionResult TotalLoanAmount()
         {
-            decimal totalloanamount = dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
-            return totalloanamount;
+            IEnumerable<Customer> customer = dataContext.Customers.ToList();
+            decimal totalloanamount = dataContext.Customers.Sum(x => x.loan_amount);
+            return Ok(totalloanamount.ToString("F"));
         }
         /// <summary>
         /// 
@@ -89,19 +88,20 @@ namespace BankingWebAPI.Controllers
 
             decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
             Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
-            if (loanamount > 0)
+            if (customer != null && customer.loan_amount > 0)
             {
                 return Ok("Already applied for loan which is unpaid");
             }
-            if (customer != null && loanamount > 0)
+            if (customer != null && customer.loan_amount == 0 || customer.loan_amount < 0)
             {
-                
+
                 customer.customer_loan_applied = true;
                 customer.loan_amount = totalloanamount;
                 dataContext.Entry(customer).State = EntityState.Modified;
                 dataContext.SaveChanges();
-                return Ok($"Updated loan approval to db \n {customer.loan_amount.ToString("F")} Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in" + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") + " monthly \n Loan application : ID " + customer_id);
+                return Ok($"Updated loan approval to db \n {customer.loan_amount.ToString("F")} Total loan calculated after interest\n" + totalloanamount.ToString("F") + "\nChecking for approval....\nLoan of: $" + totalloanamount.ToString("F") + " will repay in " + monthsIn + " installments or $" + (totalloanamount / monthsIn).ToString("F") +" monthly \n Loan application : ID " + customer_id);
             }
+            
             else
             {
                 return BadRequest("Account doesn't exist in our database record");
@@ -121,6 +121,12 @@ namespace BankingWebAPI.Controllers
             Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
             if (customer != null)
             {
+                
+                if (customer.loan_amount == 0)
+                {
+
+                    return Ok("No loan to repay");
+                }
                 if (repayLoan.Contains("%") == true)
                 {
                     var charsToRemove = new string[] { "%" };
@@ -129,8 +135,11 @@ namespace BankingWebAPI.Controllers
                         repayLoan = repayLoan.Replace(c, string.Empty);
                     }
                     decimal repayLoanParse = decimal.Parse(repayLoan);
+                    if (decimal.Parse(repayLoan) < 0)
+                    {
+                        return Ok("below zero error");
+                    }
                     decimal amountToRepay = Multiply(repayLoanParse, Divide(customer.loan_amount, 100), 1);
-                    //Console.WriteLine("Amount to repay is: $" + amountToRepay.ToString("F"));
                     decimal remainingLoanLeft = SubtractLoan(customer.loan_amount, amountToRepay);
 
 
@@ -145,62 +154,62 @@ namespace BankingWebAPI.Controllers
 
                         dataContext.Entry(customer).State = EntityState.Modified;
                         dataContext.SaveChanges();
-                        return Ok($"Updated loan repayment to db, amount repaid " + amountToRepay.ToString("F") + " amount left " + remainingLoanLeft.ToString("F"));
-                        if (remainingLoanLeft == 0)
+                        if (remainingLoanLeft != 0)
+                        {
+                            return Ok($"Updated loan repayment to db, amount repaid " + amountToRepay.ToString("F") + " amount left " + remainingLoanLeft.ToString("F"));
+                        }
+                        else
                         {
                             customer.customer_loan_applied = false;
                             dataContext.Entry(customer).State = EntityState.Modified;
                             dataContext.SaveChanges();
-                            Console.WriteLine(DateTime.Now);
-                            Console.ReadLine();
-                            return Ok("Updated loan fully repaid to db");
-
-
+                            return Ok(DateTime.Now + "Updated loan fully repaid to db");
                         }
 
+                    }                    
+                }
+                else
+                {
+                    try
+                    {
+                        decimal amountToRepay = decimal.Parse(repayLoan);
+                        if (amountToRepay < 0)
+                        {
+                            return Ok("below zero error");
+                        }
+                        decimal remainingLoanLeft = SubtractLoan(customer.loan_amount, amountToRepay);
+
+
+                        if (amountToRepay > customer.loan_amount)
+                        {
+                            return Ok("Exceed loan repayment, key again");
+                        }
+                        else
+                        {
+                            customer.loan_amount = remainingLoanLeft;
+
+                            dataContext.Entry(customer).State = EntityState.Modified;
+                            dataContext.SaveChanges();
+                            if (remainingLoanLeft != 0)
+                            {
+                                return Ok($"Updated loan repayment to db, amount repaid " + amountToRepay.ToString("F") + " amount left " + remainingLoanLeft.ToString("F"));
+                            }
+                            else
+                            {
+                                customer.customer_loan_applied = false;
+                                dataContext.Entry(customer).State = EntityState.Modified;
+                                dataContext.SaveChanges();
+                                return Ok(DateTime.Now + "Updated loan fully repaid to db");
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        return Ok("Invalid format");
                     }
                     
 
                 }
-
-                else
-                {
-                    decimal amountToRepay = decimal.Parse(repayLoan);
-                    //Console.WriteLine("Amount to repay is: $" + amountToRepay);
-                    decimal remainingLoanLeft = SubtractLoan(customer.loan_amount, amountToRepay);
-
-
-                    if (amountToRepay > customer.loan_amount)
-                    {
-                        return Ok("Exceed loan repayment, key again");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Loan amount left: $" + remainingLoanLeft);
-                        customer.loan_amount = remainingLoanLeft;
-
-                        dataContext.Entry(customer).State = EntityState.Modified;
-                        dataContext.SaveChanges();
-                        return Ok($"Updated loan repayment to db, amount repaid " + amountToRepay.ToString("F") + " amount left " + remainingLoanLeft.ToString("F"));
-                        
-                    }
-                    if (remainingLoanLeft == 0)
-                    {
-                        customer.customer_loan_applied = false;
-                        dataContext.Entry(customer).State = EntityState.Modified;
-                        dataContext.SaveChanges();
-                        Console.WriteLine(DateTime.Now);
-                        Console.ReadLine();
-                        return Ok("Updated loan fully repaid to db");
-
-                    }
-
-                }
-                return Ok("No loan to repay");
-                
-
-
-
             }
             return BadRequest("Account doesn't exist in our database record");
         }

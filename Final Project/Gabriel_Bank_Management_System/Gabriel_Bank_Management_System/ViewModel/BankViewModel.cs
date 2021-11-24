@@ -219,13 +219,13 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string SignUp(string customer_id, string customer_name, string customer_address, DateTime customer_dob, string customer_email, string customer_phone, string customer_pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
         {
             //Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations");
-            string output2 = string.Empty;
+            string output = string.Empty;
             //(string, string, string, DateTime, string, string, string, string, decimal, Guid, bool, decimal) output;
             
             var responseTask = _bankClient.GetAsync("api/Customer/signup?customer_id=" + customer_id + 
                 "&customer_name=" + customer_name + 
                 "&customer_address=" + customer_address + 
-                "&customer_dob=" + customer_dob + 
+                "&customer_dob=" + customer_dob.ToString("O") + 
                 "&customer_email=" + customer_email + 
                 "&customer_phone=" + customer_phone + 
                 "&customer_pw=" + customer_pw + 
@@ -233,111 +233,100 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 "&account_bal=" + account_bal + 
                 "&cheque_bk_number=" + cheque_bk_number + 
                 "&loan_app=" + loan_app + 
-                "&loan_with_amt=" + loan_with_amt);
-            responseTask.Wait();
-            //output.Item1 = customer_id;
-            //output.Item2 = customer_name;
-            //output.Item3 = customer_address;
-            //output.Item4 = customer_dob;
-            //output.Item5 = customer_email;
-            //output.Item6 = customer_phone;
-            //output.Item7 = customer_pw;
-            //output.Item8 = account_no;
-            //output.Item9 = account_bal;
-            //output.Item10 = cheque_bk_number;
-            //output.Item11 = loan_app;
-            //output.Item12 = loan_with_amt;
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+                "&loan_with_amt=" + loan_with_amt).Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                bool signUpResult = readTask.Result;
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Account creation has been completed";
 
-                if (signUpResult)
-                {
-                    output2 = "New account has been registered.";
-                }
+                //if (signUpResult != null)
+                //{
+                //    output = "deposit has been registered.";
+                //}
             }
             else
             {
-                output2 = "Error has occured.";
-            }
-            return output2;
-
-
-
-
-
-            //var new_user = new BankingWebAPI.Models.Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, 0, Guid.Empty, false, 0);
-            //return new_user;
-        }
-        public string SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
-        {
-            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
-
-            string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/BankEmployee/signup?username=" + bankemployee_name +
-                "&idNumber=" + bankemployee_id +
-                "&address=" + bankemployee_address +
-                "$dateofbirth=" + bankemployee_dob +
-                "$designation=" + bankemployee_designation +
-                "$yearsofservice=" + bankemployee_yos +
-                "&password=" + bankemployee_pw);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                bool signUpResult = readTask.Result;
-
-                if (signUpResult)
-                {
-                    output = "New account has been registered.";
-                }
-            }
-            else
-            {
-                output = "Error has occured.";
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
             }
             return output;
-            //var new_user = new BankingWebAPI.Models.BankEmployees(bankemployee_id, bankemployee_name, bankemployee_address, bankemployee_dob, bankemployee_designation, bankemployee_yos, bankemployee_pw);
-            //return new_user;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bankemployee_id,"></param>
+        /// <param name="bankemployee_name"></param>
+        /// <param name="bankemployee_address"></param>
+        /// <param name="bankemployee_dob"></param>
+        /// <param name="bankemployee_designation"></param>
+        /// <param name="bankemployee_yos"></param>
+        /// <param name="bankemployee_pw"></param>
+        /// <returns></returns>
+        public string SignUpEmployee(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/signup?bankemployee_id=" + bankemployee_id + 
+                "&bankemployee_name=" + bankemployee_name + 
+                "&bankemployee_address=" + bankemployee_address + 
+                "&bankemployee_dob=" + bankemployee_dob.ToString("O") + "&bankemployee_designation=" + bankemployee_designation + 
+                "&bankemployee_yos=" + bankemployee_yos + 
+                "&bankemployee_pw=" + bankemployee_pw).Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Account creation has been completed";
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+            }
+            return output;
         }
         public string SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw)
         {
-            Console.WriteLine("password is ok" + "\nWriting to file.." + "\nCongratulations, Account creation has been completed.....");
-
-
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/BankManager/signup?username=" + bankmanager_name +
-                "&idNumber=" + bankmanager_id +
-                "&address=" + bankmanager_address +
-                "$dateofbirth=" + bankmanager_dob +
-                "$designation=" + bankmanager_designation +
-                "$yearsofservice=" + bankmanager_yos +
-                "&password=" + bankmanager_pw);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/signup?bankmanager_id=" + bankmanager_id +
+                "&bankmanager_name=" + bankmanager_name +
+                "&bankmanager_address=" + bankmanager_address +
+                "$bankmanager_dob=" + bankmanager_dob.ToString("O") +
+                "$bankmanager_designation=" + bankmanager_designation +
+                "$bankmanager_yos=" + bankmanager_yos +
+                "&bankmanager_pw=" + bankmanager_pw).Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                bool signUpResult = readTask.Result;
-
-                if (signUpResult)
-                {
-                    output = "New account has been registered.";
-                }
+                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
+                //readTask.Wait();
+                //IHttpActionResult signUpResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Account creation has been completed";
             }
             else
             {
-                output = "Error has occured.";
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+                //output = "Error has occured.";
             }
             return output;
-            //var new_user = new BankingWebAPI.Models.BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
-            //return new_user;
         }
         /// <summary>
         /// 
@@ -382,7 +371,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string RemoveEmployees(string bankemployee_id)
         {
             string output = string.Empty;
-            var responseTask = _bankClient.DeleteAsync("api/BankEmployee/delete/" + bankemployee_id);
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/delete?bankemployee_id=" + bankemployee_id);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
@@ -437,10 +426,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    //output = $"Welcome {userName}." +
-                    //    "\nWould you like to" +
-                    //    "\n1.) Play Slots?" +
-                    //    "\n2.) Logout?";
+                    
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -472,10 +458,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    //output = $"Welcome {userName}." +
-                    //    "\nWould you like to" +
-                    //    "\n1.) Play Slots?" +
-                    //    "\n2.) Logout?";
+                    
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -508,10 +491,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    //output = $"Welcome {userName}." +
-                    //    "\nWould you like to" +
-                    //    "\n1.) Play Slots?" +
-                    //    "\n2.) Logout?";
+                    
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -526,21 +506,12 @@ namespace Gabriel_Bank_Management_System.ViewModel
         {
             string output = string.Empty;
             var responseTask = _bankClient.GetAsync("api/Savings/withdrawal?customer_id=" + customer_id + "&withdrawAmountKeyedInByCustomer=" + withdrawAmountKeyedInByCustomer).Result;
-            //responseTask.Wait();
-            //var result = responseTask.Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = responseTask.Content.ReadAsAsync<bool>();
-                //readTask.Wait();
-                //bool signUpResult = readTask.Result;
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
-                //if (signUpResult)
-                //{
-                //    output = "withdrawal has been registered.";
-                //}
             }
             else
             {
@@ -561,22 +532,12 @@ namespace Gabriel_Bank_Management_System.ViewModel
         {
             string output = string.Empty;
             var responseTask = _bankClient.GetAsync("api/Savings/deposit?customer_id=" + customer_id + "&depositAmountKeyedInByCustomer=" + depositAmountKeyedInByCustomer).Result;
-            //responseTask.Wait();
-            //var result = responseTask.Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
-                //readTask.Wait();
-                //IHttpActionResult signUpResult = readTask.Result;
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
-
-                //if (signUpResult != null)
-                //{
-                //    output = "deposit has been registered.";
-                //}
             }
             else
             {
@@ -584,7 +545,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine(result);
                 Console.ReadLine();
                 return "Error";
-                //output = "Error has occured.";
             }
             return output;
         }
@@ -641,18 +601,10 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 "&interestamount=" + interestamount).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
-                //readTask.Wait();
-                //IHttpActionResult signUpResult = readTask.Result;
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
-
-                //if (signUpResult != null)
-                //{
-                //    output = "deposit has been registered.";
-                //}
             }
             else
             {
@@ -660,7 +612,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine(result);
                 Console.ReadLine();
                 return "Error";
-                //output = "Error has occured.";
             }
             return output;
 
@@ -672,18 +623,12 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/TakingLoan/viewloan?customer_id=" + customer_id).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
-                //readTask.Wait();
-                //IHttpActionResult signUpResult = readTask.Result;
+
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
 
-                //if (signUpResult != null)
-                //{
-                //    output = "deposit has been registered.";
-                //}
             }
             else
             {
@@ -691,7 +636,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine(result);
                 Console.ReadLine();
                 return "Error";
-                //output = "Error has occured.";
             }
             return output;
         }
@@ -708,18 +652,10 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 "&repayLoan=" + repayLoan).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
-                //readTask.Wait();
-                //IHttpActionResult signUpResult = readTask.Result;
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
-
-                //if (signUpResult != null)
-                //{
-                //    output = "deposit has been registered.";
-                //}
             }
             else
             {
@@ -727,41 +663,25 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine(result);
                 Console.ReadLine();
                 return "Error";
-                //output = "Error has occured.";
             }
             return output;
-
-
-
         }
         
-
         public decimal DepositLimit()
         {
             decimal maximumamount = 5000;
             return maximumamount;
-        }
-
-        
-        
+        }                
         public string ViewBalance(string customer_id)
         {
             string output = string.Empty;
             var responseTask = _bankClient.GetAsync("api/Savings/viewbalance?customer_id=" + customer_id).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
-                //readTask.Wait();
-                //IHttpActionResult signUpResult = readTask.Result;
                 var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
                 Console.WriteLine(dataObjects);
                 Console.ReadLine();
                 return "Successful";
-
-                //if (signUpResult != null)
-                //{
-                //    output = "deposit has been registered.";
-                //}
             }
             else
             {
@@ -769,7 +689,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 Console.WriteLine(result);
                 Console.ReadLine();
                 return "Error";
-                //output = "Error has occured.";
             }
             return output;
         }
@@ -813,37 +732,45 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string ListCustomers()
         {
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/Customers/viewallcustomers");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/Customer/viewallcustomers").Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
             }
-            Console.WriteLine("\n Viewing all customers here");
-            return output;
-            //Console.WriteLine("\n Listing all current customers in database: ");
-            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            //{
-            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} {kvp.Value.customer_address} {kvp.Value.customerBalance.ToString("F")} {kvp.Value.loan_amount.ToString("F")} {kvp.Value.customer_dateOfBirth}");
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+            }
 
-            //}
+            return output;
         }
         
         public string ListEmployees()
         {
-            string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/BankEmployee/viewallemployees");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
-            {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                bool viewAllEmployeeResult = readTask.Result;
-            }
             Console.WriteLine("\n Viewing all employees here");
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/viewallemployees").Result;
+            if (responseTask.IsSuccessStatusCode)
+            {
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+            }
+            
             return output;
 
         }
@@ -851,176 +778,105 @@ namespace Gabriel_Bank_Management_System.ViewModel
         public string SearchCustomerByID(string customer_id)
         {
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/Customer/getcustomerbyid/" + customer_id);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/customerbyid?customer_id=" + customer_id).Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
             }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine("Incorrect format");
+                Console.ReadLine();
+                return "Error";
+            }
+
             return output;
-            //if (cam.dictionaryOfcustomers.ContainsKey(customer_id))
-            //{
-            //    Console.WriteLine("\n" + "ok found" + "\n");
-            //    Console.WriteLine("CUSTOMER ID: " + cam.dictionaryOfcustomers[customer_id].customer_id);
-            //    Console.WriteLine("CUSTOMER NAME: " + cam.dictionaryOfcustomers[customer_id].customer_name);
-            //    Console.WriteLine("CUSTOMER ADDRESS: " + cam.dictionaryOfcustomers[customer_id].customer_address);
-            //    Console.WriteLine("CUSTOMER DATEOFBIRTH: " + cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth);
-            //    Console.WriteLine("CUSTOMER EMAIL: " + cam.dictionaryOfcustomers[customer_id].customer_email);
-            //    Console.WriteLine("CUSTOMER PHONE: " + cam.dictionaryOfcustomers[customer_id].customer_phone);
-            //    Console.WriteLine("CUSTOMER CHEQUE IF ANY: " + cam.dictionaryOfcustomers[customer_id].cheque_book_number);
-            //    Console.WriteLine("CUSTOMER BALANCE: $" + cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F"));
-            //    Console.WriteLine("CUSTOMER LOAN APPLIED IF ANY: " + cam.dictionaryOfcustomers[customer_id].customer_loan_applied);
-            //    Console.WriteLine("CUSTOMER LOAN AMOUNT IF ANY: " + cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F"));
-            //    Console.WriteLine("");
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Account doesn't exist");
-            //}
         }
         public string SearchCustomerByName(string customer_name)
         {
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/Customer/getcustomerbyname/" + customer_name);
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/BankEmployee/customerbyname?customer_name=" + customer_name).Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
             }
-            return output;
-            //int permissionError = 0;
-            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            //{
-            //    if (kvp.Value.customer_name == customer_name)
-            //    {
-            //        Console.WriteLine("\n" + "Search for " + customer_name + "\n");
-            //        Console.WriteLine($"CUSTOMER ID: {kvp.Value.customer_id}");
-            //        Console.WriteLine($"CUSTOMER NAME: {kvp.Value.customer_name}");
-            //        Console.WriteLine($"CUSTOMER ADDRESS: {kvp.Value.customer_address}");
-            //        Console.WriteLine($"CUSTOMER DATEOFBIRTH: {kvp.Value.customer_dateOfBirth}");
-            //        Console.WriteLine($"CUSTOMER EMAIL: {kvp.Value.customer_email}");
-            //        Console.WriteLine($"CUSTOMER PHONE: {kvp.Value.customer_phone}");
-            //        Console.WriteLine($"CUSTOMER CHEQUE IF ANY: {kvp.Value.cheque_book_number}");
-            //        Console.WriteLine($"CUSTOMER BALANCE: ${kvp.Value.customerBalance.ToString("F")}");
-            //        Console.WriteLine($"CUSTOMER LOAN APPLIED IF ANY: {kvp.Value.customer_loan_applied}");
-            //        Console.WriteLine($"CUSTOMER LOAN AMOUNT IF ANY: {kvp.Value.loan_amount.ToString("F")}\n");
-            //        Console.WriteLine("");
-            //        Console.WriteLine("");
-            //        Console.WriteLine("");
-            //        Console.WriteLine("");
-            //        Console.WriteLine("");
-            //        Console.WriteLine("");
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        permissionError = 1;
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine("Incorrect format");
+                Console.ReadLine();
+                return "Error";
+            }
 
-            //    }
-            //}
-            //if (permissionError == 1)
-            //{
-            //    Console.WriteLine("Account doesn't exist");
-            //}
+            return output;
         }
         public string TotalLoanAmount()
         {
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalloan/");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalloan/").Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<decimal>();
-                readTask.Wait();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
             }
             return output;
-            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            //{
-            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Loan amt: {kvp.Value.loan_amount.ToString("F")}");
-
-            //}
-            //var totalloanamount = cam.dictionaryOfcustomers.Sum(x => x.Value.loan_amount);
-
-            //Console.WriteLine("Total outstanding loan taken:  " + totalloanamount.ToString("F"));
-            //return totalloanamount;
-
         }
         public string TotalSavingsAccount()
         {
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalsavings/");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/Savings/viewtotalsavings/").Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<decimal>();
-                readTask.Wait();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
+            }
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
             }
             return output;
-            //foreach (KeyValuePair<string, BankingWebAPI.Models.Customer> kvp in cam.dictionaryOfcustomers)
-            //{
-            //    Console.WriteLine($"{kvp.Value.customer_id} {kvp.Value.customer_name} Customer balance: {kvp.Value.customerBalance.ToString("F")}");
-
-            //}
-            //var totalsavingsofCustomers = cam.dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
-            //Console.WriteLine("Total savings of the bank " + totalsavingsofCustomers.ToString("F"));
-            //return totalsavingsofCustomers;
         }
         public string ViewManagers()
         {
             Console.WriteLine("\n Viewing all managers here");
             string output = string.Empty;
-            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/viewallmanagers");
-            responseTask.Wait();
-            var result = responseTask.Result;
-            if (result.IsSuccessStatusCode)
+            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/viewallmanagers").Result;
+            if (responseTask.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
-                readTask.Wait();
-                bool viewAllEmployeeResult = readTask.Result;
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
+                Console.WriteLine(dataObjects);
+                Console.ReadLine();
+                return "Successful";
             }
-            
+            else
+            {
+                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                Console.WriteLine(result);
+                Console.ReadLine();
+                return "Error";
+            }
             return output;
-            //foreach (KeyValuePair<string, BankingWebAPI.Models.BankManagers> kvp in mam.dictionaryOfManagers)
-            //{
-            //    Console.WriteLine($"{kvp.Value.bankmanager_id} {kvp.Value.bankmanager_name}");
-
-            //}
         }
-        
-        //public void CustomerAdd(CustomerAccountManagerController cam, CustomerController cust, string id, Customer new_user)
-        //{
-        //    var checkUserresult = cust.CustomerAddNew(cam, new_user);
-        //    //var json = JsonConvert.SerializeObject(new_user);
-        //    //var stringContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-            
-            
-        //    //var responseTask = _bankClient.PostAsync("api/Customer/Test/Add", stringContent);
-        //    //responseTask.Wait();
-        //    //var result = responseTask.Result;
-        //    //if (result.IsSuccessStatusCode)
-        //    //{
-        //    //    var readTask = result.Content.ReadAsAsync<Dictionary<string, Customer>>();
-        //    //    readTask.Wait();
-        //    //    checkPhoneresult = readTask.Result;
-        //    //}
-        //    //return checkUserresult;
-        //}
-        //public Dictionary<string, BankEmployees> EmployeeAdd(EmployeeAccountManagerController eam, BankEmployeeController emp, string id, BankEmployees new_user)
-        //{
-        //    Dictionary<string, BankEmployees> checkUserresult = emp.EmployeeAddNew(eam, new_user);
-        //    return checkUserresult;
-        //}
-        //public Dictionary<string, BankManagers> ManagerAdd(ManagerAccountManagerController mam, string id, BankManagers new_user)
-        //{
-        //    Dictionary<string, BankManagers> checkUserresult = mam.ManagerAddNew(mam, new_user);
-        //    return checkUserresult;
-        //}
-
     }
 }

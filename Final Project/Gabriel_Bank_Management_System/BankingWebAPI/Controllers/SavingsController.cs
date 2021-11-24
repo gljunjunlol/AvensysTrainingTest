@@ -45,35 +45,6 @@ namespace BankingWebAPI.Controllers
         {
             dataContext = new ManagementContext();
         }
-        //[HttpPatch]
-        //[Route("deposit")]
-        //public Dictionary<string, Customer> customerDepositPatch(string id, decimal depositAmountKeyedInByCustomer)
-        //{
-
-        //    Customer existingCustomer = dictionaryOfcustomers[id];
-        //    if (existingCustomer != null)
-        //        dictionaryOfcustomers.Remove(id);
-        //    else
-        //    {
-        //        existingCustomer.customerBalance = existingCustomer.customerBalance + depositAmountKeyedInByCustomer;
-        //        dictionaryOfcustomers.Add(id, existingCustomer);
-        //    }
-        //    return dictionaryOfcustomers;
-        //}
-        //[HttpPatch]
-        //[Route("withdrawal")]
-        //public Dictionary<string, Customer> customerWithdrawl(string id, decimal withdrawAmountKeyedInByCustomer)
-        //{
-        //    Customer existingCustomer = dictionaryOfcustomers[id];
-        //    if (existingCustomer != null)
-        //        dictionaryOfcustomers.Remove(id);
-        //    else
-        //    {
-        //        existingCustomer.customerBalance = existingCustomer.customerBalance - withdrawAmountKeyedInByCustomer;
-        //        dictionaryOfcustomers.Add(id, existingCustomer);
-        //    }
-        //    return dictionaryOfcustomers;
-        //}
         [HttpGet]
         [Route("customer/{id}")]                       // https://localhost:44360/api/Savings/customer/2
         public decimal ViewBalance(string id)
@@ -85,21 +56,22 @@ namespace BankingWebAPI.Controllers
             }
             catch(KeyNotFoundException)
             {
-                Console.WriteLine("");
+                return 0;
             }
             catch(ArgumentNullException)
             {
-                Console.WriteLine("");
+                return 0;
             }
             return 0;
             
         }
         [HttpGet]
         [Route("viewtotalsavings")]                                // https://localhost:44360/api/Savings/viewtotalsavings
-        public decimal TotalSavingsAmount()
+        public IHttpActionResult TotalSavingsAmount()
         {
-            decimal totalSavingsamount = dictionaryOfcustomers.Sum(x => x.Value.customerBalance);
-            return totalSavingsamount;
+            IEnumerable<Customer> customer = dataContext.Customers.ToList();
+            decimal totalSavingsamount = dataContext.Customers.Sum(x => x.customerBalance);
+            return Ok(totalSavingsamount.ToString("F"));
         }
         public static decimal AddSavings(decimal x, decimal y)
         {

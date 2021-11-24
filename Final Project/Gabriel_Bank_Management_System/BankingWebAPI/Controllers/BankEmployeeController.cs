@@ -37,42 +37,39 @@ namespace BankingWebAPI.Controllers
                 dictionaryOfEmployees.Add("1111", new BankEmployees() { bankemployee_id = "1111", bankemployee_name = "jamesmith", bankemployee_address = "23 hillview", bankemployee_dateOfBirth = DateTime.Parse("13 Oct 1992"), bankemployee_designation = "Relationship Associate", bankemployee_yearsOfService = "3", bankemployee_pw = "pw" });
                 dictionaryOfEmployees.Add("1235", new BankEmployees() { bankemployee_id = "1235", bankemployee_name = "alansmith", bankemployee_address = "24 hillview", bankemployee_dateOfBirth = DateTime.Parse("14 Oct 1996"), bankemployee_designation = "Admin Employee", bankemployee_yearsOfService = "10", bankemployee_pw = "pw" });
                 dictionaryOfEmployees.Add("1236", new BankEmployees() { bankemployee_id = "1236", bankemployee_name = "samuelsmith", bankemployee_address = "25 hillview", bankemployee_dateOfBirth = DateTime.Parse("15 Oct 1991"), bankemployee_designation = "Customer Savings Associate", bankemployee_yearsOfService = "13", bankemployee_pw = "pw" });
-                //bankContext.SaveChanges();
             }
-            //Console.WriteLine("End");
-            //Console.ReadLine();
             
             
         }
-        //[HttpGet]
-        //[Route("customerbyid")]
-        //public IHttpActionResult CustomerByID(int id)
-        //{
-        //    Customer cust = data.Customers.Where(x => x.ID == id).FirstOrDefault();
-        //    if (customer != null)
-        //    {
-        //        return Ok(customer);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Account invalid");
-        //    }
-        //}
+        [HttpGet]
+        [Route("customerbyid")]
+        public IHttpActionResult CustomerByID(string customer_id)
+        {
+            Customer cust = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
+            if (cust != null)
+            {
+                return Ok(cust);
+            }
+            else
+            {
+                return BadRequest("Account invalid");
+            }
+        }
 
-        //[HttpGet]
-        //[Route("customerbyname")]
-        //public IHttpActionResult CustomerByName(string name)
-        //{
-        //    Customer cust = data.Customers.Where(x => x.Name == name).FirstOrDefault();
-        //    if (customer != null)
-        //    {
-        //        return Ok(customer);
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Account name not exist");
-        //    }
-        //}
+        [HttpGet]
+        [Route("customerbyname")]
+        public IHttpActionResult CustomerByName(string customer_name)
+        {
+            Customer cust = dataContext.Customers.Where(x => x.customer_name == customer_name).FirstOrDefault();
+            if (cust != null)
+            {
+                return Ok(cust);
+            }
+            else
+            {
+                return BadRequest("Account name not exist");
+            }
+        }
         [HttpGet]
         [Route("")]                               // https://localhost:44360/api/BankEmployee     OR http://mybankapi.me/api/BankEmployee
         public Dictionary<string, BankEmployees> GetAll()
@@ -183,20 +180,22 @@ namespace BankingWebAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="idNumber"></param>
-        /// <param name="phoneNumber"></param>
-        /// <param name="password"></param>
+        /// <param name="bankemployee_id,"></param>
+        /// <param name="bankemployee_name"></param>
+        /// <param name="bankemployee_address"></param>
+        /// <param name="bankemployee_dob"></param>
+        /// <param name="bankemployee_designation"></param>
+        /// <param name="bankemployee_yos"></param>
+        /// <param name="bankemployee_pw"></param>
         /// <returns></returns>
-        public bool SignUp(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
+        public IHttpActionResult SignUp(string bankemployee_id, string bankemployee_name, string bankemployee_address, DateTime bankemployee_dob, string bankemployee_designation, string bankemployee_yos, string bankemployee_pw)
         {
             BankEmployees employee = new BankEmployees(bankemployee_id, bankemployee_name, bankemployee_address, bankemployee_dob, bankemployee_designation, bankemployee_yos, bankemployee_pw);
-            using (ManagementContext bankContext = new ManagementContext())
-            {
-                bankContext.Employees.Add(employee);
-                bankContext.SaveChanges();
-                return true;
-            }
+            BankEmployeeBranch empBranch = new BankEmployeeBranch() { bankemployee_id = bankemployee_id, bank_branch = "South Branch" };
+            dataContext.Employees.Add(employee);
+            dataContext.employeeDetails.Add(empBranch);
+            dataContext.SaveChanges();
+            return Ok("validation success");
 
         }
         [HttpGet]
@@ -204,30 +203,30 @@ namespace BankingWebAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="idNumber"></param>
-        /// <param name="phoneNumber"></param>
-        /// <param name="password"></param>
+        /// <param name="bankemployee_id,"></param>
+        /// <param name="bankemployee_name"></param>
+        /// <param name="bankemployee_address"></param>
+        /// <param name="bankemployee_dob"></param>
+        /// <param name="bankemployee_designation"></param>
+        /// <param name="bankemployee_yos"></param>
+        /// <param name="bankemployee_pw"></param>
         /// <returns></returns>
         public bool DeleteEmployee(string bankemployee_id)
         {
-            using (ManagementContext bankContext = new ManagementContext())
+            try
             {
-                try
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = false;
-
-
-                    BankEmployees existingEmployee = bankContext.Employees.Single(x => x.bankemployee_id == bankemployee_id);
-                    bankContext.Entry(existingEmployee).State = EntityState.Deleted;
-                    bankContext.SaveChanges();
-                    return true;
-                }
-                finally
-                {
-                    bankContext.Configuration.ValidateOnSaveEnabled = true;
-                }
+                BankEmployees existingEmployee = dataContext.Employees.Single(x => x.bankemployee_id == bankemployee_id);
+                BankEmployeeBranch existingEmployeeBranch = dataContext.employeeDetails.Single(x => x.bankemployee_id == bankemployee_id);
+                dataContext.Entry(existingEmployee).State = EntityState.Deleted;
+                dataContext.Entry(existingEmployeeBranch).State = EntityState.Deleted;
+                dataContext.SaveChanges();
+                return true;
             }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            return false;
 
         }
         [HttpGet]

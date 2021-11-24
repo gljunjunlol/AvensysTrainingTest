@@ -18,25 +18,16 @@ namespace BankingWebAPI.Controllers
     {
         public BankManagers CurrentUser { get; private set; }
         IDataContext dataContext;
-        private readonly IConsoleIO ConsoleIO;
         //private IManagerAccountManager _user;
         public ManagerAccountManagerController(IDataContext datacontext)
         {
             dataContext = datacontext;
         }
-        public ManagerAccountManagerController(IConsoleIO consoleIO)
-        {
-            ConsoleIO = consoleIO;
-        }
         private IList<BankManagers> _managersList;
         public virtual Dictionary<string, BankManagers> dictionaryOfManagers { get; set; }
-
-
-
         public ManagerAccountManagerController()
         {
             dataContext = new ManagementContext();
-            ConsoleIO = new ConsoleIO();
             using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfManagers = new Dictionary<string, BankManagers>();
@@ -51,28 +42,6 @@ namespace BankingWebAPI.Controllers
             
             
         }
-
-        //[HttpGet]
-        //[Route("managerlogin")]                         // https://localhost:44360/api/ManagerAuthentication/managerlogin?bankmanager_id="hello"&bankmanager_pw="hello"
-        //public bool UserLogin(string bankmanager_id, string bankmanager_pw)
-        //{
-        //    try
-        //    {
-        //        if (dictionaryOfManagers.ContainsKey(bankmanager_id) && dictionaryOfManagers[bankmanager_id].bankmanager_pw == bankmanager_pw)
-        //        {
-        //            Console.WriteLine($"Congratulations, {dictionaryOfManagers[bankmanager_id].bankmanager_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfManagers[bankmanager_id].bankmanager_id} { dictionaryOfManagers[bankmanager_id].bankmanager_name} { dictionaryOfManagers[bankmanager_id].bankmanager_designation} { dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
-        //            return true;
-
-        //        }
-        //    }
-        //    catch(ArgumentNullException)
-        //    {
-        //        Console.WriteLine("cannot be null");
-        //    }
-        //    return false;
-            
-
-        //}
         [HttpPost]
         [Route("Test/Add")]                                 // https://localhost:44360/api/ManagerAuthentication/Test/Add
         public Dictionary<string, BankManagers> ManagerAdd(BankManagers new_user)
@@ -111,20 +80,20 @@ namespace BankingWebAPI.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="username"></param>
-        /// <param name="idNumber"></param>
-        /// <param name="phoneNumber"></param>
-        /// <param name="password"></param>
+        /// <param name="bankmanager_id"></param>
+        /// <param name="bankmanager_name"></param>
+        /// <param name="bankmanager_address"></param>
+        /// <param name="bankmanager_dob"></param>
+        /// <param name="bankmanager_designation"></param>
+        /// <param name="bankmanager_yos"></param>
+        /// <param name="bankmanager_pw"></param>
         /// <returns></returns>
-        public bool SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw)
+        public IHttpActionResult SignUpManager(string bankmanager_id, string bankmanager_name, string bankmanager_address, DateTime bankmanager_dob, string bankmanager_designation, string bankmanager_yos, string bankmanager_pw)
         {
             BankManagers manager = new BankManagers(bankmanager_id, bankmanager_name, bankmanager_address, bankmanager_dob, bankmanager_designation, bankmanager_yos, bankmanager_pw);
-            using (ManagementContext bankContext = new ManagementContext())
-            {
-                bankContext.Managers.Add(manager);
-                bankContext.SaveChanges();
-                return true;
-            }
+            dataContext.Managers.Add(manager);
+            dataContext.SaveChanges();
+            return Ok("validation success");
 
         }
         [HttpGet]
@@ -144,6 +113,7 @@ namespace BankingWebAPI.Controllers
             if (CurrentUser != null)
             {
                 loginSuccess = true;
+                isOwner = true;
             }
 
             return (loginSuccess, isOwner);

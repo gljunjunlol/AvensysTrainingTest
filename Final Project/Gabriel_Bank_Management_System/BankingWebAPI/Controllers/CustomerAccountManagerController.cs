@@ -25,18 +25,12 @@ namespace BankingWebAPI.Controllers
         {
             dataContext = datacontext;
         }
-        private readonly IConsoleIO ConsoleIO;
-        public CustomerAccountManagerController(IConsoleIO consoleIO)
-        {
-            ConsoleIO = consoleIO;
-        }
         private IList<Customer> _customerList;
         public virtual Dictionary<string, Customer> dictionaryOfcustomers { get; set; }
 
         public CustomerAccountManagerController()
         {
             dataContext = new ManagementContext();
-            ConsoleIO = new ConsoleIO();
             using (ManagementContext bankContext = new ManagementContext())
             {
                 dictionaryOfcustomers = new Dictionary<string, Customer>();
@@ -56,26 +50,6 @@ namespace BankingWebAPI.Controllers
             
             
         }
-        //[HttpGet]
-        //[Route("login")]                                     // https://localhost:44360/api/Authentication/login?customer_id=hello&customer_pw=hello
-        //public bool UserLogin(string customer_id, string customer_pw)
-        //{
-        //    try
-        //    {
-        //        if (dictionaryOfcustomers.ContainsKey(customer_id) && dictionaryOfcustomers[customer_id].customer_pw == customer_pw)
-        //        {
-        //            ConsoleIO.WriteLine($"Congratulations, {dictionaryOfcustomers[customer_id].customer_name}, you are now logged in!" + "\nok user found" + $"\nHello your info: { dictionaryOfcustomers[customer_id].customer_id} { dictionaryOfcustomers[customer_id].customer_name}");
-        //            return true;
-
-        //        }
-        //        return false;
-        //    }
-        //    catch(ArgumentNullException)
-        //    {
-        //        ConsoleIO.WriteLine("cannot be null");
-        //    }
-        //    return false;
-
         [HttpGet]
         [Route("login")]
         /// <summary>
@@ -109,21 +83,21 @@ namespace BankingWebAPI.Controllers
                 {
                     if (customer_pw ==null || customer_pw.Length < 6 || customer_pw.Length > 24)
                     {
-                        Console.WriteLine("Password not met - 6 - 24 chars");
+                        //Console.WriteLine("Password not met - 6 - 24 chars");
                         return false;
                     }
 
                     if (customer_pw.Any(char.IsLower) == false)
                     {
 
-                        Console.WriteLine("Password not met - need lower case");
+                        //Console.WriteLine("Password not met - need lower case");
                         return false;
 
                     }
                     if (customer_pw.Any(char.IsUpper) == false)
                     {
 
-                        Console.WriteLine("Password not met - need upper case");
+                        //Console.WriteLine("Password not met - need upper case");
                         return false;
 
                     }
@@ -131,14 +105,14 @@ namespace BankingWebAPI.Controllers
                     if (customer_pw.Any(char.IsDigit) == false)
                     {
 
-                        Console.WriteLine("Password not met - need to include digits");
+                        //Console.WriteLine("Password not met - need to include digits");
                         return false;
                     }
                     Regex rgx = new Regex("[^A-Za-z0-9]");
                     bool hasSpecialChars = rgx.IsMatch(customer_pw);
                     if (hasSpecialChars == false)
                     {
-                        Console.WriteLine("Password not met - need to include special characters");
+                        //Console.WriteLine("Password not met - need to include special characters");
                         return false;
                     }
                     return true;
