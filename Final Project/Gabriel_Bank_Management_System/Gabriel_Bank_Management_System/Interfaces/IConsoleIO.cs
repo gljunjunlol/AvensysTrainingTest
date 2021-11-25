@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankingWebAPI.Interfaces
+namespace Gabriel_Bank_Management_System.Interfaces
 {
     public interface IConsoleIO
     {

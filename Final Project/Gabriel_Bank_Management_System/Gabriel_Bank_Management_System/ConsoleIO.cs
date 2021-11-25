@@ -1,12 +1,11 @@
-﻿using BankingWebAPI.Interfaces;
-//using Gabriel_Bank_Management_System.Interfaces;
+﻿using Gabriel_Bank_Management_System.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankingWebAPI
+namespace Gabriel_Bank_Management_System
 {
     public class ConsoleIO : IConsoleIO
     {

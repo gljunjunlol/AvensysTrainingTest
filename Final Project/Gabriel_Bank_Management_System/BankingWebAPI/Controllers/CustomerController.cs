@@ -51,25 +51,25 @@ namespace BankingWebAPI.Controllers
         {
             return dictionaryOfcustomers.Where(x => x.Key.Contains(id)).FirstOrDefault().Value;
         }
-        [HttpPatch]
-        [Route("Test/Patch")]                             // https://localhost:44360/api/Customer/Test/Patch
-        public Dictionary<string, Customer> updateName(Customer new_user)
-        {
-            string updatedName = "hello";
-            //Customer existingCustomer = dictionaryOfcustomers[customer_id];
-            Customer existingCustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
-            if (existingCustomer != null)
-            {
-                dictionaryOfcustomers.Remove(new_user.customer_id);
-                existingCustomer.customer_name = updatedName;
-                dictionaryOfcustomers.Add(new_user.customer_id, existingCustomer);
-            }
-            else
-            {
-                dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-            }
-            return dictionaryOfcustomers;
-        }
+        //[HttpPatch]
+        //[Route("Test/Patch")]                             // https://localhost:44360/api/Customer/Test/Patch
+        //public Dictionary<string, Customer> updateName(Customer new_user)
+        //{
+        //    string updatedName = "hello";
+        //    //Customer existingCustomer = dictionaryOfcustomers[customer_id];
+        //    Customer existingCustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
+        //    if (existingCustomer != null)
+        //    {
+        //        dictionaryOfcustomers.Remove(new_user.customer_id);
+        //        existingCustomer.customer_name = updatedName;
+        //        dictionaryOfcustomers.Add(new_user.customer_id, existingCustomer);
+        //    }
+        //    else
+        //    {
+        //        dictionaryOfcustomers.Add(new_user.customer_id, new_user);
+        //    }
+        //    return dictionaryOfcustomers;
+        //}
         //[HttpPost]
         //[Route("Customer/Add")]
         //public Dictionary<string, Customer> CustomerAdd(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
@@ -198,6 +198,7 @@ namespace BankingWebAPI.Controllers
             Customer customer = new Customer(customer_id, customer_name, customer_address, customer_dob, customer_email, customer_phone, customer_pw, account_no, account_bal, cheque_bk_number, loan_app, loan_with_amt);            
             dataContext.Customers.Add(customer);
             dataContext.SaveChanges();
+            //FileManager fh = new FileManager(); fh.ReadingandWritingcustomer(customer_id);
             return Ok("validation success");
         }
         [HttpGet]

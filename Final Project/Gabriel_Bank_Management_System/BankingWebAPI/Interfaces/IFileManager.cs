@@ -10,7 +10,7 @@ namespace BankingWebAPI.Interfaces
 {
     public interface IFileManager
     {
-        void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
+        void ReadingandWritingcustomer(string customer_id);
         void ReadingandWritingEmployee(string bankemployee_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
         void ReadingandWritingManager(string bankmanager_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam);
     }

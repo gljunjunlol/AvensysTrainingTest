@@ -3,6 +3,7 @@ using Gabriel_Bank_Management_System.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace Gabriel_Bank_Management_System
 {
@@ -12,7 +13,7 @@ namespace Gabriel_Bank_Management_System
         {
             Initialize();
             bool exit = false;
-            IBankViewModel mv = new BankViewModel();
+            IBankViewModel mv = new BankViewModel(new HttpClient());
             do
             {
                 Console.Clear();
@@ -75,10 +76,38 @@ namespace Gabriel_Bank_Management_System
                                                 while (insideMenu);
                                                 insideMenu = true;
                                                 string input13;
-                                                Console.WriteLine("Key in customer address");
-                                                input13 = Console.ReadLine();
-                                                Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
-                                                DateTime customer_dob = DateTime.Parse(Console.ReadLine());
+                                                do
+                                                {
+                                                    Console.WriteLine("Key in customer address");
+                                                    input13 = Console.ReadLine();
+                                                    if (input13 == string.Empty)
+                                                    {
+                                                        Console.WriteLine("Invalid input");
+                                                    }
+
+                                                    else
+                                                    {
+                                                        insideMenu = false;
+                                                    }
+                                                        
+                                                }
+                                                while (insideMenu);
+                                                insideMenu = true;
+                                                string inputStr33;
+                                                do
+                                                {
+                                                    Console.WriteLine("Key in customer date of birth in format (MM DDD YYYY)");
+                                                    inputStr33 = Console.ReadLine();
+                                                    mv.ParseInputDate(inputStr33, out var customer_dob);
+                                                    if (customer_dob == null)
+                                                        Console.WriteLine("Wrong date format." + Environment.NewLine);
+                                                    else
+                                                        insideMenu = false; 
+                                                    
+                                                }
+                                                while (insideMenu);
+                                                insideMenu = true;
+                                                DateTime customer_dob1 = DateTime.Parse(inputStr33);
                                                 string input15;
                                                 do
                                                 {
@@ -114,12 +143,17 @@ namespace Gabriel_Bank_Management_System
                                                 {
                                                     Console.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
                                                     input17 = Console.ReadLine();
-
-                                                    insideMenu = false;
+                                                    IList<string> outputList = mv.validatePassword(input17);
+                                                    if (outputList.Count != 0)
+                                                        foreach (string output in outputList)
+                                                            Console.WriteLine(output);
+                                                    else
+                                                        insideMenu = false;
+                                                    //insideMenu = false;
                                                 }
-                                                while (mv.validatePassword(input17) == false);
+                                                //while (mv.validatePassword(input17) == false);
                                                 while (insideMenu) ;
-                                                string signUpOutput = mv.SignUp(input11, input12, input13, customer_dob, input16, input15, input17, "A" + input11, 0, Guid.Empty, false, 0);
+                                                string signUpOutput = mv.SignUp(input11, input12, input13, customer_dob1, input16, input15, input17, "A" + input11, 0, Guid.Empty, false, 0);
                                                 Console.WriteLine(signUpOutput);
                                                 Console.ReadLine();
                                                 break;
@@ -183,16 +217,39 @@ namespace Gabriel_Bank_Management_System
                                                                                         case "1":
                                                                                             {
                                                                                                 Console.WriteLine("we will use cheque if more than 5k" + "\nKey in amount for withdrawal");
-                                                                                                decimal withdrawAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
-                                                                                                mv.customerWithdrawl(customer_id, withdrawAmountKeyedInByCustomer);
+                                                                                                string inputStr2 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr2, out var withdrawAmountKeyedInByCustomer);
+
+                                                                                                if (withdrawAmountKeyedInByCustomer == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                }
+                                                                                                    
+                                                                                                else
+                                                                                                {
+                                                                                                    mv.customerWithdrawl(customer_id, withdrawAmountKeyedInByCustomer.Value);
+                                                                                                }
+                                                                                                
 
                                                                                                 break;
                                                                                             }
                                                                                         case "2":
                                                                                             {
                                                                                                 Console.WriteLine("Key in amount for deposit - we will use cheque if more than 5k");
-                                                                                                decimal depositAmountKeyedInByCustomer = decimal.Parse(Console.ReadLine());
-                                                                                                mv.customerDeposit(customer_id, depositAmountKeyedInByCustomer);
+                                                                                                string inputStr3 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr3, out var depositAmountKeyedInByCustomer);
+
+                                                                                                if (depositAmountKeyedInByCustomer == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    mv.customerDeposit(customer_id, depositAmountKeyedInByCustomer.Value);
+                                                                                                }
+                                                                                                
                                                                                                 break;
                                                                                             }
                                                                                         case "3":
@@ -231,16 +288,44 @@ namespace Gabriel_Bank_Management_System
                                                                                         case "1":
                                                                                             {
                                                                                                 Console.WriteLine("Enter loan application amount");
-                                                                                                decimal loanamount = decimal.Parse(Console.ReadLine());
+                                                                                                string inputStr2 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr2, out var loanamount);
+
+                                                                                                if (loanamount == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
                                                                                                 DateTime datetime = DateTime.Now;
                                                                                                 Console.WriteLine("Taking a loan at: " + datetime + "");
                                                                                                 Console.WriteLine("Key in amount of months to repay / installment");
-                                                                                                decimal monthsIn = decimal.Parse(Console.ReadLine());
+                                                                                                string inputStr3 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr3, out var monthsIn);
+
+                                                                                                if (monthsIn == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
                                                                                                 Console.WriteLine("Key in % of interest of loan");
-                                                                                                decimal interestamount = decimal.Parse(Console.ReadLine());
+                                                                                                string inputStr4 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr4, out var interestamount);
+
+                                                                                                if (interestamount == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    mv.LoanAccount(customer_id, loanamount.Value, monthsIn.Value, interestamount.Value);
+                                                                                                }
 
 
-                                                                                                mv.LoanAccount(customer_id, loanamount, monthsIn, interestamount);
+                                                                                                
                                                                                                 break;
                                                                                             }
                                                                                         case "2":
@@ -248,14 +333,41 @@ namespace Gabriel_Bank_Management_System
                                                                                                 Console.WriteLine("Enter customer ID again to ensure of taking loan again");
                                                                                                 string customer_id2 = Console.ReadLine();
                                                                                                 Console.WriteLine("Enter loan application amount");
-                                                                                                decimal loanamount = decimal.Parse(Console.ReadLine());
+                                                                                                string inputStr2 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr2, out var loanamount);
+
+                                                                                                if (loanamount == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
                                                                                                 DateTime datetime = DateTime.Now;
                                                                                                 Console.WriteLine("Taking a loan at: " + datetime + "");
                                                                                                 Console.WriteLine("Key in amount of months to repay / installment");
-                                                                                                decimal monthsIn = decimal.Parse(Console.ReadLine());
+                                                                                                string inputStr3 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr3, out var monthsIn);
+
+                                                                                                if (monthsIn == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
                                                                                                 Console.WriteLine("Key in % of interest of loan");
-                                                                                                decimal interestamount = decimal.Parse(Console.ReadLine());
-                                                                                                mv.LoanAccount(customer_id2, loanamount, monthsIn, interestamount);
+                                                                                                string inputStr4 = Console.ReadLine();
+                                                                                                mv.ParseInputDecimal(inputStr4, out var interestamount);
+
+                                                                                                if (interestamount == null)
+                                                                                                {
+                                                                                                    Console.WriteLine("Key in valid input" + Environment.NewLine);
+                                                                                                    Console.ReadLine();
+                                                                                                    break;
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    mv.LoanAccount(customer_id, loanamount.Value, monthsIn.Value, interestamount.Value);
+                                                                                                }
                                                                                                 break;
                                                                                             }
                                                                                         case "3":
@@ -383,16 +495,38 @@ namespace Gabriel_Bank_Management_System
                                                     while (insideMenu);
                                                     insideMenu = true;
                                                     string input20;
+                                                    do
+                                                    {
+                                                        Console.WriteLine("Key in employee address");
+                                                        input20 = Console.ReadLine();
+                                                        if (input20 == string.Empty)
+                                                        {
+                                                            Console.WriteLine("Invalid input");
+                                                        }
 
+                                                        else
+                                                        {
+                                                            insideMenu = false;
+                                                        }
 
-                                                    Console.WriteLine("Key in employee address");
-                                                    input20 = Console.ReadLine();
+                                                    }
+                                                    while (insideMenu);
+                                                    insideMenu = true;
+                                                    string inputStr34;
+                                                    do
+                                                    {
+                                                        Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
+                                                        inputStr34 = Console.ReadLine();
+                                                        mv.ParseInputDate(inputStr34, out var bankemployee_dob);
+                                                        if (bankemployee_dob == null)
+                                                            Console.WriteLine("Wrong date format." + Environment.NewLine);
+                                                        else
+                                                            insideMenu = false;
 
-
-
-                                                    //string input21;
-                                                    Console.WriteLine("Key in employee date of birth in format (MM DDD YYYY)");
-                                                    DateTime bankemployee_dob = DateTime.Parse(Console.ReadLine());
+                                                    }
+                                                    while (insideMenu);
+                                                    insideMenu = true;
+                                                    DateTime bankemployee_dob1 = DateTime.Parse(inputStr34);
 
                                                     string input22;
                                                     Console.WriteLine("key to employee designation: ");
@@ -408,12 +542,17 @@ namespace Gabriel_Bank_Management_System
                                                     {
                                                         Console.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
                                                         input24 = Console.ReadLine();
-
-                                                        insideMenu = false;
+                                                        IList<string> outputList = mv.validatePassword(input24);
+                                                        if (outputList.Count != 0)
+                                                            foreach (string output in outputList)
+                                                                Console.WriteLine(output);
+                                                        else
+                                                            insideMenu = false;
+                                                        
                                                     }
-                                                    while (mv.validatePassword(input24) == false);
+                                                    //while (mv.validatePassword(input24) == false);
                                                     while (insideMenu) ;
-                                                    string new_user = mv.SignUpEmployee(input18, input19, input20, bankemployee_dob, input22, input23, input24);
+                                                    string new_user = mv.SignUpEmployee(input18, input19, input20, bankemployee_dob1, input22, input23, input24);
                                                     Console.WriteLine(new_user);
                                                     Console.ReadLine();
                                                     break;
@@ -539,6 +678,7 @@ namespace Gabriel_Bank_Management_System
                                     Console.WriteLine("2: View Managers");
                                     Console.WriteLine("3: Login");
                                     Console.WriteLine("4: Return to home screen");
+                                    Console.WriteLine("5: Cancel Manager");
                                     string inputStr = Console.ReadLine();
 
                                     mv.ParseInputString(inputStr, out var input);
@@ -583,16 +723,38 @@ namespace Gabriel_Bank_Management_System
                                                     while (insideMenu);
                                                     insideMenu = true;
                                                     string input27;
+                                                    do
+                                                    {
+                                                        Console.WriteLine("Key in manager address");
+                                                        input27 = Console.ReadLine();
+                                                        if (input27 == string.Empty)
+                                                        {
+                                                            Console.WriteLine("Invalid input");
+                                                        }
 
+                                                        else
+                                                        {
+                                                            insideMenu = false;
+                                                        }
 
-                                                    Console.WriteLine("Key in manager address");
-                                                    input27 = Console.ReadLine();
+                                                    }
+                                                    while (insideMenu);
+                                                    insideMenu = true;
+                                                    string inputStr35;
+                                                    do
+                                                    {
+                                                        Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
+                                                        inputStr35 = Console.ReadLine();
+                                                        mv.ParseInputDate(inputStr35, out var bankmanager_dob);
+                                                        if (bankmanager_dob == null)
+                                                            Console.WriteLine("Wrong date format." + Environment.NewLine);
+                                                        else
+                                                            insideMenu = false;
 
-
-
-                                                    //string input28;
-                                                    Console.WriteLine("Key in manager date of birth in format (MM DDD YYYY)");
-                                                    DateTime manager_dob = DateTime.Parse(Console.ReadLine());
+                                                    }
+                                                    while (insideMenu);
+                                                    insideMenu = true;
+                                                    DateTime manager_dob1 = DateTime.Parse(inputStr35);
 
                                                     string input29;
                                                     Console.WriteLine("key to manager designation: ");
@@ -608,12 +770,16 @@ namespace Gabriel_Bank_Management_System
                                                     {
                                                         Console.WriteLine("Enter Password requirements: 1 lower, 1 upper, 1 digit, 1 special character, 6 - 24 chars:");
                                                         input31 = Console.ReadLine();
-
-                                                        insideMenu = false;
+                                                        IList<string> outputList = mv.validatePassword(input31);
+                                                        if (outputList.Count != 0)
+                                                            foreach (string output in outputList)
+                                                                Console.WriteLine(output);
+                                                        else
+                                                            insideMenu = false;
                                                     }
-                                                    while (mv.validatePassword(input31) == false);
+                                                    //while (mv.validatePassword(input31) == false);
                                                     while (insideMenu) ;
-                                                    string new_user = mv.SignUpManager(input25, input26, input27, manager_dob, input29, input30, input31);
+                                                    string new_user = mv.SignUpManager(input25, input26, input27, manager_dob1, input29, input30, input31);
                                                     Console.WriteLine(new_user);
                                                     Console.ReadLine();
                                                     break;
@@ -745,6 +911,13 @@ namespace Gabriel_Bank_Management_System
                                                 {
                                                     exit = true;
 
+                                                    break;
+                                                }
+                                            case 5:
+                                                {
+                                                    Console.WriteLine("Key in manager id");
+                                                    string manager_id = Console.ReadLine();
+                                                    mv.DeleteManager(manager_id);
                                                     break;
                                                 }
                                             default:

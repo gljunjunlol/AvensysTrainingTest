@@ -27,6 +27,10 @@ namespace Bank.Common.Common
         /// <summary>
         /// 
         /// </summary>
+        IdNullError,
+        /// <summary>
+        /// 
+        /// </summary>
         None
     }
 }

@@ -9,7 +9,7 @@ namespace BankingWebAPI.Interfaces
     {
         (bool, bool?) Login(string username, string password);
         //bool UserLogin(string customer_id, string customer_pw);
-        bool validatePassword(string customer_pw);
+        ForPasswordResultType validatePassword(string customer_pw);
         PhoneNumberResultType validatePhone(string a);
         EmailAddressResultType validateEmail(string a);
     }

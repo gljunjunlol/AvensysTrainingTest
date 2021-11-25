@@ -6,35 +6,44 @@ using System.Threading.Tasks;
 
 namespace Bank.Common.Common
 {
-    public enum UserNameResultType
+    [Flags]
+    public enum ForPasswordResultType
     {
         /// <summary>
         /// 
         /// </summary>
-        DuplicateUser,
+        IncorrectPasswordLength = 1,
         /// <summary>
         /// 
         /// </summary>
-        UserNameLengthIncorrect,
+        PasswordNoUpperCaseLetter = 2,
         /// <summary>
         /// 
         /// </summary>
-        UserNameContainsSpace,
+        PasswordNoLowerCaseLetter = 4,
         /// <summary>
         /// 
         /// </summary>
-        UserNameDataAccessError,
-        /// <summary>
-        /// 
-        /// </summary>        
-        UnhandledUserError,
+        PasswordNoDigits = 8,
         /// <summary>
         /// 
         /// </summary>
-        UserNameNullError,
+        PasswordNoSpecialCharacter = 16,
         /// <summary>
         /// 
         /// </summary>
-        None
+        PasswordThreeRepeatedCharacters = 32,
+        /// <summary>
+        /// 
+        /// </summary>
+        UnhandledPasswordError = 64,
+        /// <summary>
+        /// 
+        /// </summary>
+        PasswordNullError = 128,
+        /// <summary>
+        /// 
+        /// </summary>
+        None = 256
     }
 }

@@ -8,6 +8,7 @@ using System.Web.Http;
 using BankingWebAPI.Filters;
 using BankingWebAPI.Interfaces;
 using BankingWebAPI.Models;
+using System.Data.Entity;
 
 namespace BankingWebAPI.Controllers
 {
@@ -50,29 +51,32 @@ namespace BankingWebAPI.Controllers
             return dictionaryOfManagers;
 
         }
-        [HttpPost]
-        [Route("Test/AddNew")]
-        public Dictionary<string, BankManagers> ManagerAddNew(ManagerAccountManagerController mam, BankManagers new_user)
+        [HttpGet]
+        [Route("delete")]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bankmanager_id,"></param>
+        /// <param name="bankmanager_name"></param>
+        /// <param name="bankmanager_address"></param>
+        /// <param name="bankmanager_dob"></param>
+        /// <param name="bankmanager_designation"></param>
+        /// <param name="bankmanager_yos"></param>
+        /// <param name="bankmanager_pw"></param>
+        /// <returns></returns>
+        public bool DeleteManager(string bankmanager_id)
         {
-            Console.WriteLine("Saving as at..");
-
             try
             {
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    mam.dictionaryOfManagers.Add(new_user.bankmanager_id, new_user);
-                    bankContext.Managers.Add(new_user);
-                    bankContext.SaveChanges();
-                }
-                Console.WriteLine(DateTime.Now + " Done");
-                Console.ReadLine();
-
+                BankManagers existingManager = dataContext.Managers.Single(x => x.bankmanager_id == bankmanager_id);
+                dataContext.Entry(existingManager).State = EntityState.Deleted;
+                dataContext.SaveChanges();
+                return true;
             }
-            catch (NullReferenceException)
+            catch (InvalidOperationException)
             {
-                Console.WriteLine("cannot be null");
+                return false;
             }
-            return dictionaryOfManagers;
 
         }
         [HttpGet]

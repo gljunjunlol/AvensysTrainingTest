@@ -75,54 +75,52 @@ namespace BankingWebAPI.Controllers
         //}
         [HttpGet]
         [Route("checkpassword")]                                 // https://localhost:44360/api/Authentication/checkpassword?customer_pw=John12345678$
-        public bool validatePassword(string customer_pw)
+        public ForPasswordResultType validatePassword(string customer_pw)
         {
-            while (true)
+
+            ForPasswordResultType type = ForPasswordResultType.None;
+            if (customer_pw == null || customer_pw.Length < 6 || customer_pw.Length > 24)
             {
-                try
-                {
-                    if (customer_pw ==null || customer_pw.Length < 6 || customer_pw.Length > 24)
-                    {
-                        //Console.WriteLine("Password not met - 6 - 24 chars");
-                        return false;
-                    }
-
-                    if (customer_pw.Any(char.IsLower) == false)
-                    {
-
-                        //Console.WriteLine("Password not met - need lower case");
-                        return false;
-
-                    }
-                    if (customer_pw.Any(char.IsUpper) == false)
-                    {
-
-                        //Console.WriteLine("Password not met - need upper case");
-                        return false;
-
-                    }
-
-                    if (customer_pw.Any(char.IsDigit) == false)
-                    {
-
-                        //Console.WriteLine("Password not met - need to include digits");
-                        return false;
-                    }
-                    Regex rgx = new Regex("[^A-Za-z0-9]");
-                    bool hasSpecialChars = rgx.IsMatch(customer_pw);
-                    if (hasSpecialChars == false)
-                    {
-                        //Console.WriteLine("Password not met - need to include special characters");
-                        return false;
-                    }
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
+                type = ForPasswordResultType.IncorrectPasswordLength;
+                //Console.WriteLine("Password not met - 6 - 24 chars");
+                //return false;
+                return type;
             }
-            
+
+            if (customer_pw.Any(char.IsLower) == false)
+            {
+                type = ForPasswordResultType.PasswordNoLowerCaseLetter;
+                //Console.WriteLine("Password not met - need lower case");
+                //return false;
+                return type;
+            }
+            if (customer_pw.Any(char.IsUpper) == false)
+            {
+                type = ForPasswordResultType.PasswordNoUpperCaseLetter;
+                //Console.WriteLine("Password not met - need upper case");
+                //return false;
+                return type;
+            }
+
+            if (customer_pw.Any(char.IsDigit) == false)
+            {
+                type = ForPasswordResultType.PasswordNoDigits;
+                //Console.WriteLine("Password not met - need to include digits");
+                //return false;
+                return type;
+            }
+            Regex rgx = new Regex("[^A-Za-z0-9]");
+            bool hasSpecialChars = rgx.IsMatch(customer_pw);
+            if (hasSpecialChars == false)
+            {
+                type = ForPasswordResultType.PasswordNoSpecialCharacter;
+                //Console.WriteLine("Password not met - need to include special characters");
+                //return false;
+                return type;
+            }
+            //return true;
+            return type;
+
         }
         [HttpGet]
         [Route("checkphonenumber")]                // https://mybankapi.me/api/Authentication/checkphonenumber?phone=(222)333-4444
@@ -196,57 +194,39 @@ namespace BankingWebAPI.Controllers
 
         }
         [HttpGet]
-        [Route("checkusername")]                         // https://localhost:44360/api/Authentication/checkusername?username=johnsmith
+        [Route("checkusername")]                         // http://mybankapi.me/api/Authentication/checkusername?username=johnsmith
         public UserNameResultType CheckUserName(string username)
         {
             UserNameResultType type = UserNameResultType.None;
-            try
+            if (username == null || username.Length < 6 || username.Length > 24)
             {
-                if (username ==null || username.Length < 6 || username.Length > 24)
+                type = UserNameResultType.UserNameLengthIncorrect;
+            }
+            if (username != null)
+            {
+                foreach (char character in username)
                 {
-                    type = UserNameResultType.UserNameLengthIncorrect;
-                }
-                if (username != null)
-                {
-                    foreach (char character in username)
+                    if (char.IsWhiteSpace(character))
                     {
-                        if (char.IsWhiteSpace(character))
-                        {
-                            type = UserNameResultType.UserNameContainsSpace;
-                            break;
-                        }
+                        type = UserNameResultType.UserNameContainsSpace;
+                        break;
                     }
                 }
-            }
-            catch (IOException)
-            {
-                type = UserNameResultType.UserNameDataAccessError;
-            }
-            catch (Exception)
-            {
-                type = UserNameResultType.UnhandledUserError;
             }
             return type;
         }
         [HttpGet]
-        [Route("checkid")]                      // https://localhost:44360/api/Authentication/checkid?idNumber=1234
+        [Route("checkid")]                      // http://mybankapi.me/api/Authentication/checkid?idNumber=1111
         public IdResultType CheckId(string idNumber)
         {
             IdResultType type = IdResultType.None;
-            try
+            if (idNumber == null)
             {
-                if (idNumber ==null || idNumber.Length != 4)
-                {
-                    type = IdResultType.IdIncorrect;
-                }
+                type = IdResultType.IdNullError;
             }
-            catch (IOException)
+            if (idNumber == null || idNumber.Length != 4)
             {
-                type = IdResultType.IdDataAccessError;
-            }
-            catch (Exception)
-            {
-                type = IdResultType.UnhandledIdError;
+                type = IdResultType.IdIncorrect;
             }
             return type;
         }

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Common\EmailAddressResultType.cs" />
     <Compile Include="Common\IdResultType.cs" />
+    <Compile Include="Common\ForPasswordResultType.cs" />
     <Compile Include="Common\PhoneNumberResultType.cs" />
     <Compile Include="Common\UserNameResultType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

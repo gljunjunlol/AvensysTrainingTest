@@ -115,37 +115,37 @@ namespace BankingWebAPI.Controllers
             return dictionaryOfEmployees;
 
         }
-        [HttpPost]
-        [Route("Test/AddNew")]
-        public Dictionary<string, BankEmployees> EmployeeAddNew(EmployeeAccountManagerController eam, BankEmployees new_user)
-        {
-            Console.WriteLine("Saving as at..");
+        //[HttpPost]
+        //[Route("Test/AddNew")]
+        //public Dictionary<string, BankEmployees> EmployeeAddNew(EmployeeAccountManagerController eam, BankEmployees new_user)
+        //{
+        //    Console.WriteLine("Saving as at..");
 
-            try
-            {
-                using (ManagementContext bankContext = new ManagementContext())
-                {
-                    BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = new_user.bankemployee_id, bank_branch = "South Branch" };
-                    List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
-                    bankEmployeeBranchList.Add(emp1);
-                    bankContext.employeeDetails.Add(emp1);
+        //    try
+        //    {
+        //        using (ManagementContext bankContext = new ManagementContext())
+        //        {
+        //            BankEmployeeBranch emp1 = new BankEmployeeBranch() { bankemployee_id = new_user.bankemployee_id, bank_branch = "South Branch" };
+        //            List<BankEmployeeBranch> bankEmployeeBranchList = new List<BankEmployeeBranch>();
+        //            bankEmployeeBranchList.Add(emp1);
+        //            bankContext.employeeDetails.Add(emp1);
 
-                    eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
-                    bankContext.Employees.Add(new_user);
-                    bankContext.SaveChanges();
-                    Console.WriteLine(DateTime.Now + " Done");
-                    Console.ReadLine();
-                }
+        //            eam.dictionaryOfEmployees.Add(new_user.bankemployee_id, new_user);
+        //            bankContext.Employees.Add(new_user);
+        //            bankContext.SaveChanges();
+        //            Console.WriteLine(DateTime.Now + " Done");
+        //            Console.ReadLine();
+        //        }
                 
 
-            }
-            catch (NullReferenceException)
-            {
-                Console.WriteLine("cannot be null");
-            }
-            return dictionaryOfEmployees;
+        //    }
+        //    catch (NullReferenceException)
+        //    {
+        //        Console.WriteLine("cannot be null");
+        //    }
+        //    return dictionaryOfEmployees;
 
-        }
+        //}
         [HttpPut]
         [Route("Test/Put")]                                  // https://localhost:44360/api/BankEmployee/Test/Put
         public Dictionary<string, BankEmployees> PUT(BankEmployees new_user)
@@ -226,7 +226,6 @@ namespace BankingWebAPI.Controllers
             {
                 return false;
             }
-            return false;
 
         }
         [HttpGet]

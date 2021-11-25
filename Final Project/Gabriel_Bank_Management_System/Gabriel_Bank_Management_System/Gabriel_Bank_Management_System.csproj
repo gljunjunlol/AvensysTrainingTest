@@ -97,7 +97,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleIO.cs" />
     <Compile Include="Interfaces\IBankViewModel.cs" />
+    <Compile Include="Interfaces\IConsoleIO.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\FormatDecimalConverter.cs" />

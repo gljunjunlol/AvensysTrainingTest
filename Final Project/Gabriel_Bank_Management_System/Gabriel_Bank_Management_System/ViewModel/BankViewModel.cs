@@ -11,12 +11,13 @@ using System.Web.Http;
 
 namespace Gabriel_Bank_Management_System.ViewModel
 {
-    internal class BankViewModel : IBankViewModel
+    public class BankViewModel : IBankViewModel
     {
         private readonly HttpClient _bankClient;
-        internal BankViewModel()
+        public BankViewModel(HttpClient httpClient)
         {
-            _bankClient = new HttpClient();
+            _bankClient = httpClient;
+            //_bankClient = new HttpClient();
 #if DEBUG
             _bankClient.BaseAddress = new Uri("https://localhost:44360/");
 #else
@@ -187,18 +188,41 @@ namespace Gabriel_Bank_Management_System.ViewModel
             return output;
         }
 
-        public bool validatePassword(string password)
+        public IList<string> validatePassword(string password)
         {
+            IList<string> outputList = new List<string>();
+            ForPasswordResultType checkPasswordResult = ForPasswordResultType.UnhandledPasswordError;
             var responseTask = _bankClient.GetAsync("api/Authentication/checkpassword?customer_pw=" + password);
             responseTask.Wait();
             var result = responseTask.Result;
             if (result.IsSuccessStatusCode)
             {
-                var readTask = result.Content.ReadAsAsync<bool>();
+                var readTask = result.Content.ReadAsAsync<ForPasswordResultType>();
                 readTask.Wait();
-                return readTask.Result;
+                checkPasswordResult = readTask.Result;
             }
-            return false;
+            if (Equals (checkPasswordResult & ForPasswordResultType.IncorrectPasswordLength, ForPasswordResultType.IncorrectPasswordLength))
+            {
+                outputList.Add("Password not met - 6 - 24 chars");
+            }
+            if (Equals(checkPasswordResult & ForPasswordResultType.PasswordNoLowerCaseLetter, ForPasswordResultType.PasswordNoLowerCaseLetter))
+            {
+                outputList.Add("Password not met - need lower case");
+            }
+            if (Equals(checkPasswordResult & ForPasswordResultType.PasswordNoUpperCaseLetter, ForPasswordResultType.PasswordNoUpperCaseLetter))
+            {
+                outputList.Add("Password not met - need upper case");
+            }
+            if (Equals(checkPasswordResult & ForPasswordResultType.PasswordNoDigits, ForPasswordResultType.PasswordNoDigits))
+            {
+                outputList.Add("Password not met - need to include digits");
+            }
+            if (Equals(checkPasswordResult & ForPasswordResultType.PasswordNoSpecialCharacter, ForPasswordResultType.PasswordNoSpecialCharacter))
+            {
+                outputList.Add("Password not met - need to include special characters");
+            }
+            return outputList;
+            //return false;
         }
         /// <summary>
         /// 
@@ -239,9 +263,9 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
                 //readTask.Wait();
                 //IHttpActionResult signUpResult = readTask.Result;
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Account creation has been completed";
 
                 //if (signUpResult != null)
@@ -251,9 +275,9 @@ namespace Gabriel_Bank_Management_System.ViewModel
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
                 //output = "Error has occured.";
             }
@@ -284,16 +308,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
                 //readTask.Wait();
                 //IHttpActionResult signUpResult = readTask.Result;
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Account creation has been completed";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -304,25 +328,25 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/signup?bankmanager_id=" + bankmanager_id +
                 "&bankmanager_name=" + bankmanager_name +
                 "&bankmanager_address=" + bankmanager_address +
-                "$bankmanager_dob=" + bankmanager_dob.ToString("O") +
-                "$bankmanager_designation=" + bankmanager_designation +
-                "$bankmanager_yos=" + bankmanager_yos +
+                "&bankmanager_dob=" + bankmanager_dob.ToString("O") +
+                "&bankmanager_designation=" + bankmanager_designation +
+                "&bankmanager_yos=" + bankmanager_yos +
                 "&bankmanager_pw=" + bankmanager_pw).Result;
             if (responseTask.IsSuccessStatusCode)
             {
                 //var readTask = result.Content.ReadAsAsync<IHttpActionResult>();
                 //readTask.Wait();
                 //IHttpActionResult signUpResult = readTask.Result;
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Account creation has been completed";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
                 //output = "Error has occured.";
             }
@@ -391,6 +415,30 @@ namespace Gabriel_Bank_Management_System.ViewModel
             }
             return output;
         }
+        public string DeleteManager(string bankmanager_id)
+        {
+            string output = string.Empty;
+            var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/delete?bankmanager_id=" + bankmanager_id);
+            responseTask.Wait();
+            var result = responseTask.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var readTask = result.Content.ReadAsAsync<bool>();
+                readTask.Wait();
+                bool RemoveCustomerResult = readTask.Result;
+
+                if (RemoveCustomerResult)
+                {
+                    output = bankmanager_id + " has been removed";
+                }
+            }
+            else
+            {
+                output = "Error has occured";
+            }
+
+            return output;
+        }
 
 
         /// <summary>
@@ -426,7 +474,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    
+                    output = null;
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -458,7 +506,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    
+                    output = null;
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -491,7 +539,7 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 }
                 else if (isLoginSuccess.Item2 == false)
                 {
-                    
+                    output = null;
                 }
             }
             return (output, isLoginSuccess.Item2);
@@ -508,16 +556,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/Savings/withdrawal?customer_id=" + customer_id + "&withdrawAmountKeyedInByCustomer=" + withdrawAmountKeyedInByCustomer).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -534,16 +582,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/Savings/deposit?customer_id=" + customer_id + "&depositAmountKeyedInByCustomer=" + depositAmountKeyedInByCustomer).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -568,7 +616,6 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 value = null;
             }
         }
-
         public void ParseInputString(string input, out int? value)
         {
             try
@@ -584,6 +631,38 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 value = null;
             }
         }
+        public void ParseInputDecimal(string input, out decimal? value)
+        {
+            try
+            {
+                value = Convert.ToDecimal(input);
+            }
+            catch (FormatException)
+            {
+                value = null;
+            }
+            catch (OverflowException)
+            {
+                value = null;
+            }
+        }
+        public void ParseInputDate(string input, out DateTime? value)
+        {
+            try
+            {
+                value = Convert.ToDateTime(input);
+            }
+            catch (FormatException)
+            {
+                value = null;
+            }
+            catch (OverflowException)
+            {
+                value = null;
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -601,16 +680,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 "&interestamount=" + interestamount).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -624,17 +703,17 @@ namespace Gabriel_Bank_Management_System.ViewModel
             if (responseTask.IsSuccessStatusCode)
             {
 
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
 
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -652,16 +731,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
                 "&repayLoan=" + repayLoan).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -678,16 +757,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/Savings/viewbalance?customer_id=" + customer_id).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -735,16 +814,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/Customer/viewallcustomers").Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
 
@@ -758,16 +837,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/BankEmployee/viewallemployees").Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             
@@ -781,16 +860,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/BankEmployee/customerbyid?customer_id=" + customer_id).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine("Incorrect format");
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine("Incorrect format");
+                //Console.ReadLine();
                 return "Error";
             }
 
@@ -802,16 +881,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/BankEmployee/customerbyname?customer_name=" + customer_name).Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine("Incorrect format");
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine("Incorrect format");
+                //Console.ReadLine();
                 return "Error";
             }
 
@@ -823,16 +902,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/TakingLoan/viewtotalloan/").Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -843,16 +922,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/Savings/viewtotalsavings/").Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+                
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;
@@ -864,16 +943,16 @@ namespace Gabriel_Bank_Management_System.ViewModel
             var responseTask = _bankClient.GetAsync("api/ManagerAuthentication/viewallmanagers").Result;
             if (responseTask.IsSuccessStatusCode)
             {
-                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result;
-                Console.WriteLine(dataObjects);
-                Console.ReadLine();
+                var dataObjects = responseTask.Content.ReadAsAsync<object>().Result; Console.WriteLine(dataObjects); Console.ReadLine();
+
+
                 return "Successful";
             }
             else
             {
-                var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
-                Console.WriteLine(result);
-                Console.ReadLine();
+                //var result = $"{(int)responseTask.StatusCode} ({responseTask.ReasonPhrase})";
+                //Console.WriteLine(result);
+                //Console.ReadLine();
                 return "Error";
             }
             return output;

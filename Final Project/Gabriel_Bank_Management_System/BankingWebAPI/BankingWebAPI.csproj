@@ -92,7 +92,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="ConsoleIO.cs" />
     <Compile Include="EntityFramework\BankDBInitializer.cs" />
     <Compile Include="EntityFramework\BankManagementConfiguration.cs" />
     <Compile Include="EntityFramework\ManagementContext.cs" />
@@ -108,7 +107,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IConsoleIO.cs" />
     <Compile Include="Interfaces\ICustomerAccountManager.cs" />
     <Compile Include="Interfaces\IDataContext.cs" />
     <Compile Include="Interfaces\IEmployeeAccountManager.cs" />

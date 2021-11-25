@@ -44,24 +44,6 @@ namespace BankingWebAPI.Controllers
             dataContext = new ManagementContext();
         }
         [HttpGet]
-        [Route("customer/{id}")]                       // https://localhost:44360/api/TakingLoan/customer/2
-        public decimal ViewLoan(string id)
-        {
-            try
-            {
-                Customer existingCustomer = dictionaryOfcustomers[id];
-                return existingCustomer.loan_amount;
-            }
-            catch(KeyNotFoundException)
-            {
-                return 0;
-            }
-            catch(ArgumentNullException)
-            {
-                return 0;
-            }            
-        }
-        [HttpGet]
         [Route("viewtotalloan")]                            // http://mybankapi.me/api/TakingLoan/viewtotalloan
         public IHttpActionResult TotalLoanAmount()
         {
@@ -81,13 +63,14 @@ namespace BankingWebAPI.Controllers
         [Route("loan")]
         public IHttpActionResult LoanAccount(string customer_id, decimal loanamount, decimal monthsIn, decimal interestamount)
         {
+            Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
             // principal loan amount * interest rate * number of years in term = total interest paid
             var months = Divide(monthsIn, 12);
 
             var interests = Divide(interestamount, 100);
 
             decimal totalloanamount = AddLoan(loanamount, Multiply(loanamount, interests, months));
-            Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
+            
             if (customer != null && customer.loan_amount > 0)
             {
                 return Ok("Already applied for loan which is unpaid");

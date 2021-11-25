@@ -5,37 +5,33 @@ using Newtonsoft.Json;
 using BankingWebAPI.Controllers;
 using BankingWebAPI.Interfaces;
 using BankingWebAPI.Models;
+using BankingWebAPI.EntityFramework;
+using System.Linq;
 
 namespace BankingWebAPI.Utility
 {
     public class FileManager : IFileManager
     {
-        
-        public void ReadingandWritingcustomer(string customer_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
+        IDataContext dataContext;
+        public FileManager(IDataContext datacontext)
+        {
+            dataContext = datacontext;
+        }
+        public FileManager()
+        {
+            dataContext = new ManagementContext();
+        }
+        public void ReadingandWritingcustomer(string customer_id)
         {
             try
             {
-                
+                Customer customer = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
 
-                
-                Customer cust = new Customer()
-                {
-                    customer_id = cam.dictionaryOfcustomers[customer_id].customer_id,
-                    customer_name = cam.dictionaryOfcustomers[customer_id].customer_name,
-                    customer_address = cam.dictionaryOfcustomers[customer_id].customer_address,
-                    customer_dateOfBirth = cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth,
-                    customer_email = cam.dictionaryOfcustomers[customer_id].customer_email,
-                    customer_phone = cam.dictionaryOfcustomers[customer_id].customer_phone,
-                    customer_pw = cam.dictionaryOfcustomers[customer_id].customer_pw,
-                    account_number = "A" + cam.dictionaryOfcustomers[customer_id].customer_id,
-                    cheque_book_number = cam.dictionaryOfcustomers[customer_id].cheque_book_number,
-                    customerBalance = cam.dictionaryOfcustomers[customer_id].customerBalance,
-                    customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied,
-                    loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
 
-                };
-                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { cam.dictionaryOfcustomers[customer_id].customer_id} { cam.dictionaryOfcustomers[customer_id].customer_name} { cam.dictionaryOfcustomers[customer_id].customer_address} { cam.dictionaryOfcustomers[customer_id].customer_dateOfBirth} { cam.dictionaryOfcustomers[customer_id].customer_email} { cam.dictionaryOfcustomers[customer_id].customer_phone} { cam.dictionaryOfcustomers[customer_id].customerBalance.ToString("F")} { cam.dictionaryOfcustomers[customer_id].customer_loan_applied} { cam.dictionaryOfcustomers[customer_id].loan_amount.ToString("F")}");
-                string jsontext = "ID " + customer_id + " " + cam.dictionaryOfcustomers[customer_id].customer_name + ".json";
+                Customer cust = new Customer() { customer_id = customer.customer_id, customer_name = customer.customer_name, customer_address = customer.customer_address, customer_dateOfBirth = customer.customer_dateOfBirth, customer_email = customer.customer_email, customer_phone = customer.customer_phone, customer_pw = customer.customer_pw, account_number = "A" + customer.customer_id, cheque_book_number = customer.cheque_book_number, customerBalance = customer.customerBalance, customer_loan_applied = customer.customer_loan_applied, loan_amount = customer.loan_amount, };
+                
+                Console.WriteLine($"Dear Customer, your details for your checking, please check the detailed report: { customer.customer_id} { customer.customer_name} { customer.customer_address} { customer.customer_dateOfBirth} { customer.customer_email} { customer.customer_phone} { customer.customerBalance.ToString("F")} { customer.customer_loan_applied} { customer.loan_amount.ToString("F")}");
+                string jsontext = @"c:\data.json";
 
                 List<Customer> customerList = new List<Customer>(); customerList.Add(cust);
                 Console.WriteLine("uploading user details to json file");
@@ -79,14 +75,14 @@ namespace BankingWebAPI.Utility
                 customer_loan_applied = cam.dictionaryOfcustomers[customer_id].customer_loan_applied,
                 loan_amount = cam.dictionaryOfcustomers[customer_id].loan_amount,
             };
-            string Alljsontext = "List of all banking customers.json";
-            var jsonData = System.IO.File.ReadAllText(Alljsontext);
-            List<Customer> customerBalances = JsonConvert.DeserializeObject<List<Customer>>(jsonData) ?? new List<Customer>();
-            customerBalances.Add(cust);
-            Console.WriteLine("uploading user details to json file");
-            jsonData = JsonConvert.SerializeObject(customerBalances, Formatting.Indented);
-            File.WriteAllText(Alljsontext, jsonData);
-            Console.ReadLine();
+            //string Alljsontext = "List of all banking customers.json";
+            //var jsonData = System.IO.File.ReadAllText(Alljsontext);
+            //List<Customer> customerBalances = JsonConvert.DeserializeObject<List<Customer>>(jsonData) ?? new List<Customer>();
+            //customerBalances.Add(cust);
+            //Console.WriteLine("uploading user details to json file");
+            //jsonData = JsonConvert.SerializeObject(customerBalances, Formatting.Indented);
+            //File.WriteAllText(Alljsontext, jsonData);
+            //Console.ReadLine();
         }
         public void ReadingandWritingEmployee(string bankemployee_id, CustomerAccountManagerController cam, EmployeeAccountManagerController eam, ManagerAccountManagerController mam)
         {
@@ -107,14 +103,14 @@ namespace BankingWebAPI.Utility
                     
 
                 };
-                Console.WriteLine($"Dear Employee, your details for your checking, please check the detailed report: { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_address} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_dateOfBirth} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
-                string jsontext = "Employee ID " + bankemployee_id + " " + eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name + ".json";
+                //Console.WriteLine($"Dear Employee, your details for your checking, please check the detailed report: { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_id} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_address} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_dateOfBirth} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_designation} { eam.dictionaryOfEmployees[bankemployee_id].bankemployee_yearsOfService}");
+                //string jsontext = "Employee ID " + bankemployee_id + " " + eam.dictionaryOfEmployees[bankemployee_id].bankemployee_name + ".json";
 
-                List<BankEmployees> employeeList = new List<BankEmployees>(); employeeList.Add(bemp);
-                Console.WriteLine("uploading user details to json file");
-                string employeeListJson = JsonConvert.SerializeObject(employeeList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, employeeListJson);
-                List<BankEmployees> empTemp1 = JsonConvert.DeserializeObject<List<BankEmployees>>(File.ReadAllText(jsontext));
-                Console.ReadLine();
+                //List<BankEmployees> employeeList = new List<BankEmployees>(); employeeList.Add(bemp);
+                //Console.WriteLine("uploading user details to json file");
+                //string employeeListJson = JsonConvert.SerializeObject(employeeList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, employeeListJson);
+                //List<BankEmployees> empTemp1 = JsonConvert.DeserializeObject<List<BankEmployees>>(File.ReadAllText(jsontext));
+                //Console.ReadLine();
             }
             catch (NotSupportedException)
             {
@@ -156,14 +152,14 @@ namespace BankingWebAPI.Utility
 
 
                 };
-                Console.WriteLine($"Dear Sir / Mam, your details for your checking, please check the detailed report: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_address} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_dateOfBirth} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
-                string jsontext = "Manager ID " + bankmanager_id + " " + mam.dictionaryOfManagers[bankmanager_id].bankmanager_name + ".json";
+                //Console.WriteLine($"Dear Sir / Mam, your details for your checking, please check the detailed report: { mam.dictionaryOfManagers[bankmanager_id].bankmanager_id} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_name} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_address} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_dateOfBirth} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_designation} { mam.dictionaryOfManagers[bankmanager_id].bankmanager_yearsOfService}");
+                //string jsontext = "Manager ID " + bankmanager_id + " " + mam.dictionaryOfManagers[bankmanager_id].bankmanager_name + ".json";
 
-                List<BankManagers> managerList = new List<BankManagers>(); managerList.Add(bmgr);
-                Console.WriteLine("uploading user details to json file");
-                string managerListJson = JsonConvert.SerializeObject(managerList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, managerListJson);
-                List<BankManagers> mgrTemp = JsonConvert.DeserializeObject<List<BankManagers>>(File.ReadAllText(jsontext));
-                Console.ReadLine();
+                //List<BankManagers> managerList = new List<BankManagers>(); managerList.Add(bmgr);
+                //Console.WriteLine("uploading user details to json file");
+                //string managerListJson = JsonConvert.SerializeObject(managerList, Formatting.Indented, new FormatDecimalConverter()); File.WriteAllText(jsontext, managerListJson);
+                //List<BankManagers> mgrTemp = JsonConvert.DeserializeObject<List<BankManagers>>(File.ReadAllText(jsontext));
+                //Console.ReadLine();
             }
             catch (NotSupportedException)
             {
