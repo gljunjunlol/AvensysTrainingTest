@@ -125,8 +125,11 @@
       <DependentUpon>202111190254502_ChangedbankCu.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\BankEmployeesDTO.cs" />
     <Compile Include="Models\BankEmployees.cs" />
+    <Compile Include="Models\BankManagersDTO.cs" />
     <Compile Include="Models\BankManagers.cs" />
+    <Compile Include="Models\CustomerDTO.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\FileManager.cs" />

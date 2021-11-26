@@ -51,33 +51,6 @@ namespace BankingWebAPI.Controllers
         {
             return dictionaryOfcustomers.Where(x => x.Key.Contains(id)).FirstOrDefault().Value;
         }
-        //[HttpPatch]
-        //[Route("Test/Patch")]                             // https://localhost:44360/api/Customer/Test/Patch
-        //public Dictionary<string, Customer> updateName(Customer new_user)
-        //{
-        //    string updatedName = "hello";
-        //    //Customer existingCustomer = dictionaryOfcustomers[customer_id];
-        //    Customer existingCustomer = dictionaryOfcustomers.Where(x => x.Key == new_user.customer_id).FirstOrDefault().Value;
-        //    if (existingCustomer != null)
-        //    {
-        //        dictionaryOfcustomers.Remove(new_user.customer_id);
-        //        existingCustomer.customer_name = updatedName;
-        //        dictionaryOfcustomers.Add(new_user.customer_id, existingCustomer);
-        //    }
-        //    else
-        //    {
-        //        dictionaryOfcustomers.Add(new_user.customer_id, new_user);
-        //    }
-        //    return dictionaryOfcustomers;
-        //}
-        //[HttpPost]
-        //[Route("Customer/Add")]
-        //public Dictionary<string, Customer> CustomerAdd(string id, string name, string address, DateTime dob, string email, string phone, string pw, string account_no, decimal account_bal, Guid cheque_bk_number, bool loan_app, decimal loan_with_amt)
-        //{
-        //    dictionaryOfcustomers.Add(id, new Customer (id, name, address, dob, email, phone, pw, account_no, account_bal, cheque_bk_number, loan_app, loan_with_amt));
-        //    return dictionaryOfcustomers;
-
-        //}
         [HttpPost]
         [Route("Test/Add")]                                 // https://localhost:44360/api/Customer/Test/Add
         public Dictionary<string, Customer> CustomerAdd(Customer new_user)
@@ -101,10 +74,17 @@ namespace BankingWebAPI.Controllers
         [Route("viewallcustomers")]                              //http://mybankapi.me/api/Customer/viewallcustomers
         public IHttpActionResult ViewAllCustomers()
         {
-            IEnumerable<Customer> customer = dataContext.Customers.ToList();
-            if (customer.Count() >0)
+            IEnumerable<Customer> customers = dataContext.Customers.ToList();
+
+            List<CustomerDTO> customerDTOs = new List<CustomerDTO>();
+
+            foreach (Customer customer in customers)
             {
-                return Ok(customer);
+                customerDTOs.Add(new CustomerDTO(customer));
+            }
+            if (customerDTOs.Count() >0)
+            {
+                return Ok(customerDTOs);
             }
             else
             {

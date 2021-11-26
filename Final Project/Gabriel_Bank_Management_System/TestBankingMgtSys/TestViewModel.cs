@@ -13,6 +13,7 @@ using System.Net.Http;
 using Moq.Protected;
 using System.Threading;
 using System.Net;
+using System.IO;
 
 namespace TestBankingMgtSys
 {
@@ -1037,6 +1038,39 @@ namespace TestBankingMgtSys
 
             Assert.Equal("Error", result);
 
+        }
+        [Fact]
+        public void TestFormatDecimalConvert()
+        {
+            Type objecttype = typeof(String);
+            FormatDecimalConverter fdc = new FormatDecimalConverter();
+            fdc.CanConvert(objecttype);
+            StringWriter sw = new StringWriter();
+            JsonWriter writer = new JsonTextWriter(sw);
+            object value = new object();
+
+            JsonSerializer serializer = new JsonSerializer();
+            fdc.WriteJson(writer, value, serializer);
+        }
+        [Fact]
+        public void TestFormatDecimalConvertRead()
+        {
+            FormatDecimalConverter fdc = new FormatDecimalConverter();
+            Assert.False(fdc.CanRead);
+        }
+        [Fact]
+        public void TestFormatDecimalConvertJsonRead()
+        {
+            Type objecttype = typeof(String);
+            FormatDecimalConverter fdc = new FormatDecimalConverter();
+            fdc.CanConvert(objecttype);
+            string _input = "hello";
+            StringReader sw = new StringReader(_input);
+            JsonReader reader = new JsonTextReader(sw);
+            object value = new object();
+
+            JsonSerializer serializer = new JsonSerializer();
+            fdc.ReadJson(reader, objecttype, value, serializer);
         }
     }
 }

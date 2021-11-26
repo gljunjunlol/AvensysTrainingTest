@@ -102,6 +102,22 @@ namespace BankEmployeeTest
             emp.EmployeeAdd(new_user);
         }
         [Fact]
+        public void TestEmployeeAddDTO()
+        {
+            var new_user = new BankEmployeesDTO("1", "george", "23 hillview", DateTime.Now, "loan employee", "3");
+            BankEmployeesDTO emp = new BankEmployeesDTO();
+            BankEmployeeBranchDTO empBranch = new BankEmployeeBranchDTO();
+            empBranch.bankemployee_id = "1234";
+            empBranch.bank_branch = "South Branch";
+        }
+        [Fact]
+        public void TestEmployeeAddDTO2()
+        {
+            BankEmployeesDTO emp = new BankEmployeesDTO();
+            emp.ToString();
+            BankEmployeesDTO emp1 = new BankEmployeesDTO(new BankEmployees());
+        }
+        [Fact]
         public void TestEmployeePut()
         {
             BankEmployeeController emp = new BankEmployeeController();

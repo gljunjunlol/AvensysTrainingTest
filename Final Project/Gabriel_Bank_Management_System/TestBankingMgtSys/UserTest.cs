@@ -472,6 +472,16 @@ namespace UserTest
             cust.CustomerAdd(new_user);
         }
         [Fact]
+        public void TestCustomerDTO2()
+        {
+            var new_user = new CustomerDTO("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "123", 0);
+        }
+        [Fact]
+        public void TestCustomerDTO()
+        {
+            var new_user = new CustomerDTO("1", "apple", "23 hillview", DateTime.Now, "something@mail.com", "(222)333-4444", "123", 0, Guid.Empty, false, 100);
+        }
+        [Fact]
         public void TestCustomerPut()
         {
             CustomerController cust = new CustomerController();
@@ -871,6 +881,14 @@ namespace UserTest
         public void TestTransactionTable()
         {
             TransactionTable tb = new TransactionTable();
+            tb.dateOftransaction = DateTime.Now;
+            tb.TransactionDetails = "";
+            tb.TransactionAmount = 4000;
+        }
+        [Fact]
+        public void TestTransactionDTOTable()
+        {
+            TransactionTableDTO tb = new TransactionTableDTO();
             tb.dateOftransaction = DateTime.Now;
             tb.TransactionDetails = "";
             tb.TransactionAmount = 4000;

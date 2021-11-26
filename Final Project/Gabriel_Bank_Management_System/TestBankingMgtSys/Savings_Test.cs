@@ -311,5 +311,53 @@ namespace TakingLoan_Test
 
             Assert.IsType<BadRequestErrorMessageResult>(res);
         }
+        [Fact]
+
+        public void Test_Adding_negative_fundsforDTO()
+        {
+            CustomerDTO cust = new CustomerDTO();
+
+            cust.customerBalance = 1000;
+            var account = new CustomerDTO();
+            account.deposit(1000);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.deposit(-1000));
+        }
+        [Fact]
+
+        public void Test_Withdraw_negative_fundsforDTO()
+        {
+            CustomerDTO cust = new CustomerDTO();
+
+            cust.customerBalance = 1000;
+            var account = new CustomerDTO();
+
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(-1000));
+        }
+        [Fact]
+
+        public void Test_Withdraw_More_Than_fundsforDTO()
+        {
+            CustomerDTO cust = new CustomerDTO();
+
+            cust.customerBalance = 1000;
+            var account = new CustomerDTO();
+
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => account.withdraw(2000));
+        }
+        [Fact]
+        public void TestCustomerWithdrawlforDTO()
+        {
+
+            decimal expected = 5;
+            CustomerDTO cust = new CustomerDTO();
+
+            cust.customerBalance = 10;
+            cust.withdraw(5);
+            cust.customerBalance = 5;
+            Assert.Equal(expected, cust.customerBalance);
+        }
     }
 }

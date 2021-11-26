@@ -48,7 +48,7 @@ namespace BankingWebAPI.Controllers
             Customer cust = dataContext.Customers.Where(x => x.customer_id == customer_id).FirstOrDefault();
             if (cust != null)
             {
-                return Ok(cust);
+                return Ok(new CustomerDTO(cust));
             }
             else
             {
@@ -63,7 +63,7 @@ namespace BankingWebAPI.Controllers
             Customer cust = dataContext.Customers.Where(x => x.customer_name == customer_name).FirstOrDefault();
             if (cust != null)
             {
-                return Ok(cust);
+                return Ok(new CustomerDTO(cust));
             }
             else
             {
@@ -232,10 +232,16 @@ namespace BankingWebAPI.Controllers
         [Route("viewallemployees")]
         public IHttpActionResult ViewAllEmployees()
         {
-            IEnumerable<BankEmployees> employee = dataContext.Employees.ToList();
-            if (employee.Count() > 0)
+            IEnumerable<BankEmployees> employees = dataContext.Employees.ToList();
+            List<BankEmployeesDTO> bankemployeeDTOs = new List<BankEmployeesDTO>();
+
+            foreach (BankEmployees employee in employees)
             {
-                return Ok(employee);
+                bankemployeeDTOs.Add(new BankEmployeesDTO(employee));
+            }
+            if (bankemployeeDTOs.Count() > 0)
+            {
+                return Ok(bankemployeeDTOs);
             }
             else
             {

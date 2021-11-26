@@ -126,10 +126,16 @@ namespace BankingWebAPI.Controllers
         [Route("viewallmanagers")]
         public IHttpActionResult ViewAllManagers()
         {
-            IEnumerable<BankManagers> manager = dataContext.Managers.ToList();
-            if (manager.Count() > 0)
+            IEnumerable<BankManagers> managers = dataContext.Managers.ToList();
+            List<BankManagersDTO> bankmanagerDTOs = new List<BankManagersDTO>();
+
+            foreach (BankManagers manager in managers)
             {
-                return Ok(manager);
+                bankmanagerDTOs.Add(new BankManagersDTO(manager));
+            }
+            if (bankmanagerDTOs.Count() > 0)
+            {
+                return Ok(bankmanagerDTOs);
             }
             else
             {

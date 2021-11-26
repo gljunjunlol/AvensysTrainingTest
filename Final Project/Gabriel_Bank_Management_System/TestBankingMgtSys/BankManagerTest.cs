@@ -54,6 +54,19 @@ namespace BankManagerTest
             mam.ManagerAdd(mgr);
         }
         [Fact]
+        public void TestManagersAddDTO()
+        {
+            var new_user = new BankManagersDTO("1", "karen", "23 hillview", DateTime.Now, "loan manager", "3");
+            BankManagersDTO emp = new BankManagersDTO();
+        }
+        [Fact]
+        public void TestManagersAddDTO2()
+        {
+            BankManagersDTO mgr = new BankManagersDTO();
+            mgr.ToString();
+            BankManagersDTO mgr1 = new BankManagersDTO(new BankManagers());
+        }
+        [Fact]
         public void SignUpManagerTest()
         {
             string bankmanager_id = "1234"; string bankmanager_name = "karensmith"; string bankmanager_address = "23"; DateTime bankmanager_dob = DateTime.Now; string bankmanager_designation = "loan employee"; string bankmanager_yos = "3"; string bankmanager_pw = "Karen12345678$";
