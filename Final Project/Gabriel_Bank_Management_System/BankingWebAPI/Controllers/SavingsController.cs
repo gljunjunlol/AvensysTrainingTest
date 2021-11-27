@@ -107,12 +107,12 @@ namespace BankingWebAPI.Controllers
             }
             if (customer.customerBalance > withdrawAmountKeyedInByCustomer && customer != null && customer.customerBalance > 0 && withdrawAmountKeyedInByCustomer > 5000)
             {
-                var guid1 = Guid.NewGuid();
-                customer.cheque_book_number = guid1;
-                customer.customerBalance = customer.customerBalance - withdrawAmountKeyedInByCustomer;
+                var guid1 = Guid.NewGuid(); customer.cheque_book_number = guid1; customer.customerBalance = customer.customerBalance - withdrawAmountKeyedInByCustomer;
+
+
                 dataContext.Entry(customer).State = EntityState.Modified;
                 dataContext.SaveChanges();
-                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque withdrawal to db \n Successfully withdrawed Customer ID: {customer_id}. Amount: {withdrawAmountKeyedInByCustomer.ToString("F")} Cheque: {customer.cheque_book_number} Dear Customer, your current balance is: {customer.customerBalance.ToString("F")}");
+                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque withdrawal to db \n Successfully withdrawed Amount $: {withdrawAmountKeyedInByCustomer.ToString("F")} Cheque: {customer.cheque_book_number} \n We have your current balance is: {customer.customerBalance.ToString("F")}");
             }
             
             if (customer.customerBalance > withdrawAmountKeyedInByCustomer && customer != null && customer.customerBalance > 0)
@@ -120,7 +120,7 @@ namespace BankingWebAPI.Controllers
                 customer.customerBalance = customer.customerBalance - withdrawAmountKeyedInByCustomer;
                 dataContext.Entry(customer).State = EntityState.Modified;
                 dataContext.SaveChanges();
-                return Ok($"Updated withdrawal to db \n Successfully withdrawed Customer ID: {customer_id}. Amount: {withdrawAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance.ToString("F")}");
+                return Ok($"Your account { customer.account_number} was debited with {withdrawAmountKeyedInByCustomer.ToString("F")} on {DateTime.Now} \n We have your current balance is:  { customer.customerBalance.ToString("F")}");
             }
             
             if (customer != null && customer.customerBalance < 0 || customer.customerBalance < withdrawAmountKeyedInByCustomer)
@@ -152,12 +152,12 @@ namespace BankingWebAPI.Controllers
             }
             if (customer != null && depositAmountKeyedInByCustomer > 5000)
             {
-                var guid1 = Guid.NewGuid();
-                customer.cheque_book_number = guid1;
-                customer.customerBalance = customer.customerBalance + depositAmountKeyedInByCustomer;
+                var guid1 = Guid.NewGuid(); customer.cheque_book_number = guid1; customer.customerBalance = customer.customerBalance + depositAmountKeyedInByCustomer;
+
+
                 dataContext.Entry(customer).State = EntityState.Modified;
                 dataContext.SaveChanges();
-                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque deposit to db \n Successfully deposit Customer ID: {customer_id}. Amount: {depositAmountKeyedInByCustomer.ToString("F")}. Cheque: {customer.cheque_book_number} Dear Customer, your current balance is: {customer.customerBalance}");
+                return Ok($"Amount is larger than 5000, we will process the cheque \n Updated cheque deposit to db \n Successfully deposit Amount: {depositAmountKeyedInByCustomer.ToString("F")}. Cheque: {customer.cheque_book_number} \n We have your current balance is: {customer.customerBalance}");
             }
 
             if (customer != null && depositAmountKeyedInByCustomer < 5001)
@@ -165,7 +165,8 @@ namespace BankingWebAPI.Controllers
                 customer.customerBalance = customer.customerBalance + depositAmountKeyedInByCustomer;
                 dataContext.Entry(customer).State = EntityState.Modified;
                 dataContext.SaveChanges();
-                return Ok($"Updated deposit to db \n Successfully deposit Customer ID: {customer_id}. Amount: {depositAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance}");
+                return Ok($"Your account { customer.account_number} was credited with {depositAmountKeyedInByCustomer.ToString("F")} on {DateTime.Now} \n We have your current balance is:  { customer.customerBalance.ToString("F")}");
+                //return Ok($"Updated deposit to db \n Successfully deposit Customer ID: {customer_id}. Amount: {depositAmountKeyedInByCustomer.ToString("F")} Dear Customer, your current balance is: {customer.customerBalance}");
             }
             else
             {
